@@ -8,6 +8,7 @@ from pathlib import Path
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--mode", choices=["baseline", "system"], required=True)
+    # Baseline and system modes must use the same base model; system mode only adds system.txt
     p.add_argument("--model", default="qwen3.5:4b")
     p.add_argument("--temperature", type=float, default=0.2)
     p.add_argument("--seed", type=int, default=42)
@@ -41,4 +42,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
