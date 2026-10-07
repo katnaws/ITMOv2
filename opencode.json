@@ -18,5 +18,20 @@
         }
       }
     }
+  },
+  "skills": [
+    "./practices/practice_04"
+  ],
+  "mcp": {
+    "servers": {
+      "study_tracker": {
+        "type": "local",
+        "command": [
+          "python3",
+          "practices/practice_04/mcp/study_tracker/server.py"
+        ],
+        "codemode": false
+      }
+    }
   }
 }

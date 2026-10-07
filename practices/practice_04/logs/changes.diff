@@ -1,0 +1,4544 @@
+diff --git a/.gitignore b/.gitignore
+index da44a08..6f926f4 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -84,6 +84,7 @@ coverage.xml
+ 
+ # Django stuff:
+ *.log
++!practices/practice_04/logs/runner.log
+ local_settings.py
+ db.sqlite3
+ 
+@@ -159,6 +160,9 @@ ehthumbs.db
+ Thumbs.db
+ 
+ # Локальные файлы решений студентов
++node_modules/
++practices/practice_04/dashboard/dist/
++practices/practice_04/mcp/study_tracker/data/
+ solutions_local/
+ student_solutions/
+ 
+diff --git a/Makefile b/Makefile
+index ff5b752..e1e9582 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,9 @@
+-.PHONY: install test step1 step2 step3
++.PHONY: install test step1 step2 step3 hooks p4-run p4-study-demo p4-dashboard p4-pack
+ 
+ install:
+-	@echo "Для практик 1–2 ничего устанавливать не нужно."
++	@echo "Установка для практик 1–2 не требуется. Для практики 4:"
++	@echo " - привяжите git hooks: make hooks"
++	@echo " - при необходимости установите python3"
+ 
+ test: step1 step2 step3
+ 
+@@ -13,3 +15,23 @@ step2:
+ 
+ step3:
+ 	@$(MAKE) -s -C practices/practice_03 test
++
++hooks:
++	@chmod +x practices/practice_04/hooks/post-commit
++	@git config core.hooksPath practices/practice_04/hooks
++	@echo "Hooks path configured to practices/practice_04/hooks"
++
++p4-run:
++	@bash practices/practice_04/runner.sh
++
++p4-study-demo:
++	@python3 practices/practice_04/mcp/study_tracker/check.py
++
++p4-dashboard:
++	@npm --prefix practices/practice_04/dashboard run build
++	@python3 practices/practice_04/dashboard/server.py
++
++p4-pack:
++	@python3 practices/practice_04/scripts/p4_report.py
++	@bash practices/practice_04/runner.sh
++	@python3 practices/practice_04/scripts/p4_pack.py
+diff --git a/opencode.json b/opencode.json
+index fd83fb5..5f5dbee 100644
+--- a/opencode.json
++++ b/opencode.json
+@@ -18,5 +18,20 @@
+         }
+       }
+     }
++  },
++  "skills": [
++    "./practices/practice_04"
++  ],
++  "mcp": {
++    "servers": {
++      "study_tracker": {
++        "type": "local",
++        "command": [
++          "python3",
++          "practices/practice_04/mcp/study_tracker/server.py"
++        ],
++        "codemode": false
++      }
++    }
+   }
+ }
+diff --git a/practices/practice_04/README.md b/practices/practice_04/README.md
+index 760d020..386e430 100644
+--- a/practices/practice_04/README.md
++++ b/practices/practice_04/README.md
+@@ -8,9 +8,9 @@
+ 
+ Можно продолжить свой проект или выбрать другую задачу. Сделанное на занятии засчитывается.
+ 
+-1. **Настройте среду и покажите её применение.** Агент должен прочитать правила из `AGENTS.md`, загрузить выбранный skill и вызвать MCP tool. Автоматическая проверка должна запускаться после правки и возвращать результат агенту. Объясните, зачем нужны выбранные подключения.
++1. **Настройте среду и покажите её применение.** Агент должен прочитать правила из `AGENTS.md`, загрузить выбранный skill и вызвать MCP tool. Автоматическая проверка должна запускаться после правки и возвращать результат агенту. Объясните, зачем нужны выбранные подключения. В этом репозитории для примера добавлены: `AGENTS.md`, skill `practices/practice_04/auto_check/`, MCP `practices/practice_04/mcp/study_tracker/` и runner `practices/practice_04/runner.sh`.
+ 2. **Создайте или исследуйте skill.** Создайте skill с содержательной автоматизацией либо запустите готовый и разберите его устройство. Покажите запуск и проверенный результат. Для готового skill напишите собственный разбор в 3–4 предложениях, своими словами.
+-3. **Сделайте собственный MCP.** Реализуйте один полезный tool и покажите реальный вызов: успешный сценарий и обработку ошибочного входа.
++3. **Сделайте собственный MCP.** Реализуйте один полезный tool и покажите реальный вызов: успешный сценарий и обработку ошибочного входа. В реализации — инструменты учебного трекера, демонстрация в `practices/practice_04/logs/study_tracker_demo.json`.
+ 4. **Напишите свободную рефлексию.** В `reflection.md` расскажите, что помогло, что мешало и где пришлось вмешаться. Объём и формат свободные; «правильного» мнения нет.
+ 
+ ## Что подготовить для сдачи
+@@ -20,7 +20,7 @@
+ - Файлы собственного MCP, подтверждения успешного вызова и обработки ошибочного входа.
+ - `reflection.md` с конкретными наблюдениями.
+ 
+-Всё это можно обернуть в .html презентацию с deeplink'ами на подгруженные локально скилы, а можно быть готовым шарить экран и показывать демо экрана на защите.
++Всё это можно обернуть в .html презентацию с deeplink'ами на подгруженные локально скилы, а можно быть готовым шарить экран и показывать демо экрана на защите. Для запуска демонстрации в этом репозитории используйте цели `make p4-run` и `make p4-study-demo`.
+ 
+ ## Что студент показывает ревьюверу
+ 
+@@ -42,3 +42,10 @@
+ | Свободная рефлексия в `reflection.md` с конкретными наблюдениями | 1 |
+ 
+ Количество подключений само по себе баллов не добавляет. Создание собственного субагента — необязательный бонус, на оценку не влияет.
++
++## Реализация
++
++Все исходники, skill, hook, логи и отчёт собраны в `practices/practice_04/`.
++Инструкция: `practices/practice_04/HANDOFF.md`. Проверка: `make p4-run`.
++
++Состав реализации: [IMPLEMENTATION.md](IMPLEMENTATION.md).
+diff --git a/AGENTS.md b/AGENTS.md
+new file mode 100644
+index 0000000..8b4ef17
+--- /dev/null
++++ b/AGENTS.md
+@@ -0,0 +1,5 @@
++# Правила для агента
++
++Для работы с практикой 4 прочитай `practices/practice_04/AGENTS.md` и
++`practices/practice_04/auto_check/SKILL.md`. Выполняй shell-команды из корня репозитория.
++После правок практики запускай `bash practices/practice_04/runner.sh`.
+diff --git a/practices/practice_04/AGENTS.md b/practices/practice_04/AGENTS.md
+new file mode 100644
+index 0000000..eb5e2f4
+--- /dev/null
++++ b/practices/practice_04/AGENTS.md
+@@ -0,0 +1,28 @@
++# AGENTS.md — правила и среда для практики 4
++
++Этот файл описывает правила для рабочего агента OpenCode (Build) и то, как он применяет skill и MCP при выполнении задач практики 4.
++
++## Общие правила работы агента
++
++- Работай в режиме Build, сохраняй изменения патчами (diff) и веди журналы.
++- После каждого изменения файлов в папке `practices/practice_04/` запускай автоматическую проверку (runner) и прикладывай краткий вывод проверки в ответ.
++- Загружай skill `practice_04/auto_check` и используй его runner для проверки. Skill описан в `practices/practice_04/auto_check/`.
++- Любая команда, требующая shell, должна запускаться из корня репозитория; пути в сообщениях — абсолютные или с корня.
++
++## Подключения и их назначение
++
++- Skill `practice_04/auto_check` — автоматизирует запуск проверки после правок: собирает изменённые файлы, вызывает runner и добавляет резюме результата в логи.
++- MCP `study_tracker` — хранит учебные задания в SQLite, показывает дедлайны и прогресс. Инструменты: `add_task`, `list_tasks`, `update_task_status`, `study_dashboard`. Реальные задания добавляй только по запросу пользователя; проверки выполняй на временной базе.
++- Git hook `post-commit` — обеспечивает автоматический запуск runner после фиксации изменений, даже без участия агента (доп. демонстрация автоматики).
++
++## Как агент применяет среду
++
++1. Читает этот файл и skill `practices/practice_04/auto_check/SKILL.md` (в OpenCode ID `auto_check`, источник `./practices/practice_04` в конфигурации).
++2. При правке в `practices/practice_04/` вызывает runner: `bash practices/practice_04/runner.sh`.
++3. При ошибке runner — возвращает краткое описание ошибки и рекомендации.
++
++## Команды для вручнуюго запуска (для ревью)
++
++- Проверка: `bash practices/practice_04/runner.sh`
++- Трекер: `make p4-study-demo` — MCP-вызовы на временной базе, включая ошибочные входы.
++- Подключение OpenCode: `opencode mcp list`.
+diff --git a/practices/practice_04/HANDOFF.md b/practices/practice_04/HANDOFF.md
+new file mode 100644
+index 0000000..097aab6
+--- /dev/null
++++ b/practices/practice_04/HANDOFF.md
+@@ -0,0 +1,109 @@
++# Что осталось вам и как показать работу
++
++## Обязательный минимум перед сдачей
++
++1. В `practices/practice_04/SUBMISSION.md` впишите ФИО и группу.
++2. Прочитайте `practices/practice_04/reflection.md`. Оставьте только формулировки,
++   с которыми согласны; можно добавить одно собственное наблюдение.
++   После проверки удалите примечание о том, что это черновик, если текст
++   уже выражает вашу рефлексию. Не нужно выдавать чужие впечатления за свои.
++3. Из корня репозитория запустите `make p4-pack` и сдайте
++   `practices/practice_04/artifacts/practice_04_submission.zip`. Если ничего не меняли,
++   уже собранный архив можно использовать сразу, но поле автора останется незаполненным.
++
++Повторять демонстрацию OpenCode, делать коммит в основном репозитории или
++строить новый интерфейс не требуется: подтверждения уже сохранены.
++Предпочтительный HTML-отчёт — `practices/practice_04/report.html`.
++Подробный Markdown-отчёт — `practices/practice_04/SUBMISSION.md`.
++
++## Показ на защите: примерно 5 минут
++
++### 1. Объяснить идею — 30 секунд
++
++«Я сделала собственный MCP для учебных заданий: он хранит сроки и статусы,
++показывает прогресс. React-дашборд использует тот же MCP. Правила, skill,
++runner и Git hook помогают проверять изменения и сохранять результаты».
++
++### 2. Открыть дашборд — 1 минута
++
++В терминале перейдите в корень ITMOv2 (папка, где лежит Makefile).
++Если зависимости ещё не установлены, выполните:
++
++```sh
++npm --prefix practices/practice_04/dashboard ci
++```
++
++Запуск:
++
++```sh
++make p4-dashboard
++```
++
++Откройте http://127.0.0.1:8765/?mode=demo.
++Если сервер уже запущен, второй запуск не нужен. Ошибка Address already
++in use на порту 8765 обычно означает, что прежний сервер ещё работает.
++Для остановки своего запуска используйте Ctrl+C в его терминале.
++
++Добавьте демозадание, например «Подготовить презентацию», курс «Технологии ИИ»,
++дата 2026-10-15. Переведите его в «Готово»: прогресс изменится.
++Откройте «История MCP-вызовов» и раскройте add_task или update_task_status.
++Покажите аргументы и ответ. Демоданные исчезнут после остановки backend.
++
++### 3. Показать работу агента — 1 минута
++
++Откройте `practices/practice_04/logs/opencode_evidence.json`.
++В checks все пять значений true. Ниже в tool_calls видны реальные события:
++read AGENTS.md, skill auto_check, успешный MCP, ошибка на неверной дате
++и shell с запуском runner. Исходный вывод сохранён в opencode_session.jsonl.
++
++Если спросят о timeout: «CLI ограничили 90 секундами; нужные инструменты
++успели завершиться, но итоговый текстовый ответ не был получен».
++Это не повод утверждать, что CLI завершился с exit code 0.
++
++### 4. Показать автоматизацию — 1 минута
++
++```sh
++make p4-run
++```
++
++Последние строки: проверки трекера и моста пройдены, React build passed,
++завершение проверки и Done.
++Логи — `practices/practice_04/logs/runner.log`.
++Затем откройте `logs/hook_demo.json`: настоящий коммит в отдельном
++временном Git-репозитории запустил post-commit и runner.
++
++### 5. Объяснить skill и рефлексию — 1 минута
++
++Откройте `practices/practice_04/auto_check/SKILL.md` и объясните:
++«Это повторяемые инструкции агенту: когда запускать проверку, что прочитать
++в логах и что делать при ошибке. Их выполняет агент; после коммита
++runner дополнительно запускается Git hook».
++Покажите reflection.md и расскажите своими словами, где принимали решения.
++
++## Если нужно повторить доказательства
++
++Из корня репозитория:
++
++```sh
++opencode mcp list
++python3 practices/practice_04/hooks/check.py
++python3 practices/practice_04/dashboard/check.py
++python3 practices/practice_04/scripts/p4_agent_demo.py
++make p4-pack
++```
++
++Последняя демонстрация OpenCode использует настроенную модель
++vsellm/openai/gpt-5 и существующую авторизацию. Не вставляйте ключ в отчёт.
++Если доступ к модели недоступен, используйте уже сохранённое доказательство,
++не заменяйте его выдуманным результатом. Скрипт имеет лимит 90 секунд.
++
++## Как запустить архив на другом компьютере
++
++Распакуйте архив. Понадобятся Git, Python 3.9+ и Node.js 22.12+.
++Все команды запускайте из папки, где находится Makefile.
++Выполните npm --prefix practices/practice_04/dashboard ci, затем make p4-run и make p4-dashboard.
++Наличие `.git` для runner не обязательно: без Git-базы он сохраняет полный снимок, а не diff относительно HEAD.
++Для отдельного hook-демо используйте python3 practices/practice_04/hooks/check.py.
++
++Для подключения hook в рабочем Git-репозитории: `make hooks`.
++Основной репозиторий уже настроен на `practices/practice_04/hooks`.
+diff --git a/practices/practice_04/IMPLEMENTATION.md b/practices/practice_04/IMPLEMENTATION.md
+new file mode 100644
+index 0000000..1aeffd2
+--- /dev/null
++++ b/practices/practice_04/IMPLEMENTATION.md
+@@ -0,0 +1,31 @@
++# Практика 4 — Study Tracker MCP
++
++Все файлы реализации собраны в этой папке:
++
++- `auto_check/` — skill с инструкциями проверки.
++- `mcp/` — собственный трекер, клиент и проверки.
++- `dashboard/` — React-интерфейс и HTTP-мост к MCP.
++- `hooks/` — post-commit и его изолированная проверка.
++- `scripts/` — запись OpenCode-демо, HTML-отчёт и упаковка.
++- `logs/` — доказательства реальных вызовов и результаты проверок.
++- `artifacts/` — архив сдачи.
++- `AGENTS.md`, `runner.sh`, `reflection.md`, `SUBMISSION.md`, `report.html`, `HANDOFF.md` — правила, проверки и материалы сдачи.
++
++В корне репозитория остаются только точки подключения: `AGENTS.md`,
++`opencode.json`, `Makefile` и `.gitignore`. Исходное задание — `README.md`, презентации преподавателя находятся здесь же.
++
++Все shell-команды выполняются из корня репозитория:
++
++```sh
++make p4-run
++make p4-dashboard
++make p4-pack
++```
++
++Перед первым запуском на новом компьютере:
++`npm --prefix practices/practice_04/dashboard ci`.
++Подробная инструкция — `practices/practice_04/HANDOFF.md`.
++
++Записи OpenCode в logs сохранены в исходном виде: они сделаны до переноса
++файлов и могут содержать прежние пути. Текущие проверки, конфигурация,
++инструкция и архив используют новую структуру.
+diff --git a/practices/practice_04/SUBMISSION.md b/practices/practice_04/SUBMISSION.md
+new file mode 100644
+index 0000000..a9d7a7f
+--- /dev/null
++++ b/practices/practice_04/SUBMISSION.md
+@@ -0,0 +1,98 @@
++# Практика 4 — учебный трекер с собственным MCP
++
++Автор: **впишите ФИО и группу перед сдачей**.
++
++## Что сделано
++
++Собственный MCP `study_tracker` предоставляет четыре инструмента:
++`add_task`, `list_tasks`, `update_task_status`, `study_dashboard`.
++Они сохраняют учебные задания в SQLite, фильтруют по курсу и статусу,
++вычисляют прогресс и показывают просроченные задания.
++React-дашборд — дополнительный клиент MCP, а не отдельный обязательный критерий.
++Он обращается к Python HTTP-мосту, который вызывает MCP через stdio.
++
++## Подтверждения по критериям
++
++| Критерий | Реализация | Подтверждение |
++|---|---|---|
++| AGENTS.md | Правила чтения skill, проверок | `logs/opencode_evidence.json`: rules_read |
++| Skill | `practices/practice_04/auto_check/SKILL.md` | OpenCode tool `skill`, ID auto_check, status completed |
++| MCP в среде | study_tracker в opencode.json | Вызовы модели и реальные stdio-клиенты |
++| Hook | `practices/practice_04/hooks/post-commit`, core.hooksPath=practices/practice_04/hooks | `logs/hook_demo.json`: реальный коммит во временном Git-репозитории автоматически запускает runner |
++| Обоснование | См. следующий раздел | Роли подключений описаны в отчёте и AGENTS.md |
++| Skill: устройство | Инструкции + runner + связанные логи | Содержательная проверка MCP, сохранения, ошибок и React |
++| Skill: применение | Модель загружает skill и запускает runner | `logs/opencode_evidence.json`: skill_loaded, runner_completed |
++| Собственный MCP: польза | Задания, сроки, статусы и прогресс | `practices/practice_04/mcp/study_tracker/server.py` |
++| Собственный MCP: вызовы | Успех и неверная дата | `logs/opencode_evidence.json`, `logs/study_tracker_demo.json` |
++| Рефлексия | Наблюдения о выборе задачи и работе с агентом | `practices/practice_04/reflection.md`; черновик требует личной проверки |
++
++## Зачем нужны подключения
++
++AGENTS.md задаёт правила для агента в репозитории. Skill содержит повторяемый
++порядок проверки, чтобы агент не придумывал его заново. Собственный MCP
++даёт агенту доступ к данным учебного трекера через инструменты с описанными
++аргументами. Runner проверяет работу инструментов и собирает
++подтверждения. Post-commit hook добавляет запуск runner после коммита,
++когда агент не участвует. Дашборд позволяет наглядно показать данные.
++
++## Устройство skill
++
++В SKILL.md есть frontmatter с названием и описанием, условия применения и
++инструкции запуска runner. Источник `./practices/practice_04` указан в opencode.json;
++OpenCode обнаруживает skill с ID `auto_check` по пути к файлу.
++Skill задаёт порядок действий; выполнение поручено агенту и скриптам.
++Это не фоновый наблюдатель файлов. Автоматизацию подтверждают вызов skill
++моделью, выполненная shell-команда runner и отдельный запуск Git hook.
++
++## Настоящая демонстрация OpenCode
++
++Сохранены исходный поток событий `logs/opencode_session.jsonl` и компактная
++выборка `logs/opencode_evidence.json`. Из событий видно:
++
++1. Агент прочитал AGENTS.md инструментом read.
++2. Загрузил skill инструментом skill с аргументом id=auto_check.
++3. Вызвал study_tracker_study_dashboard — успешный ответ.
++4. Вызвал study_tracker_add_task с датой 2026-02-30 — ошибка.
++5. Выполнил bash practices/practice_04/runner.sh — проверки завершились.
++
++Для headless CLI был установлен лимит 90 секунд. Процесс был остановлен
++после завершения перечисленных tool calls, до итогового текстового ответа.
++Это ограничение явно отражено в журнале; полный успешный выход CLI не заявляется.
++Связь MCP также независимо проверена локальными клиентами.
++
++## Проверки и ограничения
++
++Runner проверяет сохранение задач между процессами, фильтры, расчёт
++просрочек и прогресса, неверные даты, статусы и ID. Проверка моста
++дашборда подтверждает вызовы MCP; при установленных npm-зависимостях
++runner также собирает React.
++`logs/changes.diff` — снимок незакоммиченных изменений, включая работу,
++выполненную до текущего завершения лабораторной.
++
++HTTP-проверка проведена отдельно; её вывод — `logs/dashboard_http_check.json`.
++В браузере проверены добавление задания, смена статуса, поиск,
++история MCP-вызовов и отсутствие горизонтального переполнения при ширине 390 px.
++Скриншот — `logs/dashboard-preview.jpg`.
++
++Hook демонстрировался в изолированной копии: в оригинальном репозитории
++коммитов для доказательства не создавалось. В этой копии npm-зависимости
++не устанавливались, поэтому hook-демо пропускает React-сборку;
++успешная React-сборка отдельно подтверждается основным runner.log.
++
++Данные локальные, без уведомлений и удалённой синхронизации. Дедлайн
++включает указанную дату по Москве. Прогресс — доля выполненных заданий.
++Деморежим работает с отдельной временной базой, пользовательские данные
++не включены в архив сдачи.
++
++## Как воспроизвести
++
++Подробная инструкция — `HANDOFF.md`. Коротко, из корня репозитория:
++
++```sh
++npm --prefix practices/practice_04/dashboard ci
++make p4-run
++make p4-dashboard
++```
++
++Демо: http://127.0.0.1:8765/?mode=demo.
++Сборка архива: `make p4-pack`.
+diff --git a/practices/practice_04/artifacts/practice_04_submission.zip b/practices/practice_04/artifacts/practice_04_submission.zip
+new file mode 100644
+index 0000000..53acab0
+Binary files /dev/null and b/practices/practice_04/artifacts/practice_04_submission.zip differ
+diff --git a/practices/practice_04/auto_check/README.md b/practices/practice_04/auto_check/README.md
+new file mode 100644
+index 0000000..899ef4e
+--- /dev/null
++++ b/practices/practice_04/auto_check/README.md
+@@ -0,0 +1,20 @@
++# Practice 04 Auto Check — описание
++
++Skill автоматизирует запуск проверок для практики 4. Загружаемые инструкции —
++`SKILL.md`; источник `./practices/practice_04` указан в `opencode.json`, ID в OpenCode — `auto_check`.
++`skill.json` сохранён как прежнее описание команд, а не как механизм загрузки.
++
++- Инструкция в SKILL.md направляет агента запускать `practices/practice_04/runner.sh` после правок и читать результаты из логов.
++- Runner через реальные MCP-процессы проверяет трекер и мост дашборда и сохраняет diff. При наличии npm-зависимостей он также собирает React.
++- Это процедурный skill: сам по себе Markdown не является файловым наблюдателем. Автозапуск после правки выполняет агент согласно правилам, а после коммита — Git hook.
++
++Как запустить:
++
++- В OpenCode: попросите загрузить skill `auto_check` и выполнить его инструкции.
++- Вручную: `make p4-run`, `make p4-study-demo`.
++
++Проверенный результат — файлы логов:
++
++- `logs/runner.log` — общий ход проверки;
++- `logs/study_tracker_demo.json` — успешные и ошибочные MCP-вызовы трекера.
++- `logs/changes.diff` — снимок текущих незакоммиченных изменений, включая новые исходники и работу, выполненную до этой сессии; генерируемые логи исключены.
+diff --git a/practices/practice_04/auto_check/SKILL.md b/practices/practice_04/auto_check/SKILL.md
+new file mode 100644
+index 0000000..5281de4
+--- /dev/null
++++ b/practices/practice_04/auto_check/SKILL.md
+@@ -0,0 +1,20 @@
++---
++name: auto-check
++description: Проверка практики 4 после изменений, реальные MCP-демо и сборка React.
++---
++
++Все shell-команды выполняй из корня репозитория. После правок файлов
++`practices/practice_04/` запускай `bash practices/practice_04/runner.sh`.
++Runner проверяет study-tracker через MCP stdio на временной базе, включая
++сохранение между запусками, фильтры, дедлайны и ошибочный вход.
++
++Изучи `practices/practice_04/logs/runner.log`, `study_tracker_demo.json`
++и `dashboard_check.json`. В ответе укажи результат проверки.
++Ненулевой exit code означает провал: исправь причину и повтори runner.
++Не выдавай локальное демо за вызов языковой моделью в OpenCode.
++
++Для использования трекера вызывай инструменты сервера `study_tracker`:
++`add_task`, `list_tasks`, `update_task_status`, `study_dashboard`.
++Не выдумывай реальные задания и даты: бери их из запроса пользователя.
++Для демо используй временную БД через `STUDY_TRACKER_DB`.
++Даты задавай как YYYY-MM-DD, статусы — todo / in_progress / done.
+diff --git a/practices/practice_04/auto_check/skill.json b/practices/practice_04/auto_check/skill.json
+new file mode 100644
+index 0000000..d91acd0
+--- /dev/null
++++ b/practices/practice_04/auto_check/skill.json
+@@ -0,0 +1,26 @@
++{
++  "$schema": "https://opencode.ai/skill.schema.json",
++  "id": "practice_04.auto_check",
++  "name": "Practice 04 Auto Check",
++  "description": "Автоматический запуск проверок MCP и дашборда после правок в practice_04",
++  "resources": [
++    {
++      "uri": "file:practices/practice_04/runner.sh",
++      "description": "Runner для автоматической проверки"
++    }
++  ],
++  "commands": [
++    {
++      "name": "run_checks",
++      "description": "Запускает bash runner.sh, парсит вывод и возвращает краткое резюме",
++      "run": {
++        "shell": {
++          "command": "bash",
++          "args": [
++            "practices/practice_04/runner.sh"
++          ]
++        }
++      }
++    }
++  ]
++}
+diff --git a/practices/practice_04/dashboard/README.md b/practices/practice_04/dashboard/README.md
+new file mode 100644
+index 0000000..44e4d5e
+--- /dev/null
++++ b/practices/practice_04/dashboard/README.md
+@@ -0,0 +1,59 @@
++# Study Space — React-дашборд для собственного MCP
++
++React + Vite, Python HTTP backend и существующий `study_tracker` MCP.
++Backend запускает MCP-сервер отдельным процессом, выполняет `initialize` и
++`tools/call`. SQL и бизнес-логика остаются в MCP; прямого доступа backend к БД нет.
++
++## Быстрый запуск из корня репозитория
++
++```sh
++npm --prefix practices/practice_04/dashboard ci
++make p4-dashboard
++```
++
++Откройте http://127.0.0.1:8765. Демонстрация с примерами:
++http://127.0.0.1:8765/?mode=demo.
++
++Режим «Мои задания» использует ту же SQLite-базу, что и MCP в OpenCode.
++«Демо» использует отдельную временную базу: примеры добавляются через MCP,
++изменения сохраняются до остановки dashboard-сервера. Реальные задания
++не затрагиваются. Демоданные сбрасываются при перезапуске backend.
++
++Можно добавлять задания, выбирать статус, отмечать выполнение, искать по
++названию и фильтровать по курсу. Сводка и список обновляются после действий,
++по кнопке и каждые 30 секунд, пока вкладка видима.
++
++«История MCP-вызовов» показывает последние запросы и ответы текущего запуска,
++включая аргументы и `isError`. Полный журнал вызовов dashboard записывается
++в `practices/practice_04/mcp/study_tracker/data/dashboard-calls.jsonl` (локальные данные, вне Git).
++
++## Разработка
++
++Два терминала, оба из корня репозитория:
++
++```sh
++python3 practices/practice_04/dashboard/server.py
++```
++
++```sh
++npm --prefix practices/practice_04/dashboard run dev
++```
++
++Vite открывается на http://127.0.0.1:5173 и проксирует `/api` к Python.
++Для проверки: `python3 practices/practice_04/dashboard/check.py`, для сборки:
++`npm --prefix practices/practice_04/dashboard run build`. Требования: Node.js 22.12+ и Python 3.9+.
++
++## Что показать на защите
++
++1. `opencode mcp list` — сервер подключён агенту.
++2. Открыть деморежим, добавить задание и поменять статус.
++3. Открыть историю вызовов и показать `add_task`, `update_task_status`, `study_dashboard`.
++4. Запустить `make p4-run`: логи содержат успешные вызовы и ошибки.
++5. В реальном режиме добавить задание через агента и обновить dashboard:
++   одна SQLite-база доступна обоим клиентам.
++
++HTTP-маршруты: `GET /api/state?mode=real|demo` и
++`POST /api/tools/<tool>?mode=real|demo`, тело — JSON аргументов инструмента.
++Ошибки MCP возвращаются с HTTP 400 и исходным `isError: true`.
++Backend слушает только loopback; это локальное учебное приложение без
++авторизации и удалённого хостинга.
+diff --git a/practices/practice_04/dashboard/check.py b/practices/practice_04/dashboard/check.py
+new file mode 100644
+index 0000000..005c5f7
+--- /dev/null
++++ b/practices/practice_04/dashboard/check.py
+@@ -0,0 +1,94 @@
++"""Exercise the HTTP -> MCP -> SQLite path on isolated databases."""
++import http.client
++import json
++import os
++from pathlib import Path
++import sys
++import tempfile
++from threading import Thread
++
++sys.path.insert(0, str(Path(__file__).resolve().parent))
++from server import Bridge, create_server
++
++
++def check_bridge():
++    with tempfile.TemporaryDirectory(prefix="dashboard-bridge-") as directory:
++        bridge = Bridge(Path(directory) / "demo.sqlite3")
++        bridge.log = Path(directory) / "calls.jsonl"
++        state = bridge.execute("demo")
++        assert state["dashboard"]["total"] == 6
++        assert state["dashboard"]["progress_percent"] == 33.3
++        result = bridge.execute("demo", "add_task", {"title": "Проверка дашборда", "course": "Тест",
++                                                     "deadline": "2026-10-15"})
++        task = bridge.decode(result)
++        result = bridge.execute("demo", "update_task_status", {"task_id": task["id"], "status": "done"})
++        assert bridge.decode(result)["status"] == "done"
++        error = bridge.execute("demo", "add_task", {"title": "Ошибка", "course": "Тест", "deadline": "2026-02-30"})
++        assert error["isError"]
++        after = bridge.execute("demo")
++        assert after["dashboard"]["total"] == 7
++        assert after["dashboard"]["by_status"]["done"] == 3
++        return {"ok": True, "transport": "backend -> MCP stdio -> SQLite", "state": after}
++
++
++def run():
++    with tempfile.TemporaryDirectory(prefix="dashboard-check-") as directory:
++        previous = os.environ.get("STUDY_TRACKER_DB")
++        os.environ["STUDY_TRACKER_DB"] = str(Path(directory) / "real.sqlite3")
++        server = create_server(0, Path(directory) / "demo.sqlite3")
++        server.bridge.log = Path(directory) / "calls.jsonl"
++        thread = Thread(target=server.serve_forever, daemon=True)
++        thread.start()
++        transcript = []
++
++        def request(method, path, body=None, headers=None):
++            connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=15)
++            connection.request(method, path, body=json.dumps(body) if body is not None else None,
++                               headers=headers or {"Content-Type": "application/json"})
++            response = connection.getresponse()
++            status, data = response.status, json.loads(response.read())
++            connection.close()
++            transcript.append({"method": method, "path": path, "status": status, "response": data})
++            return status, data
++
++        try:
++            status, real = request("GET", "/api/state")
++            assert status == 200 and real["dashboard"]["total"] == 0
++            status, demo = request("GET", "/api/state?mode=demo")
++            assert status == 200 and demo["dashboard"]["total"] == 6
++            assert demo["dashboard"]["progress_percent"] == 33.3
++            assert len(demo["dashboard"]["overdue"]) == 1
++            assert request("GET", "/api/state")[1]["dashboard"]["total"] == 0
++            arguments = {"title": "Тест React dashboard", "course": "Технологии ИИ", "deadline": "2026-10-15"}
++            status, result = request("POST", "/api/tools/add_task", arguments)
++            assert status == 200 and not result["isError"]
++            task = json.loads(result["content"][0]["text"])
++            assert request("POST", "/api/tools/update_task_status", {"task_id": task["id"], "status": "done"})[0] == 200
++            status, updated = request("GET", "/api/state")
++            assert updated["dashboard"]["progress_percent"] == 100
++            assert updated["tasks"][0]["status"] == "done"
++            assert request("GET", "/api/state?mode=demo")[1]["dashboard"]["total"] == 6
++            status, error = request("POST", "/api/tools/add_task", dict(arguments, deadline="2026-02-30"))
++            assert status == 400 and error["isError"]
++            assert request("POST", "/api/tools/update_task_status", {"task_id": 9999, "status": "done"})[0] == 400
++            assert request("GET", "/api/state")[1]["dashboard"]["total"] == 1
++            assert request("POST", "/api/tools/not_a_tool", {})[0] == 404
++            assert request("POST", "/api/tools/add_task", arguments,
++                           {"Content-Type": "application/json", "Origin": "https://untrusted.example"})[0] == 403
++            assert request("GET", "/api/state?mode=wrong")[0] == 400
++            logs = [json.loads(line) for line in server.bridge.log.read_text().splitlines()]
++            assert any(entry["tool"] == "add_task" and entry["result"].get("isError") for entry in logs)
++            assert any(entry["tool"] == "update_task_status" and not entry["result"].get("isError") for entry in logs)
++            return {"ok": True, "checks": "HTTP -> MCP, persistence across subprocesses, demo isolation, invalid input, origin checks", "requests": transcript}
++        finally:
++            server.shutdown()
++            server.server_close()
++            thread.join(timeout=5)
++            if previous is None:
++                os.environ.pop("STUDY_TRACKER_DB", None)
++            else:
++                os.environ["STUDY_TRACKER_DB"] = previous
++
++
++if __name__ == "__main__":
++    print(json.dumps(check_bridge() if "--bridge-only" in sys.argv else run(), ensure_ascii=False, indent=2))
+diff --git a/practices/practice_04/dashboard/index.html b/practices/practice_04/dashboard/index.html
+new file mode 100644
+index 0000000..9d6c4e1
+--- /dev/null
++++ b/practices/practice_04/dashboard/index.html
+@@ -0,0 +1,15 @@
++<!doctype html>
++<html lang="ru">
++  <head>
++    <meta charset="UTF-8" />
++    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <meta name="theme-color" content="#15172a" />
++    <meta name="description" content="Учебные задания, дедлайны и прогресс в одном месте." />
++    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%237357df'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='sans-serif' font-size='23' fill='white'%3Es%3C/text%3E%3C/svg%3E" />
++    <title>Study Space — учебный трекер</title>
++  </head>
++  <body>
++    <div id="root"></div>
++    <script type="module" src="/src/main.jsx"></script>
++  </body>
++</html>
+diff --git a/practices/practice_04/dashboard/package-lock.json b/practices/practice_04/dashboard/package-lock.json
+new file mode 100644
+index 0000000..11acc1b
+--- /dev/null
++++ b/practices/practice_04/dashboard/package-lock.json
+@@ -0,0 +1,1205 @@
++{
++  "name": "study-tracker-dashboard",
++  "version": "1.0.0",
++  "lockfileVersion": 3,
++  "requires": true,
++  "packages": {
++    "": {
++      "name": "study-tracker-dashboard",
++      "version": "1.0.0",
++      "dependencies": {
++        "lucide-react": "^0.468.0",
++        "react": "^19.2.0",
++        "react-dom": "^19.2.0"
++      },
++      "devDependencies": {
++        "vite": "^7.1.0"
++      }
++    },
++    "node_modules/@esbuild/aix-ppc64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.28.2.tgz",
++      "integrity": "sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==",
++      "cpu": [
++        "ppc64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "aix"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/android-arm": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.28.2.tgz",
++      "integrity": "sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg==",
++      "cpu": [
++        "arm"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "android"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/android-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.28.2.tgz",
++      "integrity": "sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "android"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/android-x64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.28.2.tgz",
++      "integrity": "sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "android"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/darwin-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.28.2.tgz",
++      "integrity": "sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/darwin-x64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.28.2.tgz",
++      "integrity": "sha512-uq6suIWYP37qzGddBKPw5QEQPi6HiLGsO7UmkpfyaYNQ3D+rN6w6WfwH+nuqcGXWvawGwxOEroO4YGnFh95azw==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/freebsd-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.28.2.tgz",
++      "integrity": "sha512-n+I0BTSRIoy+d6RPKnEVwql5UwBJolytvY4mAOIEJorKlqgPII8ix6slVVrfZ5Tnj7glIZvloylbB/EJPMWEXw==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "freebsd"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/freebsd-x64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.28.2.tgz",
++      "integrity": "sha512-78XJTJkvPs0kz2w61301PJjXl4g7q3JqiYMZ/M/yVI73EHBrCRTgkhu9oqG7vPqq+a/yadEW8aD+agKlk5xrmg==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "freebsd"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/linux-arm": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.28.2.tgz",
++      "integrity": "sha512-XlDnu2q5yoqems+xay6wSAcg9DDD7K9RLKZEBOMZm3ckNpJBvOX20tSfby8KfrrhINDyv9V2YVZKY/SpoGJI8w==",
++      "cpu": [
++        "arm"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/linux-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.28.2.tgz",
++      "integrity": "sha512-pW4AC0P3it8c7do9MVM4p51FzHzdM/TZrerurgRcHJ2WTa1VQ1CIq18xncfpBJw4ojkiZZrKW2yIBWBP92j6Ug==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/linux-ia32": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/linux-ia32/-/linux-ia32-0.28.2.tgz",
++      "integrity": "sha512-CYbnj78HsIeA+DhgUKgFCfvNsTHFhMMrinUrMZpDXJXKN8T3XViTZ/+wtHeVxEWY8ewSzTFN+nRmSwO2tZaLUQ==",
++      "cpu": [
++        "ia32"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/linux-loong64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/linux-loong64/-/linux-loong64-0.28.2.tgz",
++      "integrity": "sha512-buwkd8nsph4R+ajRvw0qM5Hja/TXQow3ptzWO2EbG/cqcIkHloRrdlBtQlshyYGTNFvfkfJ5tpPLVkY4DtsPfQ==",
++      "cpu": [
++        "loong64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/linux-mips64el": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/linux-mips64el/-/linux-mips64el-0.28.2.tgz",
++      "integrity": "sha512-ZVykbDyk7519VwiNb9Lcj9m8XM6v5V9uKPvrEMkkEedVewf+0itkhahp4HDpgERXhwLRpWFypsGbG/J8s0QjJA==",
++      "cpu": [
++        "mips64el"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/linux-ppc64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/linux-ppc64/-/linux-ppc64-0.28.2.tgz",
++      "integrity": "sha512-CAXl+Dtd9UUuJd8pKKdwh6MLm3MUMiqMPmhZ3tTSXPqfyQ3vDl6R5hZdZ/kYojK4ofXtdfSv1tFq8XzWx3heNQ==",
++      "cpu": [
++        "ppc64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/linux-riscv64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/linux-riscv64/-/linux-riscv64-0.28.2.tgz",
++      "integrity": "sha512-GeXCej4IQtU1B+QlDV8W/RRvbzI3O/Stss+/bCXv4lZls5WGRtu2a+3JkA3i4qIUlMXpcHebWpF8AkJhATowuA==",
++      "cpu": [
++        "riscv64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/linux-s390x": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/linux-s390x/-/linux-s390x-0.28.2.tgz",
++      "integrity": "sha512-3H1weTYZPxt/WOhByszQZybS9w5lKzUn1FDMsgEChbHWQwHYQQRfBxgCcZvPhjHfKyJjIievvMmEUawJrdY9Dg==",
++      "cpu": [
++        "s390x"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/linux-x64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.28.2.tgz",
++      "integrity": "sha512-4xTZr1FUmSoQW4XIWmit3tzQrUTZM+N3P0XV8xROKYF50XfI7xeO90+1bZvNwxIufQ9hDQVRJH5YhgPVF8A/HQ==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/netbsd-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/netbsd-arm64/-/netbsd-arm64-0.28.2.tgz",
++      "integrity": "sha512-sSATRjPeDBg3pdgHoQfoYBob11Kk1FGa9lui5RIHZCoCkJa9QKlvl3/vKz2usCmYYjs7ymJR/2Nnsqe+Hjt5nw==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "netbsd"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/netbsd-x64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/netbsd-x64/-/netbsd-x64-0.28.2.tgz",
++      "integrity": "sha512-lqnzCV+mM0gIADaKihiCg6ifgfU2L3h5E33rNQBN1Y4MaVGnzryzmvvf7UHxprpQdE8hpqLolJ9Rl+SkIRDpyw==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "netbsd"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/openbsd-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/openbsd-arm64/-/openbsd-arm64-0.28.2.tgz",
++      "integrity": "sha512-AL2qJILH7lNjrDmCQDvdxMfAUIv8KMNZOvrwAQ8i8//ntL9FflhOyMJ8OZSMBb8/AWXe3/5v5S20y3zCoZWKoQ==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "openbsd"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/openbsd-x64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/openbsd-x64/-/openbsd-x64-0.28.2.tgz",
++      "integrity": "sha512-QtiuPytchRyC4rwUKhexJdQKvDuZ6hWloi3igqPQNUJCS1/v9EiO3UTOXR6A3FoMo4fnAKbWJdqaIwhOzh8qEw==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "openbsd"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/openharmony-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/openharmony-arm64/-/openharmony-arm64-0.28.2.tgz",
++      "integrity": "sha512-WkhYDmpTjLvGlScA1rwjRUmhl4k8oXR3cIbtqWmELgU/dFeHHlEllxDvdWcNJV9rbzCexB5vz8gtNewWLgCT7Q==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "openharmony"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/sunos-x64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/sunos-x64/-/sunos-x64-0.28.2.tgz",
++      "integrity": "sha512-GPMSkTOtMnv2U2F8gxe4Io6qmVs+YKyp832Etqqxr0hFngmXQ3rzwytelm3GIn7T4VviRUlf3sOgBOiTdvaf7g==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "sunos"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/win32-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/win32-arm64/-/win32-arm64-0.28.2.tgz",
++      "integrity": "sha512-PIhhEkE9uPBleRBrQEJpUn7MBnibZzbGzYWPmY3x+YoVg/95zbjB4CxPPOQ8l5tYYM4mMaCthF8/1DIfBQQyWQ==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/win32-ia32": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/win32-ia32/-/win32-ia32-0.28.2.tgz",
++      "integrity": "sha512-YmJbfTlvU7Sdn9BB+4PRES4oB6pxgS37MAONj+hBr/cpXS1aBPKXxNnDbu+QCWPj0o9dgyxeq79g6c5P8KeuYA==",
++      "cpu": [
++        "ia32"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/win32-x64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.28.2.tgz",
++      "integrity": "sha512-5ebpxr3nWMzrL/rnUI755Jkuee0bHL/Gq0WTF9lvcpv73wAp5eu8MfBUgWK9bhWvZjj7yX8etf/8tI8Ney695g==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@napi-rs/lzma-linux-x64-gnu": {
++      "version": "1.5.1",
++      "resolved": "https://registry.npmjs.org/@napi-rs/lzma-linux-x64-gnu/-/lzma-linux-x64-gnu-1.5.1.tgz",
++      "integrity": "sha512-oTXEIha4SsuXdTA4Iyskj0kpdx2yVXdhd75c2v3xGrHFfVMsbhTPZU/nMPL4sWKo4pBHm3aucLaqGlF696dTyQ==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "libc": [
++        "glibc"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": "^22.20 || ^24.12 || >=25"
++      }
++    },
++    "node_modules/@rollup/rollup-android-arm-eabi": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.64.2.tgz",
++      "integrity": "sha512-gjNDUwMswogkw3fNqV00u54uZlgmInuw5EU/1TeqQ6K0bEagoGvqjPdKzy112lKyhe7PkGudZ/kSQHsc9qroIg==",
++      "cpu": [
++        "arm"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "android"
++      ]
++    },
++    "node_modules/@rollup/rollup-android-arm64": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.64.2.tgz",
++      "integrity": "sha512-YkAW8q7p5SCLSaGWaUkmsRnBEb3MGA1pB5nI/8k0lAK5fZsQKRBqkdR1h4UU9p8u3c7ZGdUF2Zcx7mK+E/pUKg==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "android"
++      ]
++    },
++    "node_modules/@rollup/rollup-darwin-arm64": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.64.2.tgz",
++      "integrity": "sha512-hNmuIHv+LnrP/+q/44vsmIMWfoh7X2YXOp5FLtjGuvqN52VdtFpOpnshTc1k28tWv1wE/0D5gLjsozBUowEGbQ==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ]
++    },
++    "node_modules/@rollup/rollup-darwin-x64": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.64.2.tgz",
++      "integrity": "sha512-B0t5CoxgF2KL7R5FHAsyN8yVEQCSIkh4XVs8MCDjuBLNjEa8l3zd5tVKaFMv53LfUtHs9p2rnqeavPTOunV+Ww==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ]
++    },
++    "node_modules/@rollup/rollup-freebsd-arm64": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-freebsd-arm64/-/rollup-freebsd-arm64-4.64.2.tgz",
++      "integrity": "sha512-QQdYnfwrPmc1DoPlddjFvQPzUHFbStKXsHrG6EBYsWHhBVUCjsCRdcfGGXGAvhDpDtTzKK4vy1UrGFJ45rQaiw==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "freebsd"
++      ]
++    },
++    "node_modules/@rollup/rollup-freebsd-x64": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-freebsd-x64/-/rollup-freebsd-x64-4.64.2.tgz",
++      "integrity": "sha512-1xRxtGWif6BB58VSfMavi0Yfs2M4x6CtRp4o7ScY4W7AGlgvf6GSPKdDNdw7TX3tMiQwZY5W/mvyrOJTq/7AKA==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "freebsd"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-arm-gnueabihf": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm-gnueabihf/-/rollup-linux-arm-gnueabihf-4.64.2.tgz",
++      "integrity": "sha512-CXFLEt384BUwwOLR9DURWNHl1bQOVLd1ibOee+yKBJm/fZtvrSAOZ0JbxjAxszVMIovYMwFMS+oP+Q1aPcx8Eg==",
++      "cpu": [
++        "arm"
++      ],
++      "dev": true,
++      "libc": [
++        "glibc"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-arm-musleabihf": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm-musleabihf/-/rollup-linux-arm-musleabihf-4.64.2.tgz",
++      "integrity": "sha512-T1dorY0WHm5mMNpMHFl5rYRZ02gLSZcr6J45r66tYb3S3R3DyIRGiGWVdLtF+zOQjratNJaObl9jYumueRiL1A==",
++      "cpu": [
++        "arm"
++      ],
++      "dev": true,
++      "libc": [
++        "musl"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-arm64-gnu": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm64-gnu/-/rollup-linux-arm64-gnu-4.64.2.tgz",
++      "integrity": "sha512-ia6bfaCIc0ldp6bvs9oEkFrJVJKNUMoiDF0+LBZsQAZg+vE0znXnzGqH+ew/FYswE30cruAWPTO3dPw7keaVkQ==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "libc": [
++        "glibc"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-arm64-musl": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm64-musl/-/rollup-linux-arm64-musl-4.64.2.tgz",
++      "integrity": "sha512-mB/gwfBfXtT0EBpbSssqKCqMFuX8b21Zy2TGoIhehSJEssZ5ksybxymwp1BkEM5Nczh/AAxpmh5q+MkhtundGg==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "libc": [
++        "musl"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-loong64-gnu": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-loong64-gnu/-/rollup-linux-loong64-gnu-4.64.2.tgz",
++      "integrity": "sha512-VPd0a+XlHoNRI9jIPRHww2UKhDkD6XjbtcKYXZijAnhJS1jLLbiNtVl6a5LyEfNN+eyiyWcJOZXPzBo69oTsew==",
++      "cpu": [
++        "loong64"
++      ],
++      "dev": true,
++      "libc": [
++        "glibc"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-loong64-musl": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-loong64-musl/-/rollup-linux-loong64-musl-4.64.2.tgz",
++      "integrity": "sha512-10N1I6oBpERqzGtHKcCLrEpHlbXSBbMK9TURHvqgWbIFZuU3oJROxJ0H2nHfq96TVI0XJHQ9qzolJMFd2tz0LA==",
++      "cpu": [
++        "loong64"
++      ],
++      "dev": true,
++      "libc": [
++        "musl"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-ppc64-gnu": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-ppc64-gnu/-/rollup-linux-ppc64-gnu-4.64.2.tgz",
++      "integrity": "sha512-dhJrLVZ3wNNhwCmy9/VTg6Pq6J8a8eZ0n15dVRlbSWcDb+8V/1mDfbnvis+vt8W6Pbxzv6gUbTEl4piOT3bbUQ==",
++      "cpu": [
++        "ppc64"
++      ],
++      "dev": true,
++      "libc": [
++        "glibc"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-ppc64-musl": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-ppc64-musl/-/rollup-linux-ppc64-musl-4.64.2.tgz",
++      "integrity": "sha512-tPd2QuwxkTxgju5eARyb3RdgBWWi/O9dn/NFH0VkvGbLzoQeXrH6qMABtW8IODb5lUeBzB3sy2U7qmI4MtQ72g==",
++      "cpu": [
++        "ppc64"
++      ],
++      "dev": true,
++      "libc": [
++        "musl"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-riscv64-gnu": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-riscv64-gnu/-/rollup-linux-riscv64-gnu-4.64.2.tgz",
++      "integrity": "sha512-njtDdPvSQWI9CDhIPPxsiEMeHayCfu7wwcbSQ7c2kYPhGVviL+WGVhq6Jfj/b+VuhSTkFuQ0z4ZFbFjkWwBFmg==",
++      "cpu": [
++        "riscv64"
++      ],
++      "dev": true,
++      "libc": [
++        "glibc"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-riscv64-musl": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-riscv64-musl/-/rollup-linux-riscv64-musl-4.64.2.tgz",
++      "integrity": "sha512-EbOBo3dqCj9ecEV9Z7zvulB6AieMP2ztnKQYGVOSN0pzIyOu+3JH2YJZnLmbPeVvfn6yP6Qi7NbBM27EzGbj2w==",
++      "cpu": [
++        "riscv64"
++      ],
++      "dev": true,
++      "libc": [
++        "musl"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-s390x-gnu": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-s390x-gnu/-/rollup-linux-s390x-gnu-4.64.2.tgz",
++      "integrity": "sha512-8wLt2Q5n4qmfiE2Gk8V6KNLSf+oJuBX7Kdw5joFDtnZIZvirS0hLzBc79OiJjV71oYDmBUZLNy6pDgvylo4qiQ==",
++      "cpu": [
++        "s390x"
++      ],
++      "dev": true,
++      "libc": [
++        "glibc"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-x64-gnu": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.64.2.tgz",
++      "integrity": "sha512-aIChbkhC4d33bxkVP0LSi2/2lUSGRXE6k4Qa0G7tgpgTOK7kxHTixmx5qC3SKUJ6yUMznHBtQoWaG4QMqLUnhw==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "libc": [
++        "glibc"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-linux-x64-musl": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-x64-musl/-/rollup-linux-x64-musl-4.64.2.tgz",
++      "integrity": "sha512-gQ+TkVZRfjZVcl/UOAxxfWw+sHjzIXoieNwxEyJlD3tRBmBhR8ZDq11w+QEgQDcpslEB+fhN/OEpaTsDoIIHhQ==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "libc": [
++        "musl"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ]
++    },
++    "node_modules/@rollup/rollup-openbsd-x64": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-openbsd-x64/-/rollup-openbsd-x64-4.64.2.tgz",
++      "integrity": "sha512-sUaJpMKS2JBCvUk8fYimG7aMq2jHVT4kw/uVHxPolKLrMmkKy0KXirmZyZehdNpL7PffqAlPAWUELQcTiD8ChA==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "openbsd"
++      ]
++    },
++    "node_modules/@rollup/rollup-openharmony-arm64": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-openharmony-arm64/-/rollup-openharmony-arm64-4.64.2.tgz",
++      "integrity": "sha512-j1RdJWb0CrlSuwt12OPjLucPlwfLtA/KMOKVvh5rXSJEtl/WDoIGR3CSykK/jLGTo9RqNfW5Ub6kY5Z5ccYl9w==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "openharmony"
++      ]
++    },
++    "node_modules/@rollup/rollup-win32-arm64-msvc": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-win32-arm64-msvc/-/rollup-win32-arm64-msvc-4.64.2.tgz",
++      "integrity": "sha512-i3r04aHCIY3eggTBLUp/4IxiBjDpAgQaK89Ue2nMJ2MKuIXX5JfoeZjHw+kPjGGNVDlhi8FT8xzuGMJZe3aehg==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ]
++    },
++    "node_modules/@rollup/rollup-win32-ia32-msvc": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-win32-ia32-msvc/-/rollup-win32-ia32-msvc-4.64.2.tgz",
++      "integrity": "sha512-kCQ15h/uwNMGdN8gjXBZGf+aGE+ODzHfbi90/cAm4+Q89WoMiLODNoj8HoGZmYx87HPxfu5CBNPsZ+ZG4uIAoA==",
++      "cpu": [
++        "ia32"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ]
++    },
++    "node_modules/@rollup/rollup-win32-x64-gnu": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-win32-x64-gnu/-/rollup-win32-x64-gnu-4.64.2.tgz",
++      "integrity": "sha512-yYAuySSs+0X2gSMJPw/Q4jHsHZHyMq1dpAE+XnN790Jg1WuReUAD/+j+e4vuDvS4PXJ4PA4NCzTR4OYtDf18/g==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ]
++    },
++    "node_modules/@rollup/rollup-win32-x64-msvc": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.64.2.tgz",
++      "integrity": "sha512-JY1rQdWOJrKutORqKO1uzrHXV86jFiQzfLFKx2s8S1CjLXL9fC5LOIvk0q7Z7PXJvsByt+sdoE1Q2a9gBr4gLQ==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ]
++    },
++    "node_modules/@types/estree": {
++      "version": "1.0.9",
++      "resolved": "https://registry.npmjs.org/@types/estree/-/estree-1.0.9.tgz",
++      "integrity": "sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==",
++      "dev": true,
++      "license": "MIT"
++    },
++    "node_modules/esbuild": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/esbuild/-/esbuild-0.28.2.tgz",
++      "integrity": "sha512-HKVLS8dvII+xoKW9kmqxbRKrnWEXfJJr/FZhhJmiqIB0e053QNYFqOBouTMO/k5sID4MvCiUCvv8b9M4h32wIA==",
++      "dev": true,
++      "hasInstallScript": true,
++      "license": "MIT",
++      "bin": {
++        "esbuild": "bin/esbuild"
++      },
++      "engines": {
++        "node": ">=18"
++      },
++      "optionalDependencies": {
++        "@esbuild/aix-ppc64": "0.28.2",
++        "@esbuild/android-arm": "0.28.2",
++        "@esbuild/android-arm64": "0.28.2",
++        "@esbuild/android-x64": "0.28.2",
++        "@esbuild/darwin-arm64": "0.28.2",
++        "@esbuild/darwin-x64": "0.28.2",
++        "@esbuild/freebsd-arm64": "0.28.2",
++        "@esbuild/freebsd-x64": "0.28.2",
++        "@esbuild/linux-arm": "0.28.2",
++        "@esbuild/linux-arm64": "0.28.2",
++        "@esbuild/linux-ia32": "0.28.2",
++        "@esbuild/linux-loong64": "0.28.2",
++        "@esbuild/linux-mips64el": "0.28.2",
++        "@esbuild/linux-ppc64": "0.28.2",
++        "@esbuild/linux-riscv64": "0.28.2",
++        "@esbuild/linux-s390x": "0.28.2",
++        "@esbuild/linux-x64": "0.28.2",
++        "@esbuild/netbsd-arm64": "0.28.2",
++        "@esbuild/netbsd-x64": "0.28.2",
++        "@esbuild/openbsd-arm64": "0.28.2",
++        "@esbuild/openbsd-x64": "0.28.2",
++        "@esbuild/openharmony-arm64": "0.28.2",
++        "@esbuild/sunos-x64": "0.28.2",
++        "@esbuild/win32-arm64": "0.28.2",
++        "@esbuild/win32-ia32": "0.28.2",
++        "@esbuild/win32-x64": "0.28.2"
++      }
++    },
++    "node_modules/fdir": {
++      "version": "6.5.0",
++      "resolved": "https://registry.npmjs.org/fdir/-/fdir-6.5.0.tgz",
++      "integrity": "sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==",
++      "dev": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=12.0.0"
++      },
++      "peerDependencies": {
++        "picomatch": "^3 || ^4"
++      },
++      "peerDependenciesMeta": {
++        "picomatch": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/fsevents": {
++      "version": "2.3.3",
++      "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
++      "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==",
++      "dev": true,
++      "hasInstallScript": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": "^8.16.0 || ^10.6.0 || >=11.0.0"
++      }
++    },
++    "node_modules/lucide-react": {
++      "version": "0.468.0",
++      "resolved": "https://registry.npmjs.org/lucide-react/-/lucide-react-0.468.0.tgz",
++      "integrity": "sha512-6koYRhnM2N0GGZIdXzSeiNwguv1gt/FAjZOiPl76roBi3xKEXa4WmfpxgQwTTL4KipXjefrnf3oV4IsYhi4JFA==",
++      "license": "ISC",
++      "peerDependencies": {
++        "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc"
++      }
++    },
++    "node_modules/nanoid": {
++      "version": "3.3.20",
++      "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.20.tgz",
++      "integrity": "sha512-uKdg2G3GNCKQn9byYOpxbGqrT2fGO5KRt5J/8b3pok8rT6qxGWF6hxMyJiEYtAf+FVyYuD9hRaDqX5uPFYJ4ZQ==",
++      "dev": true,
++      "funding": [
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/ai"
++        }
++      ],
++      "license": "MIT",
++      "bin": {
++        "nanoid": "bin/nanoid.cjs"
++      },
++      "engines": {
++        "node": "^10 || ^12 || ^13.7 || ^14 || >=15.0.1"
++      }
++    },
++    "node_modules/picocolors": {
++      "version": "1.1.1",
++      "resolved": "https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz",
++      "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==",
++      "dev": true,
++      "license": "ISC"
++    },
++    "node_modules/picomatch": {
++      "version": "4.0.7",
++      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.7.tgz",
++      "integrity": "sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==",
++      "dev": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=12"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/jonschlinkert"
++      }
++    },
++    "node_modules/postcss": {
++      "version": "8.5.29",
++      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.29.tgz",
++      "integrity": "sha512-49cGhUbXj8Qenv0iTMxA1cFBzxXoctpC9Ujd77t1WcbJIr6nF/eI7g/8MgxrYldFRuAXvja7xQRwavoW7kgrxQ==",
++      "dev": true,
++      "funding": [
++        {
++          "type": "opencollective",
++          "url": "https://opencollective.com/postcss/"
++        },
++        {
++          "type": "tidelift",
++          "url": "https://tidelift.com/funding/github/npm/postcss"
++        },
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/ai"
++        }
++      ],
++      "license": "MIT",
++      "dependencies": {
++        "nanoid": "^3.3.19",
++        "picocolors": "^1.1.1",
++        "source-map-js": "^1.2.2"
++      },
++      "engines": {
++        "node": "^10 || ^12 || >=14"
++      }
++    },
++    "node_modules/react": {
++      "version": "19.3.0",
++      "resolved": "https://registry.npmjs.org/react/-/react-19.3.0.tgz",
++      "integrity": "sha512-E8LUcbtBWt20bbl2YoHfx4ZDBdxVTfOKtCZn9cDSJ4l6/nuoApcpIBcj47t2wZoVX8g2ZHuMHbiShgCR1T5Sog==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=0.10.0"
++      }
++    },
++    "node_modules/react-dom": {
++      "version": "19.3.0",
++      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.3.0.tgz",
++      "integrity": "sha512-JDk8dgif51OjFoDE70+OT9ICyYr+69HlmihNwp1+Nsfbna3t5sIiCa9ZJktDmQ4/1b/rn26hIAR2uYXDMr5r0Q==",
++      "license": "MIT",
++      "dependencies": {
++        "scheduler": "^0.28.0"
++      },
++      "peerDependencies": {
++        "react": "^19.3.0"
++      }
++    },
++    "node_modules/rollup": {
++      "version": "4.64.2",
++      "resolved": "https://registry.npmjs.org/rollup/-/rollup-4.64.2.tgz",
++      "integrity": "sha512-RxXm0XVVV1hFI3dYe12ruaOgsYQ725lUcUWeMSQqkF9tTxVErY+fy2Ets6vWhItL9MZMSNZGbvZFc7rH/VHp2Q==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "@types/estree": "1.0.9"
++      },
++      "bin": {
++        "rollup": "dist/bin/rollup"
++      },
++      "engines": {
++        "node": ">=18.0.0",
++        "npm": ">=8.0.0"
++      },
++      "optionalDependencies": {
++        "@napi-rs/lzma-linux-x64-gnu": "1.5.1",
++        "@rollup/rollup-android-arm-eabi": "4.64.2",
++        "@rollup/rollup-android-arm64": "4.64.2",
++        "@rollup/rollup-darwin-arm64": "4.64.2",
++        "@rollup/rollup-darwin-x64": "4.64.2",
++        "@rollup/rollup-freebsd-arm64": "4.64.2",
++        "@rollup/rollup-freebsd-x64": "4.64.2",
++        "@rollup/rollup-linux-arm-gnueabihf": "4.64.2",
++        "@rollup/rollup-linux-arm-musleabihf": "4.64.2",
++        "@rollup/rollup-linux-arm64-gnu": "4.64.2",
++        "@rollup/rollup-linux-arm64-musl": "4.64.2",
++        "@rollup/rollup-linux-loong64-gnu": "4.64.2",
++        "@rollup/rollup-linux-loong64-musl": "4.64.2",
++        "@rollup/rollup-linux-ppc64-gnu": "4.64.2",
++        "@rollup/rollup-linux-ppc64-musl": "4.64.2",
++        "@rollup/rollup-linux-riscv64-gnu": "4.64.2",
++        "@rollup/rollup-linux-riscv64-musl": "4.64.2",
++        "@rollup/rollup-linux-s390x-gnu": "4.64.2",
++        "@rollup/rollup-linux-x64-gnu": "4.64.2",
++        "@rollup/rollup-linux-x64-musl": "4.64.2",
++        "@rollup/rollup-openbsd-x64": "4.64.2",
++        "@rollup/rollup-openharmony-arm64": "4.64.2",
++        "@rollup/rollup-win32-arm64-msvc": "4.64.2",
++        "@rollup/rollup-win32-ia32-msvc": "4.64.2",
++        "@rollup/rollup-win32-x64-gnu": "4.64.2",
++        "@rollup/rollup-win32-x64-msvc": "4.64.2",
++        "fsevents": "~2.3.2"
++      }
++    },
++    "node_modules/scheduler": {
++      "version": "0.28.0",
++      "resolved": "https://registry.npmjs.org/scheduler/-/scheduler-0.28.0.tgz",
++      "integrity": "sha512-juorfCmIkIw8tT+p5BXSm6PJjQF/ycEYmKyzURCIt/RaZIhL+PulbQ9Yu2z1HdOJDdqDTlxA1+xKBmHXJsczAw==",
++      "license": "MIT"
++    },
++    "node_modules/source-map-js": {
++      "version": "1.2.2",
++      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
++      "integrity": "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==",
++      "dev": true,
++      "license": "BSD-3-Clause",
++      "engines": {
++        "node": ">=0.10.0"
++      }
++    },
++    "node_modules/tinyglobby": {
++      "version": "0.2.17",
++      "resolved": "https://registry.npmjs.org/tinyglobby/-/tinyglobby-0.2.17.tgz",
++      "integrity": "sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "fdir": "^6.5.0",
++        "picomatch": "^4.0.4"
++      },
++      "engines": {
++        "node": ">=12.0.0"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/SuperchupuDev"
++      }
++    },
++    "node_modules/vite": {
++      "version": "7.3.7",
++      "resolved": "https://registry.npmjs.org/vite/-/vite-7.3.7.tgz",
++      "integrity": "sha512-AHEzTORMbi7/7aXp7w7KZ5+DCUdSeLsJz0grY8xHpc9DHdYb0vQu6DqJfm2tOw3gDExNgPgnJTXxM6syYFHaCA==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "esbuild": "^0.27.0 || ^0.28.0",
++        "fdir": "^6.5.0",
++        "picomatch": "^4.0.3",
++        "postcss": "^8.5.6",
++        "rollup": "^4.43.0",
++        "tinyglobby": "^0.2.15"
++      },
++      "bin": {
++        "vite": "bin/vite.js"
++      },
++      "engines": {
++        "node": "^20.19.0 || >=22.12.0"
++      },
++      "funding": {
++        "url": "https://github.com/vitejs/vite?sponsor=1"
++      },
++      "optionalDependencies": {
++        "fsevents": "~2.3.3"
++      },
++      "peerDependencies": {
++        "@types/node": "^20.19.0 || >=22.12.0",
++        "jiti": ">=1.21.0",
++        "less": "^4.0.0",
++        "lightningcss": "^1.21.0",
++        "sass": "^1.70.0",
++        "sass-embedded": "^1.70.0",
++        "stylus": ">=0.54.8",
++        "sugarss": "^5.0.0",
++        "terser": "^5.16.0",
++        "tsx": "^4.8.1",
++        "yaml": "^2.4.2"
++      },
++      "peerDependenciesMeta": {
++        "@types/node": {
++          "optional": true
++        },
++        "jiti": {
++          "optional": true
++        },
++        "less": {
++          "optional": true
++        },
++        "lightningcss": {
++          "optional": true
++        },
++        "sass": {
++          "optional": true
++        },
++        "sass-embedded": {
++          "optional": true
++        },
++        "stylus": {
++          "optional": true
++        },
++        "sugarss": {
++          "optional": true
++        },
++        "terser": {
++          "optional": true
++        },
++        "tsx": {
++          "optional": true
++        },
++        "yaml": {
++          "optional": true
++        }
++      }
++    }
++  }
++}
+diff --git a/practices/practice_04/dashboard/package.json b/practices/practice_04/dashboard/package.json
+new file mode 100644
+index 0000000..498e020
+--- /dev/null
++++ b/practices/practice_04/dashboard/package.json
+@@ -0,0 +1,19 @@
++{
++  "name": "study-tracker-dashboard",
++  "version": "1.0.0",
++  "private": true,
++  "type": "module",
++  "scripts": {
++    "dev": "vite --host 127.0.0.1",
++    "build": "vite build",
++    "check": "node --check vite.config.js"
++  },
++  "dependencies": {
++    "react": "^19.2.0",
++    "react-dom": "^19.2.0",
++    "lucide-react": "^0.468.0"
++  },
++  "devDependencies": {
++    "vite": "^7.1.0"
++  }
++}
+diff --git a/practices/practice_04/dashboard/server.py b/practices/practice_04/dashboard/server.py
+new file mode 100644
+index 0000000..2678712
+--- /dev/null
++++ b/practices/practice_04/dashboard/server.py
+@@ -0,0 +1,187 @@
++#!/usr/bin/env python3
++"""HTTP bridge to the existing MCP server; no direct database access."""
++import argparse
++from datetime import datetime, timedelta
++from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
++import json
++import mimetypes
++import os
++from pathlib import Path
++import sys
++import tempfile
++from threading import Lock
++from urllib.parse import parse_qs, urlparse
++from zoneinfo import ZoneInfo
++
++ROOT = Path(__file__).resolve().parents[3]
++sys.path.insert(0, str(ROOT / "practices/practice_04/mcp"))
++from client import Client
++
++SERVER = "practices/practice_04/mcp/study_tracker/server.py"
++TOOLS = {"add_task", "list_tasks", "update_task_status", "study_dashboard"}
++DIST = ROOT / "practices/practice_04/dashboard/dist"
++
++
++class Bridge:
++    def __init__(self, demo_path):
++        self.demo_path = str(demo_path)
++        self.demo_ready = False
++        self.lock = Lock()
++        self.history = []
++        self.log = ROOT / "practices/practice_04/mcp/study_tracker/data/dashboard-calls.jsonl"
++
++    def environment(self, mode):
++        return dict(os.environ, STUDY_TRACKER_DB=self.demo_path) if mode == "demo" else dict(os.environ)
++
++    def call(self, client, mode, name, arguments):
++        result = client.call(name, **arguments)
++        entry = {"time": datetime.now(ZoneInfo("Europe/Moscow")).isoformat(),
++                 "mode": mode, "tool": name, "arguments": arguments, "result": result}
++        self.history.append(entry)
++        self.history = self.history[-50:]
++        self.log.parent.mkdir(parents=True, exist_ok=True)
++        with self.log.open("a", encoding="utf-8") as stream:
++            stream.write(json.dumps(entry, ensure_ascii=False) + "\n")
++        return result
++
++    def seed(self, client):
++        if self.demo_ready:
++            return
++        today = datetime.now(ZoneInfo("Europe/Moscow")).date()
++        examples = [
++            ("Подготовить защиту практики 4", "Технологии ИИ", 2, "in_progress"),
++            ("Написать свободную рефлексию", "Технологии ИИ", -1, "todo"),
++            ("Решить задачи по интегралам", "Математика", 0, "todo"),
++            ("Оформить лабораторную работу", "Базы данных", 5, "in_progress"),
++            ("Изучить протокол MCP", "Технологии ИИ", -2, "done"),
++            ("Сдать домашнее задание", "Математика", 8, "done"),
++        ]
++        for title, course, delta, status in examples:
++            result = self.call(client, "demo", "add_task", {
++                "title": title, "course": course, "deadline": (today + timedelta(days=delta)).isoformat()})
++            task = self.decode(result)
++            if status != "todo":
++                self.decode(self.call(client, "demo", "update_task_status", {"task_id": task["id"], "status": status}))
++        self.demo_ready = True
++
++    @staticmethod
++    def decode(result):
++        if result.get("isError"):
++            raise ValueError(result["content"][0]["text"])
++        return json.loads(result["content"][0]["text"])
++
++    def execute(self, mode, name=None, arguments=None):
++        with self.lock, Client(SERVER, self.environment(mode)) as client:
++            if mode == "demo":
++                self.seed(client)
++            if name:
++                return self.call(client, mode, name, arguments)
++            tasks = self.decode(self.call(client, mode, "list_tasks", {}))
++            dashboard = self.decode(self.call(client, mode, "study_dashboard", {}))
++            return {"tasks": tasks["tasks"], "dashboard": dashboard,
++                    "mode": mode, "history": [entry for entry in self.history if entry["mode"] == mode][-12:]}
++
++
++class Handler(BaseHTTPRequestHandler):
++    def log_message(self, *_):
++        pass
++
++    def send_json(self, value, status=200):
++        body = json.dumps(value, ensure_ascii=False).encode("utf-8")
++        self.send_response(status)
++        self.send_header("Content-Type", "application/json; charset=utf-8")
++        self.send_header("Content-Length", str(len(body)))
++        self.send_header("Cache-Control", "no-store")
++        self.send_header("X-Content-Type-Options", "nosniff")
++        self.end_headers()
++        self.wfile.write(body)
++
++    def authorized(self):
++        host = self.headers.get("Host", "")
++        if host not in {f"127.0.0.1:{self.server.server_port}", f"localhost:{self.server.server_port}"}:
++            self.send_json({"error": "Invalid host"}, 403)
++            return False
++        origin = self.headers.get("Origin")
++        allowed = {f"http://{host}", "http://127.0.0.1:5173", "http://localhost:5173"}
++        if origin and origin not in allowed:
++            self.send_json({"error": "Invalid origin"}, 403)
++            return False
++        return True
++
++    def mode(self):
++        mode = parse_qs(urlparse(self.path).query).get("mode", ["real"])[0]
++        if mode not in {"demo", "real"}:
++            raise ValueError("mode must be demo or real")
++        return mode
++
++    def do_GET(self):
++        if not self.authorized():
++            return
++        path = urlparse(self.path).path
++        if path == "/api/state":
++            try:
++                self.send_json(self.server.bridge.execute(self.mode()))
++            except ValueError as exc:
++                self.send_json({"error": str(exc)}, 400)
++            except (OSError, RuntimeError, TimeoutError) as exc:
++                self.send_json({"error": f"MCP unavailable: {exc}"}, 502)
++            return
++        files = {"/": DIST / "index.html", "/index.html": DIST / "index.html"}
++        asset = (DIST / path.lstrip("/")).resolve()
++        if path.startswith("/assets/") and asset.is_relative_to(DIST.resolve()):
++            files[path] = asset
++        if path not in files or not files[path].is_file():
++            self.send_json({"error": "Not found; build the React app with npm --prefix practices/practice_04/dashboard run build"}, 404)
++            return
++        body = files[path].read_bytes()
++        self.send_response(200)
++        self.send_header("Content-Type", mimetypes.guess_type(str(files[path]))[0] or "application/octet-stream")
++        self.send_header("Content-Length", str(len(body)))
++        self.send_header("X-Content-Type-Options", "nosniff")
++        self.end_headers()
++        self.wfile.write(body)
++
++    def do_POST(self):
++        if not self.authorized():
++            return
++        path = urlparse(self.path).path
++        name = path.removeprefix("/api/tools/")
++        if not path.startswith("/api/tools/") or name not in TOOLS:
++            self.send_json({"error": "Unknown tool"}, 404)
++            return
++        try:
++            length = int(self.headers.get("Content-Length", "0"))
++            if not 0 < length <= 16384:
++                raise ValueError("Expected a JSON body up to 16 KB")
++            if self.headers.get("Content-Type", "").split(";")[0] != "application/json":
++                raise ValueError("Content-Type must be application/json")
++            arguments = json.loads(self.rfile.read(length))
++            if not isinstance(arguments, dict):
++                raise ValueError("Arguments must be an object")
++            result = self.server.bridge.execute(self.mode(), name, arguments)
++            self.send_json(result, 400 if result.get("isError") else 200)
++        except ValueError as exc:
++            self.send_json({"error": str(exc)}, 400)
++        except (OSError, RuntimeError, TimeoutError) as exc:
++            self.send_json({"error": f"MCP unavailable: {exc}"}, 502)
++
++
++def create_server(port, demo_path):
++    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
++    server.bridge = Bridge(demo_path)
++    return server
++
++
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--port", type=int, default=8765)
++    args = parser.parse_args()
++    with tempfile.TemporaryDirectory(prefix="study-dashboard-") as directory:
++        server = create_server(args.port, Path(directory) / "demo.sqlite3")
++        print(f"Study Space: http://127.0.0.1:{server.server_port}", flush=True)
++        try:
++            server.serve_forever()
++        except KeyboardInterrupt:
++            pass
++        finally:
++            server.server_close()
+diff --git a/practices/practice_04/dashboard/src/main.jsx b/practices/practice_04/dashboard/src/main.jsx
+new file mode 100644
+index 0000000..3ff5644
+--- /dev/null
++++ b/practices/practice_04/dashboard/src/main.jsx
+@@ -0,0 +1,179 @@
++import React, { useEffect, useRef, useState } from 'react';
++import { createRoot } from 'react-dom/client';
++import { Activity, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, Circle, Clock3, Code2, FlaskConical, LayoutDashboard, ListTodo, LoaderCircle, Plus, RefreshCw, Search, Sparkles, TriangleAlert, X } from 'lucide-react';
++import './style.css';
++
++const STATUS = { todo: 'К выполнению', in_progress: 'В работе', done: 'Готово' };
++const LABELS = { add_task: 'Добавление задания', update_task_status: 'Изменение статуса', list_tasks: 'Список заданий', study_dashboard: 'Сводка прогресса' };
++const dateLabel = value => new Date(`${value}T12:00:00`).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
++const courseColors = ['purple', 'blue', 'orange', 'teal'];
++const courseWord = count => count % 10 === 1 && count % 100 !== 11 ? 'курс' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'курса' : 'курсов';
++
++async function api(path, options = {}) {
++  const response = await fetch(path, { ...options, headers: { 'Content-Type': 'application/json', ...options.headers } });
++  const result = await response.json();
++  if (!response.ok) throw new Error(result.error || result.content?.[0]?.text || 'Не удалось выполнить запрос');
++  return result;
++}
++
++function App() {
++  const [mode, setMode] = useState(new URLSearchParams(location.search).get('mode') === 'demo' ? 'demo' : 'real');
++  const [state, setState] = useState(null);
++  const [loading, setLoading] = useState(true);
++  const [busy, setBusy] = useState(false);
++  const [error, setError] = useState('');
++  const [notice, setNotice] = useState('');
++  const [view, setView] = useState('overview');
++  const [status, setStatus] = useState('all');
++  const [course, setCourse] = useState('all');
++  const [search, setSearch] = useState('');
++  const [showForm, setShowForm] = useState(false);
++  const [showHistory, setShowHistory] = useState(false);
++  const generation = useRef(0);
++
++  async function refresh(currentMode = mode, quiet = false) {
++    const ticket = ++generation.current;
++    if (!quiet) setLoading(true);
++    setError('');
++    try {
++      const result = await api(`/api/state?mode=${currentMode}`);
++      if (ticket === generation.current) setState(result);
++    } catch (e) {
++      if (ticket === generation.current) setError(e.message);
++    } finally {
++      if (ticket === generation.current) setLoading(false);
++    }
++  }
++
++  useEffect(() => {
++    setState(null);
++    setCourse('all');
++    setStatus('all');
++    setSearch('');
++    setNotice('');
++    refresh(mode);
++    const interval = setInterval(() => { if (document.visibilityState === 'visible') refresh(mode, true); }, 30000);
++    return () => { clearInterval(interval); generation.current++; };
++  }, [mode]);
++
++  useEffect(() => {
++    if (!notice) return;
++    const timer = setTimeout(() => setNotice(''), 4500);
++    return () => clearTimeout(timer);
++  }, [notice]);
++
++  async function callTool(name, args) {
++    return api(`/api/tools/${name}?mode=${mode}`, { method: 'POST', body: JSON.stringify(args) });
++  }
++
++  async function changeStatus(task, nextStatus) {
++    setBusy(true);
++    setError('');
++    try {
++      await callTool('update_task_status', { task_id: task.id, status: nextStatus });
++      await refresh(mode, true);
++      setNotice(nextStatus === 'done' ? 'Задание выполнено. Отличная работа!' : 'Статус задания обновлён');
++    } catch (e) { setError(e.message); }
++    finally { setBusy(false); }
++  }
++
++  const tasks = state?.tasks || [];
++  const dashboard = state?.dashboard;
++  const courses = [...new Set(tasks.map(t => t.course))];
++  const colorFor = name => courseColors[Math.max(0, courses.indexOf(name)) % courseColors.length];
++  const filtered = tasks.filter(t =>
++    (status === 'all' || t.status === status) && (course === 'all' || t.course === course) &&
++    `${t.title} ${t.course}`.toLowerCase().includes(search.toLowerCase()) &&
++    (view !== 'deadlines' || t.status !== 'done')
++  );
++  const nearest = tasks.filter(t => t.status !== 'done').slice(0, 4);
++
++  function switchMode(value) {
++    const url = new URL(location.href);
++    value === 'demo' ? url.searchParams.set('mode', 'demo') : url.searchParams.delete('mode');
++    history.replaceState({}, '', url);
++    setMode(value);
++  }
++
++  return <div className="app-shell">
++    <aside className="sidebar">
++      <a href="/" className="brand"><span className="brand-icon"><BookOpen size={23} /></span><span>study<span className="brand-light">space</span><small>ЛИЧНЫЙ КАБИНЕТ</small></span></a>
++      <div className="workspace"><span className="workspace-avatar">S</span><div>Моя учёба<small>Этот семестр</small></div></div>
++      <p className="nav-caption">ПРОСТРАНСТВО</p>
++      <nav aria-label="Основная навигация">
++        <button className={view === 'overview' ? 'nav-link active' : 'nav-link'} onClick={() => { setView('overview'); setStatus('all'); }}><LayoutDashboard size={19} />Обзор</button>
++        <button className={view === 'tasks' ? 'nav-link active' : 'nav-link'} onClick={() => { setView('tasks'); setStatus('all'); }}><ListTodo size={19} />Все задания<span className="nav-count">{tasks.length}</span></button>
++        <button className={view === 'deadlines' ? 'nav-link active' : 'nav-link'} onClick={() => { setView('deadlines'); setStatus('all'); }}><CalendarDays size={19} />Дедлайны</button>
++      </nav>
++      <div className="sidebar-bottom"><div className="connection"><span className={error ? 'connection-dot failed' : 'connection-dot'} />{loading ? 'Подключение…' : error ? 'Проверьте соединение' : 'MCP подключён'}</div><button className="history-link" onClick={() => setShowHistory(true)}><Code2 size={17} />История MCP-вызовов</button><div className="profile"><span className="profile-avatar">Я</span><div>Моё пространство<small>Study Tracker</small></div></div></div>
++    </aside>
++
++    <main>
++      <div className="topbar"><div className="breadcrumb">Моя учёба<span>/</span><strong>{view === 'overview' ? 'Обзор' : view === 'tasks' ? 'Все задания' : 'Дедлайны'}</strong></div><div className="mode-switch" aria-label="Режим данных"><button disabled={busy} className={mode === 'real' ? 'selected' : ''} onClick={() => switchMode('real')}>Мои задания</button><button disabled={busy} className={mode === 'demo' ? 'selected' : ''} onClick={() => switchMode('demo')}><FlaskConical size={15} />Демо</button></div></div>
++      <div className="page-content">
++        <header className="page-heading"><div><div className="eyebrow">ТВОЙ УЧЕБНЫЙ РИТМ</div><h1>{view === 'overview' ? 'Всё по плану.' : view === 'tasks' ? 'Мои задания' : 'Ближайшие дедлайны'}</h1><p>{dashboard ? new Date(`${dashboard.as_of}T12:00:00`).toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }) : 'Загружаем задания…'}<span className="heading-dot">·</span>Этот семестр</p></div><button className="button primary" disabled={loading || busy || !state} onClick={() => setShowForm(true)}><Plus size={19} />Добавить задание</button></header>
++        {mode === 'demo' && <div className="demo-banner"><FlaskConical size={17} /><span>Деморежим: можно попробовать всё. Ваши задания хранятся отдельно.</span></div>}
++        {error && <div className="error-banner" role="alert"><TriangleAlert size={18} /><span>{error}</span><button onClick={() => refresh()}>Повторить</button></div>}
++        <section className="stats-grid" aria-label="Сводка заданий">
++          <Stat icon={ListTodo} color="purple" label="Всего заданий" value={dashboard?.total ?? '—'} note={`${courses.length} ${courseWord(courses.length)} в пространстве`} />
++          <Stat icon={Clock3} color="blue" label="В работе" value={dashboard?.by_status.in_progress ?? '—'} note="Шаг за шагом к результату" />
++          <Stat icon={CheckCheck} color="teal" label="Выполнено" value={dashboard?.by_status.done ?? '—'} note={dashboard?.total ? `${dashboard.progress_percent}% от всех заданий` : 'Здесь будут ваши успехи'} />
++          <Stat icon={TriangleAlert} color="orange" label="Просрочено" value={dashboard?.overdue.length ?? '—'} note={dashboard?.overdue.length ? 'Стоит уделить внимание' : 'Всё вовремя'} />
++        </section>
++
++        <div className="content-grid">
++          <section className="panel tasks-panel">
++            <div className="panel-heading"><div><h2>{view === 'deadlines' ? 'Незавершённые задания' : 'Задания'}<span className="count-pill">{tasks.length}</span></h2><p>Маленькие шаги. Большие результаты.</p></div><button className="icon-button" aria-label="Обновить задания" disabled={loading || busy} onClick={() => refresh()}><RefreshCw size={18} className={loading ? 'spin' : ''} /></button></div>
++            <div className="task-tabs" role="group" aria-label="Фильтр по статусу">{[['all', 'Все'], ...Object.entries(STATUS)].map(([key, label]) => <button key={key} onClick={() => setStatus(key)} className={status === key ? 'active' : ''}>{label}{key === 'all' && <span>{tasks.length}</span>}</button>)}</div>
++            <div className="filters"><label className="search-field"><Search size={17} /><input aria-label="Поиск задания" placeholder="Найти задание…" value={search} onChange={e => setSearch(e.target.value)} /></label><label className="course-filter"><BookOpen size={16} /><select aria-label="Фильтр по курсу" value={course} onChange={e => setCourse(e.target.value)}><option value="all">Все курсы</option>{courses.map(c => <option key={c}>{c}</option>)}</select><ChevronDown size={14} /></label></div>
++            <div className="task-table-heading"><span>ЗАДАНИЕ</span><span>ДЕДЛАЙН</span><span>СТАТУС</span></div>
++            <div className="task-list" aria-busy={loading}>
++              {loading && !state ? <div className="empty-state"><LoaderCircle className="spin" size={28} /><h3>Загружаем задания</h3></div> : filtered.length ? filtered.map(task => <div key={task.id} className={`task-row ${task.status === 'done' ? 'completed' : ''}`}>
++                <div className="task-info"><button className={`task-check ${task.status === 'done' ? 'checked' : ''}`} aria-label={`${task.status === 'done' ? 'Вернуть в задания' : 'Выполнить'}: ${task.title}`} disabled={busy} onClick={() => changeStatus(task, task.status === 'done' ? 'todo' : 'done')}>{task.status === 'done' && <Check size={14} />}</button><div><div className="task-title">{task.title}</div><span className={`course-label ${colorFor(task.course)}`}><span />{task.course}</span></div></div>
++                <div className={`task-date ${task.overdue ? 'late' : ''}`}><CalendarDays size={14} /><div>{dateLabel(task.deadline)}<small>{task.status === 'done' ? 'Завершено' : task.days_left < 0 ? `${Math.abs(task.days_left)} дн. назад` : task.days_left === 0 ? 'Сегодня' : task.days_left === 1 ? 'Завтра' : `Через ${task.days_left} дн.`}</small></div></div>
++                <label className={`status-select ${task.status}`}><span className="status-symbol">{task.status === 'done' ? <Check size={13} /> : task.status === 'in_progress' ? <Clock3 size={13} /> : <Circle size={9} />}</span><select aria-label={`Статус: ${task.title}`} value={task.status} disabled={busy} onChange={e => changeStatus(task, e.target.value)}>{Object.entries(STATUS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select><ChevronDown size={12} /></label>
++              </div>) : <div className="empty-state"><span className="empty-icon"><BookOpen size={28} /></span><h3>{tasks.length ? 'Ничего не найдено' : 'Начнём с первого задания'}</h3><p>{tasks.length ? 'Попробуйте изменить поиск или фильтры.' : 'Добавьте задание — и оно появится здесь.'}</p>{!tasks.length && <button className="button secondary" onClick={() => setShowForm(true)}><Plus size={16} />Добавить задание</button>}</div>}
++            </div>
++            <div className="table-footer"><span>Показано {filtered.length} из {tasks.length} заданий</span><span><RefreshCw size={12} />Обновление каждые 30 сек.</span></div>
++          </section>
++
++          <aside className="right-column">
++            <section className="panel progress-panel"><div className="panel-heading"><h2>Твой прогресс</h2><Sparkles size={19} className="purple-text" /></div><div className="progress-ring" style={{ '--progress': `${dashboard?.progress_percent || 0}%` }}><div><strong>{dashboard?.progress_percent || 0}<span>%</span></strong><small>выполнено</small></div></div><p className="progress-caption">{dashboard?.by_status.done || 0} из {tasks.length} заданий позади</p><div className="progress-legend">{Object.entries(STATUS).map(([key, label]) => <div key={key}><span><i className={key} />{label}</span><strong>{dashboard?.by_status[key] || 0}</strong></div>)}</div></section>
++            <section className="panel deadlines-panel"><div className="panel-heading"><h2>На горизонте</h2><CalendarDays size={19} className="muted" /></div>{nearest.length ? nearest.map(task => <div className="deadline-item" key={task.id}><div className={`date-tile ${task.overdue ? 'late' : ''}`}><strong>{new Date(`${task.deadline}T12:00:00`).getDate()}</strong><small>{new Date(`${task.deadline}T12:00:00`).toLocaleDateString('ru-RU', { month: 'short' }).replace('.', '')}</small></div><div><h3>{task.title}</h3><p>{task.overdue ? 'Срок прошёл' : task.days_left === 0 ? 'Сегодня' : task.days_left === 1 ? 'Завтра' : `Через ${task.days_left} дн.`}</p></div></div>) : <p className="quiet-empty">Незавершённых заданий пока нет.</p>}</section>
++            <div className="focus-card"><span className="focus-icon"><Activity size={20} /></span><div><h3>В своём темпе</h3><p>{dashboard?.next_task ? `Следующий шаг — «${dashboard.next_task.title}».` : 'Одно небольшое задание — уже начало.'}</p></div></div>
++          </aside>
++        </div>
++        <footer className="page-footer"><button className="footer-history" onClick={() => setShowHistory(true)}><Code2 size={13} />История MCP</button><span>Дедлайны по московскому времени</span></footer>
++      </div>
++    </main>
++    {notice && <div className="toast" role="status"><CheckCheck size={18} />{notice}</div>}
++    {showForm && <TaskForm mode={mode} courses={courses} onClose={() => setShowForm(false)} onSubmit={async args => { setBusy(true); try { await callTool('add_task', args); setShowForm(false); await refresh(mode, true); setNotice('Задание добавлено'); } finally { setBusy(false); } }} />}
++    {showHistory && <History history={state?.history || []} mode={mode} onClose={() => setShowHistory(false)} />}
++  </div>;
++}
++
++function Stat({ icon: Icon, color, label, value, note }) {
++  return <article className="stat-card"><div className="stat-top"><span>{label}</span><span className={`stat-icon ${color}`}><Icon size={19} /></span></div><strong>{value}</strong><p>{note}</p></article>;
++}
++
++function Modal({ title, onClose, children, className = '' }) {
++  const ref = useRef(null);
++  useEffect(() => {
++    const dialog = ref.current;
++    dialog.showModal();
++    return () => dialog.close();
++  }, []);
++  return <dialog ref={ref} className={`modal ${className}`} onCancel={e => { e.preventDefault(); onClose(); }} onClick={e => { if (e.target === ref.current) onClose(); }}><div className="modal-header"><h2>{title}</h2><button className="icon-button" onClick={onClose} aria-label="Закрыть"><X size={20} /></button></div>{children}</dialog>;
++}
++
++function TaskForm({ mode, courses, onClose, onSubmit }) {
++  const [error, setError] = useState('');
++  const [saving, setSaving] = useState(false);
++  return <Modal title="Новое задание" onClose={() => { if (!saving) onClose(); }}><p className="modal-description">{mode === 'demo' ? 'Задание будет добавлено в демопространство.' : 'Что нужно сделать и к какому сроку?'}</p><form onSubmit={async e => { e.preventDefault(); const data = new FormData(e.currentTarget); setSaving(true); setError(''); try { await onSubmit(Object.fromEntries(data)); } catch (err) { setError(err.message); } finally { setSaving(false); } }}><label>Название задания<input autoFocus name="title" required maxLength={500} placeholder="Например, подготовить защиту" /></label><label>Курс<input name="course" list="course-list" required maxLength={500} placeholder="Название предмета" /><datalist id="course-list">{courses.map(c => <option key={c} value={c} />)}</datalist></label><label>Дедлайн<input name="deadline" type="date" required /></label>{error && <p className="form-error" role="alert">{error}</p>}<div className="form-actions"><button type="button" className="button secondary" disabled={saving} onClick={onClose}>Отмена</button><button className="button primary" disabled={saving}>{saving ? <LoaderCircle size={17} className="spin" /> : <Plus size={17} />}{saving ? 'Сохраняем…' : 'Добавить задание'}</button></div></form></Modal>;
++}
++
++function History({ history, mode, onClose }) {
++  return <Modal title="История MCP-вызовов" className="history-modal" onClose={onClose}><p className="modal-description">{mode === 'demo' ? 'Демопространство' : 'Мои задания'} · браузер → backend → MCP → SQLite</p><div className="history-list">{[...history].reverse().map((entry, index) => <details key={`${entry.time}-${index}`}><summary><span className={`history-status ${entry.result.isError ? 'failed' : ''}`}>{entry.result.isError ? <X size={14} /> : <Check size={14} />}</span><div><strong>{LABELS[entry.tool]}</strong><code>{entry.tool}</code></div><time>{new Date(entry.time).toLocaleTimeString('ru-RU')}</time><ChevronDown size={15} /></summary><pre>{JSON.stringify({ arguments: entry.arguments, result: entry.result }, null, 2)}</pre></details>)}{!history.length && <p>Вызовов пока нет.</p>}</div></Modal>;
++}
++
++createRoot(document.getElementById('root')).render(<App />);
+diff --git a/practices/practice_04/dashboard/src/style.css b/practices/practice_04/dashboard/src/style.css
+new file mode 100644
+index 0000000..61cb72f
+--- /dev/null
++++ b/practices/practice_04/dashboard/src/style.css
+@@ -0,0 +1,1325 @@
++:root{
++  font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
++  color:#24263b;
++  background:#f5f6fa;
++  font-synthesis:none;
++  font-size:16px;
++  font-weight:500;
++  --purple:#7357df;
++  --muted:#888a9c;
++  --border:#ececf3;
++  --sidebar:#17192d
++}
++
++*{
++  box-sizing:border-box
++}
++body{
++  margin:0
++}
++button,input,select{
++  font:inherit
++}
++button{
++  cursor:pointer
++}
++button:disabled{
++  cursor:wait;
++  opacity:.55
++}
++button,a,input,select{
++  outline-offset:4px
++}
++button{
++  border:0
++}
++a{
++  color:inherit;
++  text-decoration:none
++}
++h1,h2,h3,p{
++  margin:0
++}
++svg{
++  flex-shrink:0
++}
++button{
++  display:inline-flex;
++  align-items:center;
++  justify-content:center;
++  gap:8px
++}
++input,select{
++  min-width:0
++}
++.app-shell{
++  display:flex;
++  min-height:100vh
++}
++.sidebar{
++  width:238px;
++  position:fixed;
++  inset:0 auto 0 0;
++  background:var(--sidebar);
++  color:#a5a6bc;
++  padding:33px 23px 0;
++  display:flex;
++  flex-direction:column
++}
++.brand{
++  display:flex;
++  gap:10px;
++  align-items:center;
++  color:white;
++  font-size:23px;
++  font-weight:800;
++  letter-spacing:-1px
++}
++.brand-light{
++  font-weight:500
++}
++.brand small{
++  display:block;
++  font-size:9px;
++  letter-spacing:2px;
++  color:#74778f;
++  margin-top:5px
++}
++.brand-icon{
++  display:grid;
++  place-items:center;
++  width:39px;
++  height:43px;
++  color:#bcaaff;
++  background:#2a2547;
++  border-radius:11px
++}
++.workspace{
++  margin-top:40px;
++  display:flex;
++  align-items:center;
++  gap:12px;
++  border:1px solid #303247;
++  border-radius:10px;
++  padding:13px 11px;
++  color:#e5e5ef;
++  font-size:14px;
++  font-weight:700
++}
++.workspace-avatar{
++  width:32px;
++  height:32px;
++  background:#6960a2;
++  color:white;
++  border-radius:8px;
++  display:grid;
++  place-items:center
++}
++.workspace small{
++  display:block;
++  color:#8a8ca5;
++  font-size:12px;
++  margin-top:3px;
++  font-weight:500
++}
++.nav-caption{
++  font-size:10px;
++  letter-spacing:1.6px;
++  margin:33px 12px 13px;
++  color:#74768e;
++  font-weight:700
++}
++.nav-link{
++  width:100%;
++  justify-content:flex-start;
++  color:#a7a9c0;
++  background:none;
++  border-radius:8px;
++  padding:13px 12px;
++  font-size:14px;
++  margin-bottom:6px;
++  gap:12px
++}
++.nav-link:hover{
++  background:#24263e
++}
++.nav-link.active{
++  background:#34304f;
++  color:#d2c4ff
++}
++.nav-count{
++  margin-left:auto;
++  font-size:12px;
++  background:#26293f;
++  color:#b2b4cc;
++  border-radius:5px;
++  padding:2px 6px
++}
++.sidebar-bottom{
++  margin-top:auto;
++  padding-top:32px
++}
++.connection{
++  font-size:12px;
++  padding:17px 10px;
++  border-top:1px solid #2b2d43;
++  display:flex;
++  align-items:center;
++  gap:8px
++}
++.connection-dot{
++  width:6px;
++  height:6px;
++  border-radius:50%;
++  background:#73c6a9;
++  box-shadow:0 0 0 3px #22393c
++}
++.connection-dot.failed{
++  background:#ed947c;
++  box-shadow:none
++}
++.history-link{
++  font-size:12px;
++  background:none;
++  color:#b5b6ca;
++  margin:0 0 20px 9px
++}
++.profile{
++  display:flex;
++  align-items:center;
++  gap:10px;
++  border-top:1px solid #2b2d43;
++  padding:22px 0;
++  color:#dedee9;
++  font-size:12px
++}
++.profile small{
++  font-size:11px;
++  color:#7d8099;
++  display:block;
++  margin-top:3px
++}
++.profile-avatar{
++  width:34px;
++  height:34px;
++  border-radius:50%;
++  background:#e0d3fe;
++  color:#4c398a;
++  display:grid;
++  place-items:center;
++  font-weight:700
++}
++main{
++  margin-left:238px;
++  width:calc(100% - 238px)
++}
++.topbar{
++  height:82px;
++  border-bottom:1px solid #e7e8ef;
++  display:flex;
++  align-items:center;
++  justify-content:space-between;
++  padding:0 39px;
++  background:#fff
++}
++.breadcrumb{
++  display:flex;
++  gap:14px;
++  font-size:13px;
++  color:#999aac
++}
++.breadcrumb strong{
++  font-weight:600;
++  color:#51536a
++}
++.mode-switch{
++  display:flex;
++  padding:4px;
++  background:#f3f3f8;
++  border-radius:9px;
++  gap:3px
++}
++.mode-switch button{
++  font-size:12px;
++  background:none;
++  color:#87899e;
++  padding:8px 12px;
++  border-radius:6px
++}
++.mode-switch button.selected{
++  background:#fff;
++  color:#5f49b7;
++  box-shadow:0 2px 6px #2222380a
++}
++.page-content{
++  max-width:1550px;
++  margin:auto;
++  padding:36px 39px 22px
++}
++.page-heading{
++  display:flex;
++  align-items:center;
++  justify-content:space-between;
++  margin-bottom:29px;
++  gap:20px
++}
++.eyebrow{
++  color:#9393a7;
++  font-size:10px;
++  font-weight:800;
++  letter-spacing:1.8px;
++  margin-bottom:9px
++}
++h1{
++  font-size:32px;
++  letter-spacing:-1.1px;
++  line-height:1.35;
++  font-weight:800
++}
++.page-heading p{
++  font-size:13px;
++  color:#9192a3;
++  margin-top:8px
++}
++.heading-dot{
++  margin:0 10px
++}
++.button{
++  padding:12px 18px;
++  font-size:13px;
++  font-weight:700;
++  border-radius:8px;
++  white-space:nowrap;
++  transition:background .15s,transform .15s
++}
++.button:hover{
++  transform:translateY(-1px)
++}
++.button.primary{
++  color:white;
++  background:var(--purple);
++  box-shadow:0 3px 7px #7357df25
++}
++.button.primary:hover{
++  background:#6345cf
++}
++.button.secondary{
++  background:#f3f1fb;
++  color:#67539b
++}
++.demo-banner,.error-banner{
++  display:flex;
++  align-items:center;
++  gap:10px;
++  padding:12px 15px;
++  border-radius:8px;
++  font-size:12px;
++  margin-bottom:20px
++}
++.demo-banner{
++  background:#efecfb;
++  color:#7661b6;
++  border:1px solid #e3dcf8
++}
++.error-banner{
++  background:#fff0e9;
++  color:#a35139;
++  border:1px solid #f5d9ce
++}
++.error-banner span{
++  flex:1;
++  overflow-wrap:anywhere
++}
++.error-banner button{
++  background:transparent;
++  color:inherit;
++  text-decoration:underline
++}
++.stats-grid{
++  display:grid;
++  grid-template-columns:repeat(4,minmax(0,1fr));
++  gap:18px;
++  margin-bottom:28px
++}
++.stat-card{
++  padding:19px 22px 20px;
++  border:1px solid var(--border);
++  border-radius:12px;
++  background:#fff;
++  box-shadow:0 3px 7px #27284602
++}
++.stat-top{
++  display:flex;
++  align-items:center;
++  justify-content:space-between;
++  gap:10px;
++  color:#787b90;
++  font-size:12px
++}
++.stat-icon{
++  display:grid;
++  place-items:center;
++  width:34px;
++  height:34px;
++  border-radius:9px
++}
++.purple{
++  color:#8061cc;
++  background:#f1edfc
++}
++.blue{
++  color:#5483c8;
++  background:#edf3fd
++}
++.teal{
++  color:#3d9f8b;
++  background:#eaf7f1
++}
++.orange{
++  color:#d3955a;
++  background:#fff3e8
++}
++.stat-card>strong{
++  font-size:33px;
++  font-weight:800;
++  line-height:1.2;
++  display:block;
++  margin:9px 0 8px;
++  letter-spacing:-1px
++}
++.stat-card>p{
++  font-size:11px;
++  color:#999bac
++}
++.content-grid{
++  display:grid;
++  grid-template-columns:minmax(0,1fr) 282px;
++  gap:25px;
++  align-items:start
++}
++.panel{
++  background:white;
++  border:1px solid var(--border);
++  border-radius:12px;
++  overflow:hidden;
++  box-shadow:0 3px 7px #27284602
++}
++.panel-heading{
++  display:flex;
++  align-items:center;
++  justify-content:space-between;
++  padding:24px 24px 18px;
++  gap:12px
++}
++.panel-heading h2{
++  font-size:16px;
++  font-weight:800;
++  display:flex;
++  align-items:center;
++  gap:10px;
++  letter-spacing:-.3px
++}
++.panel-heading p{
++  font-size:11px;
++  color:#a0a1af;
++  margin-top:6px
++}
++.count-pill{
++  font-size:11px;
++  background:#f3f2f8;
++  color:#848097;
++  min-width:23px;
++  height:23px;
++  display:grid;
++  place-items:center;
++  border-radius:6px
++}
++.icon-button{
++  background:transparent;
++  color:#999aaf;
++  padding:7px;
++  border-radius:6px
++}
++.icon-button:hover{
++  background:#f3f2f8
++}
++.task-tabs{
++  display:flex;
++  gap:19px;
++  margin:0 24px;
++  border-bottom:1px solid var(--border)
++}
++.task-tabs button{
++  font-size:12px;
++  color:#9596a7;
++  background:none;
++  border-bottom:2px solid transparent;
++  padding:12px 0;
++  gap:6px;
++  margin-bottom:-1px
++}
++.task-tabs button.active{
++  color:var(--purple);
++  border-bottom-color:var(--purple);
++  font-weight:700
++}
++.task-tabs button span{
++  font-size:10px;
++  background:#eee9fb;
++  border-radius:4px;
++  padding:1px 5px
++}
++.filters{
++  display:flex;
++  gap:12px;
++  margin:20px 24px
++}
++.search-field{
++  display:flex;
++  align-items:center;
++  gap:9px;
++  border:1px solid #e8e9f0;
++  border-radius:7px;
++  padding:9px 12px;
++  color:#adaebe;
++  flex:1;
++  min-width:0
++}
++.search-field input{
++  border:0;
++  outline:none;
++  font-size:12px;
++  background:transparent;
++  width:100%;
++  color:#43465c
++}
++.search-field input::placeholder{
++  color:#a4a5b5
++}
++.course-filter{
++  display:flex;
++  align-items:center;
++  gap:6px;
++  border:1px solid #e8e9f0;
++  border-radius:7px;
++  padding:9px 10px;
++  color:#878a9e;
++  max-width:180px
++}
++.course-filter select{
++  appearance:none;
++  border:0;
++  outline:none;
++  background:transparent;
++  font-size:12px;
++  color:#77798f;
++  width:100%;
++  cursor:pointer
++}
++.task-table-heading{
++  display:grid;
++  grid-template-columns:minmax(0,1fr) 100px 123px;
++  gap:14px;
++  font-size:9px;
++  font-weight:700;
++  letter-spacing:1px;
++  color:#a5a7b7;
++  background:#fafafd;
++  padding:12px 24px;
++  border-block:1px solid #f1f1f6
++}
++.task-row{
++  display:grid;
++  grid-template-columns:minmax(0,1fr) 100px 123px;
++  gap:14px;
++  align-items:center;
++  padding:20px 24px;
++  border-bottom:1px solid #f0f0f5
++}
++.task-row:hover{
++  background:#fdfdff
++}
++.task-info{
++  display:flex;
++  align-items:center;
++  gap:13px;
++  min-width:0
++}
++.task-info>div{
++  min-width:0
++}
++.task-check{
++  width:19px;
++  height:19px;
++  border:1.5px solid #dfe0ea;
++  border-radius:5px;
++  background:white;
++  flex-shrink:0;
++  color:white;
++  padding:0
++}
++.task-check:hover{
++  border-color:#9c83e7
++}
++.task-check.checked{
++  background:#9b86d8;
++  border-color:#9b86d8
++}
++.task-title{
++  font-size:12px;
++  font-weight:700;
++  line-height:1.6;
++  color:#494b61;
++  overflow-wrap:anywhere
++}
++.completed .task-title{
++  text-decoration:line-through;
++  color:#a4a6b5
++}
++.course-label{
++  display:inline-flex;
++  align-items:center;
++  gap:5px;
++  font-size:10px;
++  margin-top:6px;
++  background:transparent
++}
++.course-label span{
++  width:5px;
++  height:5px;
++  border-radius:2px;
++  background:currentColor
++}
++.task-date{
++  display:flex;
++  align-items:flex-start;
++  gap:6px;
++  color:#7c7f95;
++  font-size:11px;
++  white-space:nowrap
++}
++.task-date svg{
++  margin-top:1px
++}
++.task-date small{
++  display:block;
++  font-size:10px;
++  color:#a4a6b7;
++  margin-top:5px
++}
++.task-date.late,.task-date.late small{
++  color:#d88975
++}
++.status-select{
++  display:flex;
++  align-items:center;
++  gap:4px;
++  border-radius:5px;
++  font-size:10px;
++  padding:6px 6px;
++  width:fit-content;
++  max-width:100%;
++  color:#8b8f9f;
++  background:#f2f3f6
++}
++.status-select.in_progress{
++  color:#ac8446;
++  background:#fff6e4
++}
++.status-select.done{
++  color:#599680;
++  background:#eaf5ef
++}
++.status-select select{
++  appearance:none;
++  border:0;
++  outline:none;
++  background:transparent;
++  font-size:10px;
++  color:inherit;
++  font-weight:600;
++  width:100%;
++  cursor:pointer
++}
++.status-symbol{
++  display:flex
++}
++.table-footer{
++  display:flex;
++  justify-content:space-between;
++  gap:10px;
++  padding:17px 24px;
++  color:#a4a6b6;
++  font-size:10px
++}
++.table-footer>span:last-child{
++  display:flex;
++  align-items:center;
++  gap:5px
++}
++.right-column{
++  display:flex;
++  flex-direction:column;
++  gap:20px
++}
++.progress-panel .panel-heading,.deadlines-panel .panel-heading{
++  padding:22px 21px 17px
++}
++.progress-panel h2,.deadlines-panel h2{
++  font-size:14px
++}
++.purple-text{
++  color:#a994db
++}
++.muted{
++  color:#a8abbd
++}
++.progress-ring{
++  width:151px;
++  height:151px;
++  margin:8px auto 0;
++  border-radius:50%;
++  background:conic-gradient(from 0deg,#8b6ee3 var(--progress),#f1eef9 var(--progress));
++  padding:10px;
++  transform:rotate(-90deg)
++}
++.progress-ring>div{
++  background:white;
++  border-radius:50%;
++  height:100%;
++  display:flex;
++  flex-direction:column;
++  align-items:center;
++  justify-content:center;
++  transform:rotate(90deg)
++}
++.progress-ring strong{
++  font-size:30px;
++  letter-spacing:-1px;
++  color:#444259;
++  font-weight:800
++}
++.progress-ring strong>span{
++  font-size:18px;
++  font-weight:600;
++  letter-spacing:0
++}
++.progress-ring small{
++  font-size:11px;
++  color:#a0a0b2;
++  margin-top:3px
++}
++.progress-caption{
++  text-align:center;
++  font-size:11px;
++  color:#9394a8;
++  margin:15px 0 19px
++}
++.progress-legend{
++  padding:0 23px 22px;
++  display:flex;
++  flex-direction:column;
++  gap:11px
++}
++.progress-legend>div{
++  display:flex;
++  justify-content:space-between;
++  font-size:11px;
++  color:#9496a9
++}
++.progress-legend span{
++  display:flex;
++  align-items:center;
++  gap:8px
++}
++.progress-legend i{
++  width:6px;
++  height:6px;
++  background:#d9d9e7;
++  border-radius:50%
++}
++.progress-legend i.in_progress{
++  background:#ebbe6a
++}
++.progress-legend i.done{
++  background:#987edc
++}
++.progress-legend strong{
++  font-weight:600;
++  color:#606378
++}
++.deadline-item{
++  display:flex;
++  gap:11px;
++  margin:0 20px;
++  padding:14px 0;
++  border-bottom:1px solid #f0f0f5;
++  align-items:center
++}
++.deadline-item:last-child{
++  border:0;
++  margin-bottom:7px
++}
++.date-tile{
++  width:40px;
++  min-width:40px;
++  height:47px;
++  display:flex;
++  align-items:center;
++  justify-content:center;
++  flex-direction:column;
++  border-radius:7px;
++  background:#f4f3f9;
++  color:#8a829d
++}
++.date-tile strong{
++  font-size:16px;
++  font-weight:800
++}
++.date-tile small{
++  font-size:9px;
++  margin-top:1px
++}
++.date-tile.late{
++  background:#fcf0eb;
++  color:#ca8b73
++}
++.deadline-item h3{
++  font-size:11px;
++  font-weight:600;
++  line-height:1.6;
++  color:#66687d;
++  overflow-wrap:anywhere
++}
++.deadline-item p{
++  font-size:10px;
++  color:#a3a5b6;
++  margin-top:4px
++}
++.focus-card{
++  padding:17px;
++  display:flex;
++  gap:10px;
++  border:1px solid #e8e2f7;
++  background:#f0ecf9;
++  border-radius:10px;
++  color:#8875b4
++}
++.focus-icon{
++  display:flex;
++  margin-top:2px
++}
++.focus-card h3{
++  font-size:12px;
++  font-weight:700
++}
++.focus-card p{
++  font-size:11px;
++  line-height:1.7;
++  margin-top:6px;
++  color:#a093bb;
++  overflow-wrap:anywhere
++}
++.page-footer{
++  display:flex;
++  justify-content:space-between;
++  font-size:10px;
++  color:#b0b1c0;
++  margin-top:28px
++}
++.empty-state{
++  padding:48px 25px;
++  text-align:center;
++  display:flex;
++  flex-direction:column;
++  align-items:center;
++  gap:13px
++}
++.empty-state h3{
++  font-size:15px;
++  font-weight:700
++}
++.empty-state p{
++  font-size:12px;
++  color:#999bac
++}
++.empty-icon{
++  background:#f2effb;
++  color:#9981d2;
++  padding:17px;
++  border-radius:14px;
++  margin-bottom:3px
++}
++.quiet-empty{
++  font-size:12px;
++  color:#9496a7;
++  padding:0 21px 25px
++}
++.modal{
++  width:min(480px,calc(100% - 32px));
++  border:1px solid #ebe8f4;
++  border-radius:16px;
++  padding:26px;
++  color:#303247;
++  box-shadow:0 25px 80px #17192d30
++}
++.modal::backdrop{
++  background:#17192d66;
++  backdrop-filter:blur(3px)
++}
++.modal-header{
++  display:flex;
++  justify-content:space-between;
++  align-items:center
++}
++.modal-header h2{
++  font-size:19px;
++  font-weight:800
++}
++.modal-description{
++  font-size:12px;
++  color:#9192a7;
++  margin:12px 0 24px;
++  line-height:1.8
++}
++.modal form{
++  display:flex;
++  flex-direction:column;
++  gap:18px
++}
++.modal form label{
++  display:flex;
++  flex-direction:column;
++  gap:9px;
++  font-size:12px;
++  font-weight:700;
++  color:#76788e
++}
++.modal form input{
++  font-size:14px;
++  border:1px solid #e6e4ee;
++  padding:12px;
++  border-radius:8px;
++  background:#fcfcfe;
++  width:100%;
++  color:#44445b
++}
++.modal form input:focus{
++  outline-color:#b7a4ee
++}
++.form-actions{
++  display:flex;
++  justify-content:flex-end;
++  gap:10px;
++  margin-top:9px
++}
++.form-error{
++  color:#b66855;
++  font-size:12px;
++  line-height:1.6
++}
++.toast{
++  position:fixed;
++  bottom:28px;
++  left:50%;
++  transform:translateX(-50%);
++  display:flex;
++  align-items:center;
++  gap:10px;
++  border-radius:10px;
++  padding:14px 20px;
++  background:#25283c;
++  color:#f1f1f8;
++  font-size:13px;
++  box-shadow:0 8px 25px #24263825;
++  z-index:20;
++  max-width:90vw
++}
++.toast svg{
++  color:#a8dfc4
++}
++.history-modal{
++  width:min(700px,calc(100% - 32px))
++}
++.history-list{
++  max-height:60vh;
++  overflow:auto
++}
++.history-list details{
++  border-top:1px solid #f0eef6
++}
++.history-list summary{
++  display:flex;
++  align-items:center;
++  gap:10px;
++  padding:13px 0;
++  cursor:pointer;
++  list-style:none
++}
++.history-list summary>div{
++  flex:1
++}
++.history-list strong{
++  font-size:12px;
++  display:block;
++  font-weight:700
++}
++.history-list code{
++  font-size:10px;
++  color:#9893aa
++}
++.history-list time{
++  font-size:11px;
++  color:#a3a3b5
++}
++.history-status{
++  display:grid;
++  place-items:center;
++  background:#edf7f0;
++  color:#659b7a;
++  width:26px;
++  height:26px;
++  border-radius:7px
++}
++.history-status.failed{
++  background:#fbeee9;
++  color:#cc866c
++}
++.history-list pre{
++  white-space:pre-wrap;
++  overflow-wrap:anywhere;
++  background:#f7f6fb;
++  padding:13px;
++  border-radius:8px;
++  font-size:11px;
++  line-height:1.8;
++  color:#6f6686
++}
++.spin{
++  animation:spin 1s linear infinite
++}
++@keyframes spin{
++  to{
++  transform:rotate(360deg)
++}
++
++}
++
++@media(min-width:1500px){
++  .task-title{
++  font-size:14px
++}
++.task-date{
++  font-size:12px
++}
++.status-select,.status-select select{
++  font-size:11px
++}
++
++}
++
++@media(max-width:1200px){
++  .sidebar{
++  width:205px;
++  padding-inline:17px
++}
++main{
++  margin-left:205px;
++  width:calc(100% - 205px)
++}
++.topbar{
++  padding-inline:25px
++}
++.page-content{
++  padding:30px 25px
++}
++.content-grid{
++  grid-template-columns:minmax(0,1fr) 245px;
++  gap:18px
++}
++.stats-grid{
++  gap:12px
++}
++.stat-card{
++  padding:17px
++}
++.task-row,.task-table-heading{
++  padding-inline:17px;
++  grid-template-columns:minmax(0,1fr) 80px 110px;
++  gap:10px
++}
++.panel-heading{
++  padding-inline:17px
++}
++.task-tabs,.filters{
++  margin-inline:17px
++}
++.task-tabs{
++  gap:14px
++}
++.task-tabs button{
++  font-size:11px
++}
++.course-filter{
++  max-width:140px
++}
++.table-footer{
++  padding-inline:17px;
++  font-size:9px
++}
++.brand{
++  font-size:21px
++}
++
++}
++
++@media(max-width:1020px){
++  .content-grid{
++  grid-template-columns:1fr
++}
++.right-column{
++  display:grid;
++  grid-template-columns:1fr 1fr
++}
++.focus-card{
++  grid-column:1/-1
++}
++.stats-grid{
++  grid-template-columns:repeat(2,1fr)
++}
++.task-title{
++  font-size:13px
++}
++.task-row{
++  padding-block:21px
++}
++.page-heading .button{
++  padding:11px 13px;
++  font-size:12px
++}
++h1{
++  font-size:28px
++}
++
++}
++
++@media(max-width:700px){
++  .sidebar{
++  position:static;
++  width:100%;
++  padding:17px 19px 9px;
++  gap:15px;
++  display:grid;
++  grid-template-columns:1fr auto
++}
++.brand{
++  font-size:20px
++}
++.brand small{
++  font-size:8px
++}
++.brand-icon{
++  width:33px;
++  height:35px
++}
++.workspace,.nav-caption,.sidebar-bottom{
++  display:none
++}
++.sidebar nav{
++  grid-column:1/-1;
++  display:flex;
++  gap:4px
++}
++.nav-link{
++  padding:10px;
++  justify-content:center;
++  font-size:11px;
++  margin:0;
++  gap:6px
++}
++.nav-link svg{
++  width:15px
++}
++.nav-count{
++  display:none
++}
++.app-shell{
++  display:block
++}
++main{
++  margin:0;
++  width:100%
++}
++.topbar{
++  height:65px;
++  padding-inline:18px;
++  gap:10px
++}
++.breadcrumb{
++  font-size:11px;
++  gap:9px
++}
++.mode-switch button{
++  font-size:10px;
++  padding:7px 9px
++}
++.page-content{
++  padding:25px 18px
++}
++.page-heading{
++  align-items:flex-start;
++  gap:10px
++}
++.page-heading .button{
++  padding:10px;
++  max-width:130px;
++  white-space:normal;
++  text-align:left;
++  font-size:11px;
++  margin-top:22px
++}
++.page-heading .button svg{
++  width:16px
++}
++h1{
++  font-size:26px
++}
++.page-heading p{
++  font-size:11px;
++  line-height:1.8
++}
++.eyebrow{
++  font-size:9px
++}
++.stats-grid{
++  gap:10px;
++  margin-bottom:20px
++}
++.stat-card{
++  padding:14px
++}
++.stat-top{
++  font-size:11px
++}
++.stat-card>strong{
++  font-size:29px
++}
++.stat-card>p{
++  font-size:9px
++}
++.stat-icon{
++  width:29px;
++  height:29px
++}
++.stat-icon svg{
++  width:16px
++}
++.right-column{
++  grid-template-columns:1fr
++}
++.focus-card{
++  grid-column:auto
++}
++.task-table-heading{
++  display:none
++}
++.task-row{
++  grid-template-columns:minmax(0,1fr) auto;
++  gap:12px;
++  padding:18px 16px
++}
++.task-info{
++  grid-column:1/-1;
++  align-items:flex-start
++}
++.task-check{
++  margin-top:2px
++}
++.task-title{
++  font-size:13px
++}
++.course-label{
++  font-size:10px
++}
++.task-date{
++  margin-left:32px;
++  font-size:11px;
++  align-items:center
++}
++.task-date small{
++  display:inline;
++  margin:0 0 0 8px;
++  font-size:10px
++}
++.status-select select{
++  font-size:10px
++}
++.filters{
++  flex-wrap:wrap;
++  gap:8px
++}
++.search-field{
++  flex-basis:100%
++}
++.course-filter{
++  max-width:none;
++  width:100%
++}
++.task-tabs{
++  gap:18px;
++  overflow:auto
++}
++.task-tabs button{
++  white-space:nowrap;
++  font-size:11px
++}
++.panel-heading h2{
++  font-size:15px
++}
++.table-footer>span:last-child{
++  display:none
++}
++.demo-banner{
++  font-size:10px;
++  line-height:1.8
++}
++.page-footer{
++  font-size:9px;
++  gap:8px
++}
++.modal{
++  padding:22px
++}
++.form-actions .button{
++  font-size:12px
++}
++.progress-ring{
++  margin-top:2px
++}
++.toast{
++  font-size:11px;
++  width:max-content
++}
++
++}
++
++@media(prefers-reduced-motion:reduce){
++  *,*::before,*::after{
++  animation:none!important;
++  transition:none!important
++}
++
++}
++
++
++.footer-history{
++  background:none;
++  padding:0;
++  color:#9390a8;
++  font-size:11px;
++  gap:6px
++}
++.footer-history:hover{
++  color:#7357df
++}
++
+diff --git a/practices/practice_04/dashboard/vite.config.js b/practices/practice_04/dashboard/vite.config.js
+new file mode 100644
+index 0000000..cb4e59d
+--- /dev/null
++++ b/practices/practice_04/dashboard/vite.config.js
+@@ -0,0 +1,5 @@
++import { defineConfig } from 'vite';
++
++export default defineConfig({
++  server: { proxy: { '/api': { target: 'http://127.0.0.1:8765', changeOrigin: true } } },
++});
+diff --git a/practices/practice_04/hooks/check.py b/practices/practice_04/hooks/check.py
+new file mode 100644
+index 0000000..516af52
+--- /dev/null
++++ b/practices/practice_04/hooks/check.py
+@@ -0,0 +1,41 @@
++"""Prove post-commit automation in an isolated Git repository."""
++import json
++from pathlib import Path
++import shutil
++import subprocess
++import tempfile
++
++ROOT = Path(__file__).resolve().parents[3]
++
++
++def check():
++    with tempfile.TemporaryDirectory(prefix="practice04-hook-") as directory:
++        target = Path(directory)
++        for name in ("AGENTS.md", "opencode.json", ".gitignore"):
++            shutil.copy2(ROOT / name, target / name)
++        shutil.copytree(ROOT / "practices/practice_04", target / "practices/practice_04",
++                        ignore=shutil.ignore_patterns("node_modules", "dist", "data", "logs", "artifacts", "__pycache__", "presentation.pdf", "presentation.pptx"))
++        (target / "practices/practice_04/hooks/post-commit").chmod(0o755)
++        def git(*args):
++            return subprocess.run(["git", *args], cwd=target, text=True, capture_output=True, check=True)
++        git("init", "-q")
++        git("config", "user.name", "Practice 04 Hook Demo")
++        git("config", "user.email", "practice04@example.invalid")
++        git("config", "commit.gpgsign", "false")
++        git("add", ".")
++        git("commit", "-qm", "Isolated baseline")
++        git("config", "core.hooksPath", "practices/practice_04/hooks")
++        readme = target / "practices/practice_04/HANDOFF.md"
++        readme.write_text(readme.read_text() + "\n<!-- Isolated hook verification -->\n")
++        git("add", "practices/practice_04/HANDOFF.md")
++        commit = git("commit", "-m", "Demonstrate post-commit runner")
++        output = commit.stdout + commit.stderr
++        log = (target / "practices/practice_04/logs/runner.log").read_text()
++        assert "[post-commit]" in output and "[runner] Done." in log, output
++        assert json.loads((target / "practices/practice_04/logs/study_tracker_demo.json").read_text())["ok"]
++        return {"ok": True, "method": "real git commit in isolated temporary repository",
++                "original_repository_committed": False, "commit_output": output, "runner_log": log}
++
++
++if __name__ == "__main__":
++    print(json.dumps(check(), ensure_ascii=False, indent=2))
+diff --git a/practices/practice_04/hooks/post-commit b/practices/practice_04/hooks/post-commit
+new file mode 100755
+index 0000000..c313e36
+--- /dev/null
++++ b/practices/practice_04/hooks/post-commit
+@@ -0,0 +1,12 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++ROOT_DIR=$(git rev-parse --show-toplevel)
++cd "$ROOT_DIR"
++
++if git diff-tree --no-commit-id --name-only -r HEAD | grep -Eq '^practices/practice_04/'; then
++  echo "[post-commit] practice_04 changes detected, running runner..."
++  bash practices/practice_04/runner.sh || true
++else
++  echo "[post-commit] no practice_04 changes"
++fi
+diff --git a/practices/practice_04/mcp/client.py b/practices/practice_04/mcp/client.py
+new file mode 100644
+index 0000000..1b89a02
+--- /dev/null
++++ b/practices/practice_04/mcp/client.py
+@@ -0,0 +1,57 @@
++"""Real subprocess MCP client for demos, tests and metrics (no direct imports)."""
++import json
++from pathlib import Path
++import subprocess
++import sys
++import select
++
++ROOT = Path(__file__).resolve().parents[3]
++
++
++class Client:
++    def __init__(self, server, environment=None):
++        self.process = subprocess.Popen(
++            [sys.executable, str(ROOT / server)], cwd=ROOT, env=environment,
++            stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True, encoding="utf-8")
++        self.sequence = 0
++
++    def __enter__(self):
++        self.request("initialize", {"protocolVersion": "2025-06-18", "capabilities": {},
++                                   "clientInfo": {"name": "practice-04-demo", "version": "1.0.0"}})
++        self.send({"jsonrpc": "2.0", "method": "notifications/initialized"})
++        return self
++
++    def __exit__(self, *args):
++        self.process.stdin.close()
++        try:
++            self.process.wait(timeout=5)
++        except subprocess.TimeoutExpired:
++            self.process.kill()
++            self.process.wait()
++        self.process.stdout.close()
++
++    def send(self, message):
++        self.process.stdin.write(json.dumps(message, ensure_ascii=False) + "\n")
++        self.process.stdin.flush()
++
++    def request(self, method, params=None):
++        self.sequence += 1
++        self.send({"jsonrpc": "2.0", "id": self.sequence, "method": method, "params": params or {}})
++        if not select.select([self.process.stdout], [], [], 10)[0]:
++            raise TimeoutError(f"MCP server did not respond to {method} within 10 seconds")
++        response = json.loads(self.process.stdout.readline())
++        if response.get("id") != self.sequence or "error" in response:
++            raise RuntimeError(response)
++        return response["result"]
++
++    def call(self, name, **arguments):
++        return self.request("tools/call", {"name": name, "arguments": arguments})
++
++
++if __name__ == "__main__":
++    if len(sys.argv) != 4:
++        sys.exit("Usage: python3 practices/practice_04/mcp/client.py SERVER TOOL 'JSON_ARGUMENTS'")
++    with Client(sys.argv[1]) as client:
++        result = client.call(sys.argv[2], **json.loads(sys.argv[3]))
++        print(json.dumps(result, ensure_ascii=False, indent=2))
++        sys.exit(1 if result.get("isError") else 0)
+diff --git a/practices/practice_04/mcp/stdio.py b/practices/practice_04/mcp/stdio.py
+new file mode 100644
+index 0000000..1bf2462
+--- /dev/null
++++ b/practices/practice_04/mcp/stdio.py
+@@ -0,0 +1,50 @@
++"""Small MCP 2025-06-18 stdio transport, using only the standard library."""
++import json
++import sys
++import sqlite3
++
++
++def serve(name, tools, handlers):
++    initialized = False
++    for line in sys.stdin:
++        request = None
++        try:
++            request = json.loads(line)
++            if not isinstance(request, dict) or request.get("jsonrpc") != "2.0":
++                raise ValueError("Expected a JSON-RPC 2.0 object")
++            method = request.get("method")
++            if "id" not in request:
++                continue  # notifications never receive responses
++            error = None
++            if method == "initialize":
++                initialized = True
++                result = {"protocolVersion": "2025-06-18", "capabilities": {"tools": {}},
++                          "serverInfo": {"name": name, "version": "1.0.0"}}
++            elif method == "ping":
++                result = {}
++            elif not initialized:
++                error = {"code": -32600, "message": "Initialize first"}
++            elif method == "tools/list":
++                result = {"tools": tools}
++            elif method == "tools/call":
++                params = request.get("params", {})
++                if not isinstance(params, dict) or params.get("name") not in handlers:
++                    error = {"code": -32602, "message": "Unknown tool"}
++                else:
++                    try:
++                        arguments = params.get("arguments", {})
++                        if not isinstance(arguments, dict):
++                            raise ValueError("arguments must be an object")
++                        value = handlers[params["name"]](**arguments)
++                        result = {"content": [{"type": "text", "text": json.dumps(value, ensure_ascii=False)}],
++                                  "isError": False}
++                    except (ValueError, TypeError, OSError, sqlite3.Error) as exc:
++                        result = {"content": [{"type": "text", "text": str(exc)}], "isError": True}
++            else:
++                error = {"code": -32601, "message": "Method not found"}
++            response = {"jsonrpc": "2.0", "id": request["id"]}
++            response["error" if error else "result"] = error if error else result
++        except (ValueError, TypeError) as exc:
++            response = {"jsonrpc": "2.0", "id": request.get("id") if isinstance(request, dict) else None,
++                        "error": {"code": -32700, "message": str(exc)}}
++        print(json.dumps(response, ensure_ascii=False), flush=True)
+diff --git a/practices/practice_04/mcp/study_tracker/README.md b/practices/practice_04/mcp/study_tracker/README.md
+new file mode 100644
+index 0000000..1a63b05
+--- /dev/null
++++ b/practices/practice_04/mcp/study_tracker/README.md
+@@ -0,0 +1,63 @@
++# Study Tracker MCP
++
++Локальный учебный трекер: Python 3.9+ со стандартной библиотекой и данными SQLite.
++Сервер поддерживает MCP stdio версии 2025-06-18: `initialize`, уведомление
++`notifications/initialized`, `tools/list`, `tools/call`, `ping`.
++Он остаётся запущенным для последовательных вызовов; stdout содержит только JSON-RPC.
++
++| Инструмент | Аргументы | Результат |
++|---|---|---|
++| `add_task` | title, course, deadline (YYYY-MM-DD) | Новое задание с ID |
++| `list_tasks` | course и status (необязательно) | Задания по дедлайну |
++| `update_task_status` | task_id, status | Обновлённое задание |
++| `study_dashboard` | as_of (необязательно) | Прогресс, просрочки, сроки на неделю, ближайшая задача |
++
++Статусы: `todo`, `in_progress`, `done`. Дедлайн — включительно: просрочка
++наступает на следующий день по Москве. Выполненные задания не попадают в просрочки.
++Повторное добавление создаёт отдельное задание. `next_task` — незавершённое
++задание с самым ранним дедлайном, включая просроченные.
++
++## Запуск из корня репозитория
++
++```sh
++opencode mcp list
++make p4-study-demo
++make p4-run
++```
++
++Демо создаёт временную базу и проверяет все четыре инструмента, перезапуск
++сервера, расчёт дат, фильтры и ошибки. Пользовательская база находится в
++`practices/practice_04/mcp/study_tracker/data/tasks.sqlite3`, исключена из Git и не заполняется демо.
++Переменная `STUDY_TRACKER_DB` позволяет выбрать другую базу.
++
++Настоящий вызов через отдельный процесс сервера (изменит пользовательскую базу):
++
++```sh
++python3 practices/practice_04/mcp/client.py practices/practice_04/mcp/study_tracker/server.py add_task '{"title":"Подготовить защиту","course":"Технологии ИИ","deadline":"2026-10-15"}'
++python3 practices/practice_04/mcp/client.py practices/practice_04/mcp/study_tracker/server.py study_dashboard '{}'
++```
++
++## Демонстрация агенту
++
++В новом чате OpenCode из корня репозитория:
++
++> Прочитай AGENTS.md и загрузи skill auto_check. Через MCP study_tracker
++> добавь задание «Подготовить защиту практики 4», курс «Технологии ИИ»,
++> дедлайн 2026-10-15. Переведи его в in_progress и покажи сводку прогресса.
++
++Затем:
++
++> Попробуй добавить задание с датой 2026-02-30. Покажи ошибку MCP и проверь,
++> что задание не появилось в списке.
++
++Сохрани вывод tool calls или скриншот для подтверждения работы именно агента.
++Локальное интеграционное демо подтверждает протокол, но не вызов моделью.
++
++Ограничения: только локальные данные, без уведомлений и календарной синхронизации;
++поиск курса по точному названию; прогресс — доля выполненных заданий без весов.
++Транспорт предназначен для небольшой учебной демонстрации и не реализует
++все необязательные возможности MCP (ресурсы, промпты, отмену, потоковый прогресс).
++
++Документация: [MCP tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools),
++[OpenCode MCP](https://opencode.ai/v2/docs/mcp-servers),
++[OpenCode skills](https://opencode.ai/v2/docs/skills/).
+diff --git a/practices/practice_04/mcp/study_tracker/check.py b/practices/practice_04/mcp/study_tracker/check.py
+new file mode 100644
+index 0000000..c236531
+--- /dev/null
++++ b/practices/practice_04/mcp/study_tracker/check.py
+@@ -0,0 +1,128 @@
++"""Integration checks and reproducible demo through real MCP subprocesses."""
++from datetime import date, timedelta
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++import tempfile
++from zoneinfo import ZoneInfo
++from datetime import datetime
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++from client import Client, ROOT
++
++SERVER = "practices/practice_04/mcp/study_tracker/server.py"
++
++
++def payload(result):
++    assert not result.get("isError"), result
++    return json.loads(result["content"][0]["text"])
++
++
++def run_demo():
++    today = datetime.now(ZoneInfo("Europe/Moscow")).date()
++    transcript = []
++    with tempfile.TemporaryDirectory(prefix="study-tracker-") as directory:
++        environment = dict(os.environ, STUDY_TRACKER_DB=str(Path(directory) / "tasks.sqlite3"))
++        with Client(SERVER, environment) as client:
++            catalog = client.request("tools/list")
++            assert {tool["name"] for tool in catalog["tools"]} == {
++                "add_task", "list_tasks", "update_task_status", "study_dashboard"}
++
++            def call(name, **arguments):
++                result = client.call(name, **arguments)
++                transcript.append({"tool": name, "arguments": arguments, "result": result})
++                return result
++
++            assert payload(call("study_dashboard"))["total"] == 0
++            first = payload(call("add_task", title="Демо: реализовать MCP", course="Технологии ИИ",
++                                 deadline=(today + timedelta(days=3)).isoformat()))
++            second = payload(call("add_task", title="Демо: написать отчёт", course="Технологии ИИ",
++                                  deadline=(today - timedelta(days=1)).isoformat()))
++            third = payload(call("add_task", title="Демо: решить задачи", course="Математика",
++                                 deadline=today.isoformat()))
++            payload(call("update_task_status", task_id=first["id"], status="in_progress"))
++            payload(call("update_task_status", task_id=third["id"], status="done"))
++            dashboard = payload(call("study_dashboard", as_of=today.isoformat()))
++            assert dashboard["progress_percent"] == 33.3
++            assert [task["id"] for task in dashboard["overdue"]] == [second["id"]]
++            assert [task["id"] for task in dashboard["due_soon"]] == [first["id"]]
++            assert dashboard["next_task"]["id"] == second["id"]
++            yesterday = payload(call("study_dashboard", as_of=(today - timedelta(days=1)).isoformat()))
++            assert yesterday["overdue"] == []  # deadline today is not overdue
++            assert len(yesterday["due_soon"]) == 2
++            assert payload(call("list_tasks", course="Математика", status="done"))["count"] == 1
++            assert payload(call("list_tasks", course="' OR 1=1 --"))["count"] == 0
++            for arguments in (
++                {"title": "", "course": "ИИ", "deadline": today.isoformat()},
++                {"title": "Ошибка", "course": "ИИ", "deadline": "2026-02-30"},
++                {"title": "Ошибка", "course": "ИИ", "deadline": "20261007"},
++            ):
++                assert call("add_task", **arguments)["isError"]
++            assert call("update_task_status", task_id=99999, status="done")["isError"]
++            assert call("update_task_status", task_id=first["id"], status="finished")["isError"]
++            assert call("update_task_status", task_id=True, status="done")["isError"]
++            assert call("study_dashboard", as_of="tomorrow")["isError"]
++            assert call("list_tasks", unexpected=True)["isError"]
++            try:
++                client.call("unknown_tool")
++            except RuntimeError as exc:
++                assert "Unknown tool" in str(exc)
++            else:
++                raise AssertionError("Unknown tool should return a JSON-RPC error")
++            assert client.request("ping") == {}  # server survives errors
++            assert payload(call("list_tasks"))["count"] == 3  # failed writes changed nothing
++        with Client(SERVER, environment) as restarted:
++            persisted = payload(restarted.call("list_tasks"))
++            assert persisted["count"] == 3
++            assert next(task for task in persisted["tasks"] if task["id"] == first["id"])["status"] == "in_progress"
++            transcript.append({"check": "persistence_after_restart", "result": persisted})
++    return {"ok": True, "transport": "MCP JSON-RPC 2.0 over stdio", "as_of": today.isoformat(),
++            "database": "temporary; real study data unchanged", "calls": transcript}
++
++
++def source_paths():
++    paths = set()
++    for folder in ("practices/practice_04",):
++        paths.update(path.relative_to(ROOT).as_posix() for path in (ROOT / folder).rglob("*")
++                     if path.is_file() and not any(part in {"node_modules", "dist", "data", "logs", "__pycache__", "artifacts"}
++                                                  for part in path.relative_to(ROOT).parts))
++    paths.update(name for name in ("AGENTS.md", "opencode.json", "Makefile", ".gitignore", "practices/practice_04/reflection.md")
++                 if (ROOT / name).is_file())
++    return paths
++
++
++def has_git_baseline():
++    result = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=ROOT, capture_output=True, text=True)
++    if result.returncode or Path(result.stdout.strip()).resolve() != ROOT:
++        return False
++    return subprocess.run(["git", "rev-parse", "--verify", "HEAD"], cwd=ROOT, capture_output=True).returncode == 0
++
++
++def save_patch(destination):
++    """Include existing uncommitted work and new source files; exclude generated logs."""
++    if has_git_baseline():
++        patch = subprocess.check_output(
++            ["git", "diff", "HEAD", "--", ".", ":(exclude)practices/practice_04/logs/**"], cwd=ROOT)
++        paths = subprocess.check_output(["git", "ls-files", "--others", "--exclude-standard", "-z"], cwd=ROOT).decode().strip("\0").split("\0")
++    else:
++        patch = b"# Source snapshot: no Git baseline in extracted submission\n"
++        paths = sorted(source_paths())
++    for relative in paths:
++        if not relative or relative.startswith("practices/practice_04/logs/"):
++            continue
++        addition = subprocess.run(["git", "diff", "--no-index", "--", "/dev/null", relative],
++                                  cwd=ROOT, capture_output=True)
++        if addition.returncode not in (0, 1):
++            raise RuntimeError(addition.stderr.decode())
++        patch += addition.stdout
++    Path(destination).write_bytes(patch)
++
++
++if __name__ == "__main__":
++    if len(sys.argv) == 3 and sys.argv[1] == "--patch":
++        save_patch(sys.argv[2])
++    else:
++        result = run_demo()
++        print(json.dumps(result, ensure_ascii=False, indent=2))
+diff --git a/practices/practice_04/mcp/study_tracker/server.py b/practices/practice_04/mcp/study_tracker/server.py
+new file mode 100644
+index 0000000..3cc5dc0
+--- /dev/null
++++ b/practices/practice_04/mcp/study_tracker/server.py
+@@ -0,0 +1,131 @@
++#!/usr/bin/env python3
++"""Persistent study tasks exposed as MCP tools. Dates use Europe/Moscow."""
++from datetime import date, datetime
++import os
++from pathlib import Path
++import re
++import sqlite3
++import sys
++from zoneinfo import ZoneInfo
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++from stdio import serve
++
++ROOT = Path(__file__).resolve().parents[4]
++STATUSES = ("todo", "in_progress", "done")
++
++
++def text(value, field):
++    if not isinstance(value, str) or not value.strip() or len(value) > 500:
++        raise ValueError(f"{field}: expected non-empty text, at most 500 characters")
++    return value.strip()
++
++
++def parse_date(value):
++    if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
++        raise ValueError("Date must use YYYY-MM-DD")
++    return date.fromisoformat(value)
++
++
++def database():
++    path = Path(os.environ.get("STUDY_TRACKER_DB", str(ROOT / "practices/practice_04/mcp/study_tracker/data/tasks.sqlite3")))
++    path.parent.mkdir(parents=True, exist_ok=True)
++    connection = sqlite3.connect(path)
++    connection.row_factory = sqlite3.Row
++    connection.execute("""CREATE TABLE IF NOT EXISTS tasks (
++        id INTEGER PRIMARY KEY, title TEXT NOT NULL, course TEXT NOT NULL,
++        deadline TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'todo',
++        created_at TEXT NOT NULL)""")
++    return connection
++
++
++def task_view(row, today=None):
++    today = today or datetime.now(ZoneInfo("Europe/Moscow")).date()
++    task = dict(row)
++    task["days_left"] = (date.fromisoformat(task["deadline"]) - today).days
++    task["overdue"] = task["days_left"] < 0 and task["status"] != "done"
++    return task
++
++
++def add_task(title, course, deadline):
++    title, course = text(title, "title"), text(course, "course")
++    deadline = parse_date(deadline).isoformat()
++    connection = database()
++    try:
++        with connection:
++            cursor = connection.execute(
++                "INSERT INTO tasks (title, course, deadline, created_at) VALUES (?, ?, ?, ?)",
++                (title, course, deadline, datetime.now(ZoneInfo("Europe/Moscow")).isoformat()))
++            return task_view(connection.execute("SELECT * FROM tasks WHERE id = ?", (cursor.lastrowid,)).fetchone())
++    finally:
++        connection.close()
++
++
++def list_tasks(course=None, status=None):
++    conditions, values = [], []
++    if course is not None:
++        conditions.append("course = ?")
++        values.append(text(course, "course"))
++    if status is not None:
++        if status not in STATUSES:
++            raise ValueError("status must be todo, in_progress or done")
++        conditions.append("status = ?")
++        values.append(status)
++    connection = database()
++    try:
++        query = "SELECT * FROM tasks" + (" WHERE " + " AND ".join(conditions) if conditions else "")
++        rows = connection.execute(query + " ORDER BY deadline, id", values).fetchall()
++        return {"tasks": [task_view(row) for row in rows], "count": len(rows)}
++    finally:
++        connection.close()
++
++
++def update_task_status(task_id, status):
++    if type(task_id) is not int or task_id < 1:
++        raise ValueError("task_id must be a positive integer")
++    if status not in STATUSES:
++        raise ValueError("status must be todo, in_progress or done")
++    connection = database()
++    try:
++        with connection:
++            if connection.execute("UPDATE tasks SET status = ? WHERE id = ?", (status, task_id)).rowcount == 0:
++                raise ValueError(f"Task {task_id} not found")
++            return task_view(connection.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone())
++    finally:
++        connection.close()
++
++
++def study_dashboard(as_of=None):
++    today = parse_date(as_of) if as_of is not None else datetime.now(ZoneInfo("Europe/Moscow")).date()
++    tasks = [task_view(task, today) for task in list_tasks()["tasks"]]
++    counts = {status: sum(task["status"] == status for task in tasks) for status in STATUSES}
++    active = [task for task in tasks if task["status"] != "done"]
++    return {"as_of": today.isoformat(), "timezone": "Europe/Moscow", "total": len(tasks),
++            "by_status": counts, "progress_percent": round(100 * counts["done"] / len(tasks), 1) if tasks else 0,
++            "overdue": [task for task in active if task["overdue"]],
++            "due_soon": [task for task in active if 0 <= task["days_left"] <= 7],
++            "next_task": active[0] if active else None}
++
++
++def tool(name, description, properties, required=(), readonly=True):
++    return {"name": name, "description": description,
++            "inputSchema": {"type": "object", "properties": properties,
++                            "required": list(required), "additionalProperties": False},
++            "annotations": {"readOnlyHint": readonly, "destructiveHint": False, "openWorldHint": False}}
++
++
++STRING = {"type": "string"}
++STATUS = {"type": "string", "enum": list(STATUSES)}
++TOOLS = [
++    tool("add_task", "Добавить учебное задание; сохраняет данные в SQLite. Дедлайн YYYY-MM-DD.",
++         {"title": STRING, "course": STRING, "deadline": STRING}, ("title", "course", "deadline"), False),
++    tool("list_tasks", "Показать задания по дедлайну, можно фильтровать по курсу и статусу.",
++         {"course": STRING, "status": STATUS}),
++    tool("update_task_status", "Изменить статус существующего задания по ID.",
++         {"task_id": {"type": "integer", "minimum": 1}, "status": STATUS}, ("task_id", "status"), False),
++    tool("study_dashboard", "Сводка прогресса, просроченные задания, дедлайны на 7 дней и следующая задача.",
++         {"as_of": {"type": "string", "description": "Дата YYYY-MM-DD; по умолчанию сегодня в Москве"}}),
++]
++
++if __name__ == "__main__":
++    serve("study-tracker", TOOLS, {item["name"]: globals()[item["name"]] for item in TOOLS})
+diff --git a/practices/practice_04/reflection.md b/practices/practice_04/reflection.md
+new file mode 100644
+index 0000000..75291f9
+--- /dev/null
++++ b/practices/practice_04/reflection.md
+@@ -0,0 +1,11 @@
++# Рефлексия — практика 4
++
++Мне хотелось сделать MCP, которым правда можно пользоваться. Вместе с агентом мы обсудили варианты, и я выбрала трекер учёбы: задания, дедлайны и прогресс.
++
++Потом я попросила сделать к нему дашборд на React, чтобы результат было проще показать и попробовать самой. По критериям дашборд не был обязательным, но на нём удобно показывать, как добавляется задание и меняется его статус. При этом одного работающего интерфейса для сдачи мало: нужны примеры вызовов MCP, в том числе с ошибочным вводом. Поэтому мы сохранили результаты проверок и логи.
++
++Skill даёт агенту порядок действий после правок: запустить проверку, прочитать результат и исправить ошибки. Саму проверку выполняет runner, а hook запускает его после коммита.
++
++Была и путаница с папками: агент разбросал папки и файлы решений по всему репозиторию и пришлось отдельно его просить структурировать файлы правильно. После переноса пришлось обновить пути в командах и конфигурации и снова проверить запуск. Это хороший пример того, что даже с агентом нужно смотреть, что происходит в репозитории.
++
++Большую часть кода и технических проверок сделал агент. Я выбирала идею, уточняла требования и просила менять то, что мне не подходило. Из этой работы я вынесла, что стоит задавать вопросы, даже если приложение уже работает.
+diff --git a/practices/practice_04/report.html b/practices/practice_04/report.html
+new file mode 100644
+index 0000000..fa4d82c
+--- /dev/null
++++ b/practices/practice_04/report.html
+@@ -0,0 +1,64 @@
++<!doctype html>
++<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
++<title>Практика 4 — Study Tracker MCP</title><style>
++*{box-sizing:border-box}body{margin:0;background:#f5f6fa;color:#25283c;font:16px/1.7 system-ui,sans-serif}
++header{background:#191c32;color:white;padding:46px max(24px,calc((100vw - 1050px)/2))}header small{color:#b4a5ed;letter-spacing:2px}
++h1{font-size:38px;line-height:1.2;margin:15px 0}header p{color:#c0c2d4}main{max-width:1100px;padding:30px 25px 55px;margin:auto}
++section{margin:0 0 26px;padding:26px 30px;background:white;border:1px solid #e4e6ef;border-radius:12px}
++h2{font-size:23px;margin:0 0 16px}h3{font-size:18px;margin-bottom:8px}p{margin:10px 0}a{color:#6848c5}code{font:13px/1.6 ui-monospace,monospace;overflow-wrap:anywhere}
++.pill{display:inline-block;background:#e8f4ec;color:#427459;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700}
++.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}.facts span{padding:5px 12px;border-radius:7px;background:#2b2e47;color:#d6d8e8;font-size:13px}
++table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:12px 10px;border-bottom:1px solid #ececf3;text-align:left;vertical-align:top}th{background:#f8f7fc}.scroll{overflow:auto}
++.architecture{background:#f3f0fb;padding:18px;border-radius:8px;text-align:center;color:#6d53a8;font-weight:700}
++.note{padding:15px;border-left:3px solid #ae96ec;background:#f8f6fc;color:#6e6387;font-size:14px}
++pre{overflow:auto;padding:18px;background:#1e2237;color:#e0dfed;border-radius:8px;font-size:13px;white-space:pre-wrap}img{width:100%;border:1px solid #e7e8ef;border-radius:10px}details summary{cursor:pointer;font-weight:700}footer{text-align:center;color:#8f91a5;font-size:13px}li{margin:7px 0}
++@media(max-width:650px){h1{font-size:29px}section{padding:20px}main{padding:20px 14px}table{font-size:12px}}
++@media print{body{background:white}header{padding:24px;background:white;color:#25283c}header p{color:#555}main{padding:0}section{break-inside:avoid;border:none;padding:16px 0}a{color:inherit}details{display:block}.preview{display:none}}
++</style></head><body>
++<header><small>ПРАКТИКА 04 · ТЕХНОЛОГИИ ИИ В РАЗРАБОТКЕ ПО</small><h1>Study Tracker MCP</h1>
++<p>Собственный инструмент для заданий, дедлайнов и прогресса</p><p>Автор: впишите ФИО и группу перед сдачей.</p>
++<div class="facts"><span>Python + SQLite</span><span>MCP stdio</span><span>React + Vite</span><span>OpenCode</span></div></header>
++<main><section><span class="pill">Подтверждения собраны</span><h2>Что сделано</h2>
++<p>Учебный трекер предоставляет четыре MCP-инструмента: добавить задание, показать список, изменить статус и получить сводку. Данные сохраняются между запусками.</p>
++<div class="architecture">React → HTTP-мост → MCP tools/call → SQLite</div>
++<p>Агент OpenCode и дашборд используют один MCP. Деморежим хранит примеры отдельно от личных заданий.</p>
++<p><a href="SUBMISSION.md">Подробный отчёт</a> · <a href="HANDOFF.md">Инструкция по сдаче и защите</a> · <a href="reflection.md">Рефлексия</a></p></section>
++<section><h2>Критерии задания</h2><div class="scroll"><table><thead><tr><th>Критерий</th><th>Реализация и доказательство</th></tr></thead><tbody>
++<tr><td>Среда — 5 баллов</td><td>AGENTS.md, skill, MCP, hook и объяснение их назначения. <a href="logs/opencode_evidence.json">Вызовы агента</a>, <a href="logs/hook_demo.json">автозапуск hook</a>.</td></tr>
++<tr><td>Skill — 2 балла</td><td>Процедурные инструкции авто-проверки. Агент загрузил <code>auto_check</code> через tool skill и выполнил runner.</td></tr>
++<tr><td>Собственный MCP — 2 балла</td><td>Четыре полезных инструмента, реальный успешный вызов и ошибка на дате 2026-02-30. <a href="logs/study_tracker_demo.json">Интеграционное демо</a>.</td></tr>
++<tr><td>Рефлексия — 1 балл</td><td><a href="reflection.md">Черновик по событиям работы</a>; студенту осталось проверить личные формулировки.</td></tr>
++</tbody></table></div><p class="note">Таблица сопоставляет материалы с критериями и не гарантирует оценку. Дашборд — дополнительная наглядная демонстрация.</p></section>
++<section><h2>Зачем нужны подключения</h2><ul>
++<li><strong>AGENTS.md:</strong> правила запуска проверок и сохранения результатов.</li>
++<li><strong>Skill:</strong> повторяемая инструкция агенту вместо ручного составления порядка действий.</li>
++<li><strong>Study Tracker MCP:</strong> работа с учебными заданиями через инструменты с описанными аргументами.</li>
++<li><strong>Runner и hook:</strong> проверка после изменений и автоматический запуск после коммита.</li></ul></section>
++<section><h2>Реальные действия OpenCode</h2><div class="scroll"><table><thead><tr><th>Инструмент</th><th>Статус</th><th>Аргументы</th></tr></thead><tbody><tr><td><code>read</code></td><td>completed</td><td><code>{&quot;path&quot;: &quot;/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/AGENTS.md&quot;, &quot;limit&quot;: 2000}</code></td></tr>
++<tr><td><code>skill</code></td><td>completed</td><td><code>{&quot;id&quot;: &quot;auto_check&quot;}</code></td></tr>
++<tr><td><code>study_tracker_study_dashboard</code></td><td>completed</td><td><code>{&quot;as_of&quot;: &quot;2026-10-07&quot;}</code></td></tr>
++<tr><td><code>study_tracker_add_task</code></td><td>error</td><td><code>{&quot;course&quot;: &quot;Демо&quot;, &quot;deadline&quot;: &quot;2026-02-30&quot;, &quot;title&quot;: &quot;Проверка ошибки&quot;}</code></td></tr>
++<tr><td><code>shell</code></td><td>completed</td><td><code>{&quot;command&quot;: &quot;bash practices/practice_04/runner.sh&quot;, &quot;workdir&quot;: &quot;/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2&quot;, &quot;timeout&quot;: 120000}</code></td></tr></tbody></table></div>
++<p><a href="logs/opencode_evidence.json">Компактное доказательство</a> · <a href="logs/opencode_session.jsonl">Исходный поток событий</a></p>
++<p class="note">CLI ограничен 90 секундами и остановлен до итогового текстового ответа. Перечисленные вызовы инструментов успели завершиться. Ошибка add_task — ожидаемый результат проверки неверной даты.</p></section>
++<section><h2>Автоматическая проверка</h2><p>Проверены сохранение между процессами, фильтры, сроки, прогресс, неверный ввод, MCP-мост и сборка React.</p>
++<p><a href="logs/runner.log">Runner</a> · <a href="logs/dashboard_check.json">MCP-мост</a> · <a href="logs/dashboard_http_check.json">HTTP-проверки</a> · <a href="logs/changes.diff">Diff</a></p>
++<h3>Git hook</h3><p>В изолированном временном Git-репозитории создан настоящий коммит. Post-commit автоматически выполнил runner. В основном репозитории демонстрационный коммит не создавался.</p>
++<details><summary>Вывод коммита и hook</summary><pre>[main f2f15f1] Demonstrate post-commit runner
++ 1 file changed, 2 insertions(+)
++[post-commit] practice_04 changes detected, running runner...
++[runner] Practice 04 runner starting...
++[runner] Validations passed.
++[runner] Checking study tracker via MCP stdio...
++[runner] Study tracker checks passed (persistence, deadlines, filters, invalid input).
++[runner] Checking dashboard MCP bridge...
++[runner] Dashboard checks passed (real MCP calls, status changes, invalid input).
++[runner] React build skipped: run npm --prefix practices/practice_04/dashboard ci first.
++[runner] Done. See logs in /private/var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/practice04-hook-vf7x79nc/practices/practice_04/logs
++</pre></details>
++<p class="note">В hook-демо npm-зависимости не устанавливались. React-сборка подтверждена отдельно основным runner.log.</p></section>
++<section class="preview"><h2>Дашборд</h2><p>Добавление задания, смена статуса, поиск, дедлайны и история реальных MCP-запросов.</p><details><summary>Скриншот проверки интерфейса</summary><p><img src="logs/dashboard-preview.jpg" alt="React-дашборд Study Space с заданиями и прогрессом"></p></details></section>
++<section><h2>Запуск из корня репозитория</h2><pre>npm --prefix practices/practice_04/dashboard ci
++make p4-run
++make p4-dashboard</pre><p>Открыть <a href="http://127.0.0.1:8765/?mode=demo">деморежим дашборда</a>.</p><p>Для подготовки архива: <code>make p4-pack</code>. Подробные шаги и сценарий защиты — <a href="HANDOFF.md">HANDOFF.md</a>.</p></section>
++<footer>Собрано 07.10.2026, Europe/Moscow · Данные и секреты пользователя не включены в пакет</footer></main></body></html>
+\ No newline at end of file
+diff --git a/practices/practice_04/runner.sh b/practices/practice_04/runner.sh
+new file mode 100644
+index 0000000..ffc2da0
+--- /dev/null
++++ b/practices/practice_04/runner.sh
+@@ -0,0 +1,45 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++ROOT_DIR=$(cd "$(dirname "$0")/../.." && pwd)
++PRACT_DIR="$ROOT_DIR/practices/practice_04"
++LOG_DIR="$PRACT_DIR/logs"
++mkdir -p "$LOG_DIR"
++
++echo "[runner] Practice 04 runner starting..." | tee "$LOG_DIR/runner.log"
++
++# 1) Basic validations
++missing=()
++[[ -f "$ROOT_DIR/AGENTS.md" ]] || missing+=("AGENTS.md")
++[[ -f "$ROOT_DIR/practices/practice_04/auto_check/SKILL.md" ]] || missing+=("practices/practice_04/auto_check/SKILL.md")
++[[ -f "$ROOT_DIR/practices/practice_04/mcp/study_tracker/server.py" ]] || missing+=("practices/practice_04/mcp/study_tracker/server.py")
++
++if [[ ${#missing[@]} -gt 0 ]]; then
++  echo "[runner] Missing required files: ${missing[*]}" | tee -a "$LOG_DIR/runner.log"
++  exit 2
++fi
++
++echo "[runner] Validations passed." | tee -a "$LOG_DIR/runner.log"
++
++# 2) Real MCP initialize -> tools/list -> tools/call; isolated SQLite demo.
++echo "[runner] Checking study tracker via MCP stdio..." | tee -a "$LOG_DIR/runner.log"
++python3 "$ROOT_DIR/practices/practice_04/mcp/study_tracker/check.py" > "$LOG_DIR/study_tracker_demo.json" 2>> "$LOG_DIR/runner.log"
++echo "[runner] Study tracker checks passed (persistence, deadlines, filters, invalid input)." | tee -a "$LOG_DIR/runner.log"
++
++echo "[runner] Checking dashboard MCP bridge..." | tee -a "$LOG_DIR/runner.log"
++python3 "$ROOT_DIR/practices/practice_04/dashboard/check.py" --bridge-only > "$LOG_DIR/dashboard_check.json" 2>> "$LOG_DIR/runner.log"
++echo "[runner] Dashboard checks passed (real MCP calls, status changes, invalid input)." | tee -a "$LOG_DIR/runner.log"
++if [[ -x "$ROOT_DIR/practices/practice_04/dashboard/node_modules/.bin/vite" ]]; then
++  echo "[runner] Building React dashboard..." | tee -a "$LOG_DIR/runner.log"
++  npm --prefix "$ROOT_DIR/practices/practice_04/dashboard" run build >> "$LOG_DIR/runner.log" 2>&1
++  echo "[runner] React build passed." | tee -a "$LOG_DIR/runner.log"
++else
++  echo "[runner] React build skipped: run npm --prefix practices/practice_04/dashboard ci first." | tee -a "$LOG_DIR/runner.log"
++fi
++
++# Save the current change snapshot.
++python3 "$ROOT_DIR/practices/practice_04/mcp/study_tracker/check.py" --patch "$LOG_DIR/changes.diff" 2>> "$LOG_DIR/runner.log"
++
++echo "[runner] Done. See logs in $LOG_DIR" | tee -a "$LOG_DIR/runner.log"
++
++exit 0
+diff --git a/practices/practice_04/scripts/p4_agent_demo.py b/practices/practice_04/scripts/p4_agent_demo.py
+new file mode 100644
+index 0000000..58de83d
+--- /dev/null
++++ b/practices/practice_04/scripts/p4_agent_demo.py
+@@ -0,0 +1,84 @@
++"""Record a bounded OpenCode run and its actual output without reading credentials."""
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++ROOT = Path(__file__).resolve().parents[3]
++LOGS = ROOT / "practices/practice_04/logs"
++PROMPT = """Покажи применение среды практики 4. Прочитай AGENTS.md.
++Загрузи skill auto_check через инструмент skill.
++Вызови MCP study_tracker.study_dashboard для успешного сценария.
++Вызови MCP study_tracker.add_task с title='Проверка ошибки', course='Демо', deadline='2026-02-30'.
++Это намеренно ошибочная дата, задание не должно сохраняться.
++Запусти bash practices/practice_04/runner.sh и кратко объясни результат.
++Не меняй исходники, не делай коммиты, не читай секреты и не добавляй корректные задания.
++Если инструмент недоступен, честно укажи это, не заменяй MCP прямым вызовом функции.
++"""
++
++
++def extract():
++    attempt = json.loads((LOGS / "opencode_attempt.json").read_text())
++    events = []
++    for line in attempt["stdout"].splitlines():
++        try:
++            events.append(json.loads(line))
++        except ValueError:
++            continue
++    tools = [event["part"] for event in events if event.get("type") == "tool_use"]
++    selected = [part for part in tools if part.get("tool") in {
++        "skill", "study_tracker_study_dashboard", "study_tracker_add_task", "shell"}
++        or (part.get("tool") == "read" and str(part.get("state", {}).get("input", {}).get("path", "")).endswith("AGENTS.md"))]
++    checks = {
++        "rules_read": any(part.get("tool") == "read" and part.get("state", {}).get("status") == "completed"
++                          and str(part.get("state", {}).get("input", {}).get("path", "")).endswith("AGENTS.md") for part in tools),
++        "skill_loaded": any(part.get("tool") == "skill" and part.get("state", {}).get("status") == "completed"
++                            and part.get("state", {}).get("input", {}).get("id") == "auto_check" for part in tools),
++        "mcp_success": any(part.get("tool") == "study_tracker_study_dashboard"
++                           and part.get("state", {}).get("status") == "completed" for part in tools),
++        "mcp_invalid_input": any(part.get("tool") == "study_tracker_add_task"
++                                 and part.get("state", {}).get("status") == "error"
++                                 and part.get("state", {}).get("input", {}).get("deadline") == "2026-02-30" for part in tools),
++        "runner_completed": any(part.get("tool") == "shell" and part.get("state", {}).get("status") == "completed"
++                                and "[runner] Done." in part.get("state", {}).get("output", "") for part in tools),
++    }
++    evidence = {"ok": all(checks.values()), "checks": checks,
++                "session_id": events[0].get("sessionID") if events else None,
++                "cli_exit_code": attempt["exit_code"], "cli_timeout_seconds": attempt.get("timeout_seconds"),
++                "note": "Required tool calls completed; CLI timed out before a final text response" if attempt.get("timeout_seconds") else "CLI completed",
++                "tool_calls": selected}
++    (LOGS / "opencode_evidence.json").write_text(json.dumps(evidence, ensure_ascii=False, indent=2))
++    (LOGS / "opencode_session.jsonl").write_text(attempt["stdout"])
++    print("OpenCode evidence:", checks)
++    return evidence
++
++
++def record():
++    LOGS.mkdir(parents=True, exist_ok=True)
++    command = ["opencode", "run", "--standalone", "--agent", "build", "--model", "vsellm/openai/gpt-5",
++               "--format", "json", "--title", "Practice 4 evidence", PROMPT]
++    try:
++        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=90)
++        report = {"exit_code": result.returncode, "stdout": result.stdout, "stderr": result.stderr}
++    except subprocess.TimeoutExpired as exc:
++        report = {"exit_code": None, "timeout_seconds": 90,
++                  "stdout": (exc.stdout or b"").decode() if isinstance(exc.stdout, bytes) else exc.stdout or "",
++                  "stderr": (exc.stderr or b"").decode() if isinstance(exc.stderr, bytes) else exc.stderr or ""}
++    serialized = json.dumps({"prompt": PROMPT, **report}, ensure_ascii=False, indent=2)
++    # Redact any environment-sourced key if an upstream error echoes it.
++    for name, value in os.environ.items():
++        if value and len(value) > 8 and (name.endswith("_API_KEY") or name.endswith("_TOKEN")):
++            serialized = serialized.replace(value, "[REDACTED]")
++    (LOGS / "opencode_attempt.json").write_text(serialized)
++    print(f"OpenCode exit code: {report['exit_code']}; saved opencode_attempt.json")
++    extract()
++    subprocess.run(["bash", "practices/practice_04/runner.sh"], cwd=ROOT, check=True)
++
++
++if __name__ == "__main__":
++    if "--extract" in sys.argv:
++        extract()
++        subprocess.run(["bash", "practices/practice_04/runner.sh"], cwd=ROOT, check=True)
++    else:
++        record()
+diff --git a/practices/practice_04/scripts/p4_pack.py b/practices/practice_04/scripts/p4_pack.py
+new file mode 100644
+index 0000000..dff3bbf
+--- /dev/null
++++ b/practices/practice_04/scripts/p4_pack.py
+@@ -0,0 +1,34 @@
++"""Create a portable submission archive from an explicit source allowlist."""
++from pathlib import Path
++import zipfile
++
++ROOT = Path(__file__).resolve().parents[3]
++OUTPUT = ROOT / "practices/practice_04/artifacts/practice_04_submission.zip"
++FILES = ["AGENTS.md", "opencode.json", "Makefile", ".gitignore", "practices/practice_04/reflection.md"]
++DIRECTORIES = ["practices/practice_04"]
++EXCLUDED = {"node_modules", "dist", "data", "__pycache__", ".git", "presentation.pdf", "presentation.pptx", "artifacts"}
++
++
++def pack():
++    files = {ROOT / relative for relative in FILES}
++    for directory in DIRECTORIES:
++        for path in (ROOT / directory).rglob("*"):
++            relative = path.relative_to(ROOT)
++            if path.is_file() and not any(part in EXCLUDED for part in relative.parts):
++                files.add(path)
++    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
++    with zipfile.ZipFile(OUTPUT, "w", compression=zipfile.ZIP_DEFLATED) as archive:
++        for path in sorted(files):
++            archive.write(path, path.relative_to(ROOT).as_posix())
++    with zipfile.ZipFile(OUTPUT) as archive:
++        assert archive.testzip() is None
++        names = archive.namelist()
++        for required in ("practices/practice_04/logs/runner.log",
++                         "practices/practice_04/hooks/post-commit", "practices/practice_04/dashboard/package-lock.json", "practices/practice_04/reflection.md"):
++            assert required in names, required
++        assert not any("node_modules/" in name or "/data/" in name or ".env" in name for name in names)
++    print(f"Submission archive: {OUTPUT}\nFiles: {len(files)}; bytes: {OUTPUT.stat().st_size}")
++
++
++if __name__ == "__main__":
++    pack()
+diff --git a/practices/practice_04/scripts/p4_report.py b/practices/practice_04/scripts/p4_report.py
+new file mode 100644
+index 0000000..7eb55f9
+--- /dev/null
++++ b/practices/practice_04/scripts/p4_report.py
+@@ -0,0 +1,77 @@
++"""Render a self-contained HTML report from verified local evidence."""
++from datetime import datetime
++import html
++import json
++from pathlib import Path
++from zoneinfo import ZoneInfo
++
++ROOT = Path(__file__).resolve().parents[3]
++PRACTICE = ROOT / "practices/practice_04"
++
++
++def render():
++    evidence = json.loads((PRACTICE / "logs/opencode_evidence.json").read_text())
++    hook = json.loads((PRACTICE / "logs/hook_demo.json").read_text())
++    assert evidence["ok"] and hook["ok"], "Evidence incomplete"
++    calls = "\n".join(
++        f'<tr><td><code>{html.escape(part["tool"])}</code></td><td>{html.escape(part["state"]["status"])}</td>'
++        f'<td><code>{html.escape(json.dumps(part["state"].get("input", {}), ensure_ascii=False))}</code></td></tr>'
++        for part in evidence["tool_calls"])
++    author_line = next(line for line in (PRACTICE / "SUBMISSION.md").read_text().splitlines() if line.startswith("Автор:"))
++    author = html.escape(author_line.replace("**", ""))
++    date = datetime.now(ZoneInfo("Europe/Moscow")).strftime("%d.%m.%Y")
++    report = f'''<!doctype html>
++<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
++<title>Практика 4 — Study Tracker MCP</title><style>
++*{{box-sizing:border-box}}body{{margin:0;background:#f5f6fa;color:#25283c;font:16px/1.7 system-ui,sans-serif}}
++header{{background:#191c32;color:white;padding:46px max(24px,calc((100vw - 1050px)/2))}}header small{{color:#b4a5ed;letter-spacing:2px}}
++h1{{font-size:38px;line-height:1.2;margin:15px 0}}header p{{color:#c0c2d4}}main{{max-width:1100px;padding:30px 25px 55px;margin:auto}}
++section{{margin:0 0 26px;padding:26px 30px;background:white;border:1px solid #e4e6ef;border-radius:12px}}
++h2{{font-size:23px;margin:0 0 16px}}h3{{font-size:18px;margin-bottom:8px}}p{{margin:10px 0}}a{{color:#6848c5}}code{{font:13px/1.6 ui-monospace,monospace;overflow-wrap:anywhere}}
++.pill{{display:inline-block;background:#e8f4ec;color:#427459;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700}}
++.facts{{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}}.facts span{{padding:5px 12px;border-radius:7px;background:#2b2e47;color:#d6d8e8;font-size:13px}}
++table{{width:100%;border-collapse:collapse;font-size:14px}}th,td{{padding:12px 10px;border-bottom:1px solid #ececf3;text-align:left;vertical-align:top}}th{{background:#f8f7fc}}.scroll{{overflow:auto}}
++.architecture{{background:#f3f0fb;padding:18px;border-radius:8px;text-align:center;color:#6d53a8;font-weight:700}}
++.note{{padding:15px;border-left:3px solid #ae96ec;background:#f8f6fc;color:#6e6387;font-size:14px}}
++pre{{overflow:auto;padding:18px;background:#1e2237;color:#e0dfed;border-radius:8px;font-size:13px;white-space:pre-wrap}}img{{width:100%;border:1px solid #e7e8ef;border-radius:10px}}details summary{{cursor:pointer;font-weight:700}}footer{{text-align:center;color:#8f91a5;font-size:13px}}li{{margin:7px 0}}
++@media(max-width:650px){{h1{{font-size:29px}}section{{padding:20px}}main{{padding:20px 14px}}table{{font-size:12px}}}}
++@media print{{body{{background:white}}header{{padding:24px;background:white;color:#25283c}}header p{{color:#555}}main{{padding:0}}section{{break-inside:avoid;border:none;padding:16px 0}}a{{color:inherit}}details{{display:block}}.preview{{display:none}}}}
++</style></head><body>
++<header><small>ПРАКТИКА 04 · ТЕХНОЛОГИИ ИИ В РАЗРАБОТКЕ ПО</small><h1>Study Tracker MCP</h1>
++<p>Собственный инструмент для заданий, дедлайнов и прогресса</p><p>{author}</p>
++<div class="facts"><span>Python + SQLite</span><span>MCP stdio</span><span>React + Vite</span><span>OpenCode</span></div></header>
++<main><section><span class="pill">Подтверждения собраны</span><h2>Что сделано</h2>
++<p>Учебный трекер предоставляет четыре MCP-инструмента: добавить задание, показать список, изменить статус и получить сводку. Данные сохраняются между запусками.</p>
++<div class="architecture">React → HTTP-мост → MCP tools/call → SQLite</div>
++<p>Агент OpenCode и дашборд используют один MCP. Деморежим хранит примеры отдельно от личных заданий.</p>
++<p><a href="SUBMISSION.md">Подробный отчёт</a> · <a href="HANDOFF.md">Инструкция по сдаче и защите</a> · <a href="reflection.md">Рефлексия</a></p></section>
++<section><h2>Критерии задания</h2><div class="scroll"><table><thead><tr><th>Критерий</th><th>Реализация и доказательство</th></tr></thead><tbody>
++<tr><td>Среда — 5 баллов</td><td>AGENTS.md, skill, MCP, hook и объяснение их назначения. <a href="logs/opencode_evidence.json">Вызовы агента</a>, <a href="logs/hook_demo.json">автозапуск hook</a>.</td></tr>
++<tr><td>Skill — 2 балла</td><td>Процедурные инструкции авто-проверки. Агент загрузил <code>auto_check</code> через tool skill и выполнил runner.</td></tr>
++<tr><td>Собственный MCP — 2 балла</td><td>Четыре полезных инструмента, реальный успешный вызов и ошибка на дате 2026-02-30. <a href="logs/study_tracker_demo.json">Интеграционное демо</a>.</td></tr>
++<tr><td>Рефлексия — 1 балл</td><td><a href="reflection.md">Черновик по событиям работы</a>; студенту осталось проверить личные формулировки.</td></tr>
++</tbody></table></div><p class="note">Таблица сопоставляет материалы с критериями и не гарантирует оценку. Дашборд — дополнительная наглядная демонстрация.</p></section>
++<section><h2>Зачем нужны подключения</h2><ul>
++<li><strong>AGENTS.md:</strong> правила запуска проверок и сохранения результатов.</li>
++<li><strong>Skill:</strong> повторяемая инструкция агенту вместо ручного составления порядка действий.</li>
++<li><strong>Study Tracker MCP:</strong> работа с учебными заданиями через инструменты с описанными аргументами.</li>
++<li><strong>Runner и hook:</strong> проверка после изменений и автоматический запуск после коммита.</li></ul></section>
++<section><h2>Реальные действия OpenCode</h2><div class="scroll"><table><thead><tr><th>Инструмент</th><th>Статус</th><th>Аргументы</th></tr></thead><tbody>{calls}</tbody></table></div>
++<p><a href="logs/opencode_evidence.json">Компактное доказательство</a> · <a href="logs/opencode_session.jsonl">Исходный поток событий</a></p>
++<p class="note">CLI ограничен 90 секундами и остановлен до итогового текстового ответа. Перечисленные вызовы инструментов успели завершиться. Ошибка add_task — ожидаемый результат проверки неверной даты.</p></section>
++<section><h2>Автоматическая проверка</h2><p>Проверены сохранение между процессами, фильтры, сроки, прогресс, неверный ввод, MCP-мост и сборка React.</p>
++<p><a href="logs/runner.log">Runner</a> · <a href="logs/dashboard_check.json">MCP-мост</a> · <a href="logs/dashboard_http_check.json">HTTP-проверки</a> · <a href="logs/changes.diff">Diff</a></p>
++<h3>Git hook</h3><p>В изолированном временном Git-репозитории создан настоящий коммит. Post-commit автоматически выполнил runner. В основном репозитории демонстрационный коммит не создавался.</p>
++<details><summary>Вывод коммита и hook</summary><pre>{html.escape(hook['commit_output'])}</pre></details>
++<p class="note">В hook-демо npm-зависимости не устанавливались. React-сборка подтверждена отдельно основным runner.log.</p></section>
++<section class="preview"><h2>Дашборд</h2><p>Добавление задания, смена статуса, поиск, дедлайны и история реальных MCP-запросов.</p><details><summary>Скриншот проверки интерфейса</summary><p><img src="logs/dashboard-preview.jpg" alt="React-дашборд Study Space с заданиями и прогрессом"></p></details></section>
++<section><h2>Запуск из корня репозитория</h2><pre>npm --prefix practices/practice_04/dashboard ci
++make p4-run
++make p4-dashboard</pre><p>Открыть <a href="http://127.0.0.1:8765/?mode=demo">деморежим дашборда</a>.</p><p>Для подготовки архива: <code>make p4-pack</code>. Подробные шаги и сценарий защиты — <a href="HANDOFF.md">HANDOFF.md</a>.</p></section>
++<footer>Собрано {date}, Europe/Moscow · Данные и секреты пользователя не включены в пакет</footer></main></body></html>'''
++    (PRACTICE / "report.html").write_text(report)
++    print("HTML report: practices/practice_04/report.html")
++
++
++if __name__ == "__main__":
++    render()
+diff --git a/skills/practice_04/AGENTS.md b/skills/practice_04/AGENTS.md
+new file mode 100644
+index 0000000..fb03438
+--- /dev/null
++++ b/skills/practice_04/AGENTS.md
+@@ -0,0 +1,8 @@
++# Правила для агента (Practice 04)
++
++- Загрузи skill `skills/practice_04/auto_check/` и используй команды `run_checks` и `collect_metrics` при работе с практикой 4.
++- Выполняй shell-команды из корня репозитория.
++- После правок в `practices/practice_04/` запускай `bash skills/practice_04/runner.sh`.
++- Для сбора метрик вызывай MCP tool `word_count` (сервер `wordcount`).
++
++Подтверждения выполнения сохраняй в `practices/practice_04/logs/`.
