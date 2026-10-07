@@ -1,3 +1,7 @@
 FROM qwen3.5:4b
-PARAMETER num_ctx 32768
+PARAMETER num_ctx 16384
 PARAMETER temperature 0.2
+PARAMETER num_predict 1024
+SYSTEM """/no_think
+Ты локальный помощник по репозиторию. Следуй системной инструкции OpenCode.
+Не выдумывай файлы, строки, команды и настройки. Если факта нет в доступных материалах, скажи об этом."""
