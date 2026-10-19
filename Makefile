@@ -5,7 +5,7 @@ install:
 	@echo " - привяжите git hooks: make hooks"
 	@echo " - при необходимости установите python3"
 
-test: step1 step2 step3
+test: step1 step2 step3 step6
 
 step1:
 	@$(MAKE) -s -C practices/practice_01 test
@@ -35,3 +35,5 @@ p4-pack:
 	@python3 practices/practice_04/scripts/p4_report.py
 	@bash practices/practice_04/runner.sh
 	@python3 practices/practice_04/scripts/p4_pack.py
+step6:
+	@$(MAKE) -s -C practices/practice_06 test
