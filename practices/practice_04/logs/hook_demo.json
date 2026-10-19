@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "method": "real git commit in isolated temporary repository",
+  "original_repository_committed": false,
+  "commit_output": "[main f2f15f1] Demonstrate post-commit runner\n 1 file changed, 2 insertions(+)\n[post-commit] practice_04 changes detected, running runner...\n[runner] Practice 04 runner starting...\n[runner] Validations passed.\n[runner] Checking study tracker via MCP stdio...\n[runner] Study tracker checks passed (persistence, deadlines, filters, invalid input).\n[runner] Checking dashboard MCP bridge...\n[runner] Dashboard checks passed (real MCP calls, status changes, invalid input).\n[runner] React build skipped: run npm --prefix practices/practice_04/dashboard ci first.\n[runner] Done. See logs in /private/var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/practice04-hook-vf7x79nc/practices/practice_04/logs\n",
+  "runner_log": "[runner] Practice 04 runner starting...\n[runner] Validations passed.\n[runner] Checking study tracker via MCP stdio...\n[runner] Study tracker checks passed (persistence, deadlines, filters, invalid input).\n[runner] Checking dashboard MCP bridge...\n[runner] Dashboard checks passed (real MCP calls, status changes, invalid input).\n[runner] React build skipped: run npm --prefix practices/practice_04/dashboard ci first.\n[runner] Done. See logs in /private/var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/practice04-hook-vf7x79nc/practices/practice_04/logs\n"
+}

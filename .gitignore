@@ -84,6 +84,7 @@ coverage.xml
 
 # Django stuff:
 *.log
+!practices/practice_04/logs/runner.log
 local_settings.py
 db.sqlite3
 
@@ -159,6 +160,9 @@ ehthumbs.db
 Thumbs.db
 
 # Локальные файлы решений студентов
+node_modules/
+practices/practice_04/dashboard/dist/
+practices/practice_04/mcp/study_tracker/data/
 solutions_local/
 student_solutions/
 

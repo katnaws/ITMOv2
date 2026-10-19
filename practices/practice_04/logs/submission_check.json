@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "checks": [
+    "archive CRC integrity",
+    "required evidence included",
+    "no node_modules, personal databases or .env files",
+    "extracted archive runner exit 0 without Git baseline"
+  ],
+  "note": "React build in extracted copy skipped until npm ci; original React build passed"
+}

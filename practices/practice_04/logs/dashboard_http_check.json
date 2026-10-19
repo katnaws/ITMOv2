@@ -1,0 +1,1318 @@
+{
+  "ok": true,
+  "checks": "HTTP -> MCP, persistence across subprocesses, demo isolation, invalid input, origin checks",
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/state",
+      "status": 200,
+      "response": {
+        "tasks": [],
+        "dashboard": {
+          "as_of": "2026-10-07",
+          "timezone": "Europe/Moscow",
+          "total": 0,
+          "by_status": {
+            "todo": 0,
+            "in_progress": 0,
+            "done": 0
+          },
+          "progress_percent": 0,
+          "overdue": [],
+          "due_soon": [],
+          "next_task": null
+        },
+        "mode": "real",
+        "history": [
+          {
+            "time": "2026-10-07T23:26:41.513790+03:00",
+            "mode": "real",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [], \"count\": 0}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.514485+03:00",
+            "mode": "real",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 0, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 0}, \"progress_percent\": 0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
+                }
+              ],
+              "isError": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/state?mode=demo",
+      "status": 200,
+      "response": {
+        "tasks": [
+          {
+            "id": 5,
+            "title": "Изучить протокол MCP",
+            "course": "Технологии ИИ",
+            "deadline": "2026-10-05",
+            "status": "done",
+            "created_at": "2026-10-07T23:26:41.541492+03:00",
+            "days_left": -2,
+            "overdue": false
+          },
+          {
+            "id": 2,
+            "title": "Написать свободную рефлексию",
+            "course": "Технологии ИИ",
+            "deadline": "2026-10-06",
+            "status": "todo",
+            "created_at": "2026-10-07T23:26:41.539984+03:00",
+            "days_left": -1,
+            "overdue": true
+          },
+          {
+            "id": 3,
+            "title": "Решить задачи по интегралам",
+            "course": "Математика",
+            "deadline": "2026-10-07",
+            "status": "todo",
+            "created_at": "2026-10-07T23:26:41.540445+03:00",
+            "days_left": 0,
+            "overdue": false
+          },
+          {
+            "id": 1,
+            "title": "Подготовить защиту практики 4",
+            "course": "Технологии ИИ",
+            "deadline": "2026-10-09",
+            "status": "in_progress",
+            "created_at": "2026-10-07T23:26:41.538964+03:00",
+            "days_left": 2,
+            "overdue": false
+          },
+          {
+            "id": 4,
+            "title": "Оформить лабораторную работу",
+            "course": "Базы данных",
+            "deadline": "2026-10-12",
+            "status": "in_progress",
+            "created_at": "2026-10-07T23:26:41.540829+03:00",
+            "days_left": 5,
+            "overdue": false
+          },
+          {
+            "id": 6,
+            "title": "Сдать домашнее задание",
+            "course": "Математика",
+            "deadline": "2026-10-15",
+            "status": "done",
+            "created_at": "2026-10-07T23:26:41.542181+03:00",
+            "days_left": 8,
+            "overdue": false
+          }
+        ],
+        "dashboard": {
+          "as_of": "2026-10-07",
+          "timezone": "Europe/Moscow",
+          "total": 6,
+          "by_status": {
+            "todo": 2,
+            "in_progress": 2,
+            "done": 2
+          },
+          "progress_percent": 33.3,
+          "overdue": [
+            {
+              "id": 2,
+              "title": "Написать свободную рефлексию",
+              "course": "Технологии ИИ",
+              "deadline": "2026-10-06",
+              "status": "todo",
+              "created_at": "2026-10-07T23:26:41.539984+03:00",
+              "days_left": -1,
+              "overdue": true
+            }
+          ],
+          "due_soon": [
+            {
+              "id": 3,
+              "title": "Решить задачи по интегралам",
+              "course": "Математика",
+              "deadline": "2026-10-07",
+              "status": "todo",
+              "created_at": "2026-10-07T23:26:41.540445+03:00",
+              "days_left": 0,
+              "overdue": false
+            },
+            {
+              "id": 1,
+              "title": "Подготовить защиту практики 4",
+              "course": "Технологии ИИ",
+              "deadline": "2026-10-09",
+              "status": "in_progress",
+              "created_at": "2026-10-07T23:26:41.538964+03:00",
+              "days_left": 2,
+              "overdue": false
+            },
+            {
+              "id": 4,
+              "title": "Оформить лабораторную работу",
+              "course": "Базы данных",
+              "deadline": "2026-10-12",
+              "status": "in_progress",
+              "created_at": "2026-10-07T23:26:41.540829+03:00",
+              "days_left": 5,
+              "overdue": false
+            }
+          ],
+          "next_task": {
+            "id": 2,
+            "title": "Написать свободную рефлексию",
+            "course": "Технологии ИИ",
+            "deadline": "2026-10-06",
+            "status": "todo",
+            "created_at": "2026-10-07T23:26:41.539984+03:00",
+            "days_left": -1,
+            "overdue": true
+          }
+        },
+        "mode": "demo",
+        "history": [
+          {
+            "time": "2026-10-07T23:26:41.539317+03:00",
+            "mode": "demo",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Подготовить защиту практики 4",
+              "course": "Технологии ИИ",
+              "deadline": "2026-10-09"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 1, \"title\": \"Подготовить защиту практики 4\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-09\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.538964+03:00\", \"days_left\": 2, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.539816+03:00",
+            "mode": "demo",
+            "tool": "update_task_status",
+            "arguments": {
+              "task_id": 1,
+              "status": "in_progress"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 1, \"title\": \"Подготовить защиту практики 4\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-09\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.538964+03:00\", \"days_left\": 2, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.540253+03:00",
+            "mode": "demo",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Написать свободную рефлексию",
+              "course": "Технологии ИИ",
+              "deadline": "2026-10-06"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 2, \"title\": \"Написать свободную рефлексию\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.539984+03:00\", \"days_left\": -1, \"overdue\": true}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.540686+03:00",
+            "mode": "demo",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Решить задачи по интегралам",
+              "course": "Математика",
+              "deadline": "2026-10-07"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 3, \"title\": \"Решить задачи по интегралам\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.540445+03:00\", \"days_left\": 0, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.541035+03:00",
+            "mode": "demo",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Оформить лабораторную работу",
+              "course": "Базы данных",
+              "deadline": "2026-10-12"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 4, \"title\": \"Оформить лабораторную работу\", \"course\": \"Базы данных\", \"deadline\": \"2026-10-12\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.540829+03:00\", \"days_left\": 5, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.541365+03:00",
+            "mode": "demo",
+            "tool": "update_task_status",
+            "arguments": {
+              "task_id": 4,
+              "status": "in_progress"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 4, \"title\": \"Оформить лабораторную работу\", \"course\": \"Базы данных\", \"deadline\": \"2026-10-12\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.540829+03:00\", \"days_left\": 5, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.541714+03:00",
+            "mode": "demo",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Изучить протокол MCP",
+              "course": "Технологии ИИ",
+              "deadline": "2026-10-05"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 5, \"title\": \"Изучить протокол MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-05\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.541492+03:00\", \"days_left\": -2, \"overdue\": true}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.542053+03:00",
+            "mode": "demo",
+            "tool": "update_task_status",
+            "arguments": {
+              "task_id": 5,
+              "status": "done"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 5, \"title\": \"Изучить протокол MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-05\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.541492+03:00\", \"days_left\": -2, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.542375+03:00",
+            "mode": "demo",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Сдать домашнее задание",
+              "course": "Математика",
+              "deadline": "2026-10-15"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 6, \"title\": \"Сдать домашнее задание\", \"course\": \"Математика\", \"deadline\": \"2026-10-15\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.542181+03:00\", \"days_left\": 8, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.542694+03:00",
+            "mode": "demo",
+            "tool": "update_task_status",
+            "arguments": {
+              "task_id": 6,
+              "status": "done"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 6, \"title\": \"Сдать домашнее задание\", \"course\": \"Математика\", \"deadline\": \"2026-10-15\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.542181+03:00\", \"days_left\": 8, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.542878+03:00",
+            "mode": "demo",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [{\"id\": 5, \"title\": \"Изучить протокол MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-05\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.541492+03:00\", \"days_left\": -2, \"overdue\": false}, {\"id\": 2, \"title\": \"Написать свободную рефлексию\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.539984+03:00\", \"days_left\": -1, \"overdue\": true}, {\"id\": 3, \"title\": \"Решить задачи по интегралам\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.540445+03:00\", \"days_left\": 0, \"overdue\": false}, {\"id\": 1, \"title\": \"Подготовить защиту практики 4\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-09\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.538964+03:00\", \"days_left\": 2, \"overdue\": false}, {\"id\": 4, \"title\": \"Оформить лабораторную работу\", \"course\": \"Базы данных\", \"deadline\": \"2026-10-12\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.540829+03:00\", \"days_left\": 5, \"overdue\": false}, {\"id\": 6, \"title\": \"Сдать домашнее задание\", \"course\": \"Математика\", \"deadline\": \"2026-10-15\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.542181+03:00\", \"days_left\": 8, \"overdue\": false}], \"count\": 6}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.543067+03:00",
+            "mode": "demo",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 6, \"by_status\": {\"todo\": 2, \"in_progress\": 2, \"done\": 2}, \"progress_percent\": 33.3, \"overdue\": [{\"id\": 2, \"title\": \"Написать свободную рефлексию\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.539984+03:00\", \"days_left\": -1, \"overdue\": true}], \"due_soon\": [{\"id\": 3, \"title\": \"Решить задачи по интегралам\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.540445+03:00\", \"days_left\": 0, \"overdue\": false}, {\"id\": 1, \"title\": \"Подготовить защиту практики 4\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-09\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.538964+03:00\", \"days_left\": 2, \"overdue\": false}, {\"id\": 4, \"title\": \"Оформить лабораторную работу\", \"course\": \"Базы данных\", \"deadline\": \"2026-10-12\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.540829+03:00\", \"days_left\": 5, \"overdue\": false}], \"next_task\": {\"id\": 2, \"title\": \"Написать свободную рефлексию\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.539984+03:00\", \"days_left\": -1, \"overdue\": true}}"
+                }
+              ],
+              "isError": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/state",
+      "status": 200,
+      "response": {
+        "tasks": [],
+        "dashboard": {
+          "as_of": "2026-10-07",
+          "timezone": "Europe/Moscow",
+          "total": 0,
+          "by_status": {
+            "todo": 0,
+            "in_progress": 0,
+            "done": 0
+          },
+          "progress_percent": 0,
+          "overdue": [],
+          "due_soon": [],
+          "next_task": null
+        },
+        "mode": "real",
+        "history": [
+          {
+            "time": "2026-10-07T23:26:41.513790+03:00",
+            "mode": "real",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [], \"count\": 0}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.514485+03:00",
+            "mode": "real",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 0, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 0}, \"progress_percent\": 0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.566130+03:00",
+            "mode": "real",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [], \"count\": 0}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.566598+03:00",
+            "mode": "real",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 0, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 0}, \"progress_percent\": 0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
+                }
+              ],
+              "isError": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/tools/add_task",
+      "status": 200,
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"id\": 1, \"title\": \"Тест React dashboard\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-15\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.590201+03:00\", \"days_left\": 8, \"overdue\": false}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/tools/update_task_status",
+      "status": 200,
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"id\": 1, \"title\": \"Тест React dashboard\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-15\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.590201+03:00\", \"days_left\": 8, \"overdue\": false}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/state",
+      "status": 200,
+      "response": {
+        "tasks": [
+          {
+            "id": 1,
+            "title": "Тест React dashboard",
+            "course": "Технологии ИИ",
+            "deadline": "2026-10-15",
+            "status": "done",
+            "created_at": "2026-10-07T23:26:41.590201+03:00",
+            "days_left": 8,
+            "overdue": false
+          }
+        ],
+        "dashboard": {
+          "as_of": "2026-10-07",
+          "timezone": "Europe/Moscow",
+          "total": 1,
+          "by_status": {
+            "todo": 0,
+            "in_progress": 0,
+            "done": 1
+          },
+          "progress_percent": 100.0,
+          "overdue": [],
+          "due_soon": [],
+          "next_task": null
+        },
+        "mode": "real",
+        "history": [
+          {
+            "time": "2026-10-07T23:26:41.513790+03:00",
+            "mode": "real",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [], \"count\": 0}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.514485+03:00",
+            "mode": "real",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 0, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 0}, \"progress_percent\": 0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.566130+03:00",
+            "mode": "real",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [], \"count\": 0}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.566598+03:00",
+            "mode": "real",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 0, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 0}, \"progress_percent\": 0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.590645+03:00",
+            "mode": "real",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Тест React dashboard",
+              "course": "Технологии ИИ",
+              "deadline": "2026-10-15"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 1, \"title\": \"Тест React dashboard\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-15\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.590201+03:00\", \"days_left\": 8, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.613741+03:00",
+            "mode": "real",
+            "tool": "update_task_status",
+            "arguments": {
+              "task_id": 1,
+              "status": "done"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 1, \"title\": \"Тест React dashboard\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-15\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.590201+03:00\", \"days_left\": 8, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.636265+03:00",
+            "mode": "real",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [{\"id\": 1, \"title\": \"Тест React dashboard\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-15\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.590201+03:00\", \"days_left\": 8, \"overdue\": false}], \"count\": 1}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.636570+03:00",
+            "mode": "real",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 1, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 1}, \"progress_percent\": 100.0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
+                }
+              ],
+              "isError": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/state?mode=demo",
+      "status": 200,
+      "response": {
+        "tasks": [
+          {
+            "id": 5,
+            "title": "Изучить протокол MCP",
+            "course": "Технологии ИИ",
+            "deadline": "2026-10-05",
+            "status": "done",
+            "created_at": "2026-10-07T23:26:41.541492+03:00",
+            "days_left": -2,
+            "overdue": false
+          },
+          {
+            "id": 2,
+            "title": "Написать свободную рефлексию",
+            "course": "Технологии ИИ",
+            "deadline": "2026-10-06",
+            "status": "todo",
+            "created_at": "2026-10-07T23:26:41.539984+03:00",
+            "days_left": -1,
+            "overdue": true
+          },
+          {
+            "id": 3,
+            "title": "Решить задачи по интегралам",
+            "course": "Математика",
+            "deadline": "2026-10-07",
+            "status": "todo",
+            "created_at": "2026-10-07T23:26:41.540445+03:00",
+            "days_left": 0,
+            "overdue": false
+          },
+          {
+            "id": 1,
+            "title": "Подготовить защиту практики 4",
+            "course": "Технологии ИИ",
+            "deadline": "2026-10-09",
+            "status": "in_progress",
+            "created_at": "2026-10-07T23:26:41.538964+03:00",
+            "days_left": 2,
+            "overdue": false
+          },
+          {
+            "id": 4,
+            "title": "Оформить лабораторную работу",
+            "course": "Базы данных",
+            "deadline": "2026-10-12",
+            "status": "in_progress",
+            "created_at": "2026-10-07T23:26:41.540829+03:00",
+            "days_left": 5,
+            "overdue": false
+          },
+          {
+            "id": 6,
+            "title": "Сдать домашнее задание",
+            "course": "Математика",
+            "deadline": "2026-10-15",
+            "status": "done",
+            "created_at": "2026-10-07T23:26:41.542181+03:00",
+            "days_left": 8,
+            "overdue": false
+          }
+        ],
+        "dashboard": {
+          "as_of": "2026-10-07",
+          "timezone": "Europe/Moscow",
+          "total": 6,
+          "by_status": {
+            "todo": 2,
+            "in_progress": 2,
+            "done": 2
+          },
+          "progress_percent": 33.3,
+          "overdue": [
+            {
+              "id": 2,
+              "title": "Написать свободную рефлексию",
+              "course": "Технологии ИИ",
+              "deadline": "2026-10-06",
+              "status": "todo",
+              "created_at": "2026-10-07T23:26:41.539984+03:00",
+              "days_left": -1,
+              "overdue": true
+            }
+          ],
+          "due_soon": [
+            {
+              "id": 3,
+              "title": "Решить задачи по интегралам",
+              "course": "Математика",
+              "deadline": "2026-10-07",
+              "status": "todo",
+              "created_at": "2026-10-07T23:26:41.540445+03:00",
+              "days_left": 0,
+              "overdue": false
+            },
+            {
+              "id": 1,
+              "title": "Подготовить защиту практики 4",
+              "course": "Технологии ИИ",
+              "deadline": "2026-10-09",
+              "status": "in_progress",
+              "created_at": "2026-10-07T23:26:41.538964+03:00",
+              "days_left": 2,
+              "overdue": false
+            },
+            {
+              "id": 4,
+              "title": "Оформить лабораторную работу",
+              "course": "Базы данных",
+              "deadline": "2026-10-12",
+              "status": "in_progress",
+              "created_at": "2026-10-07T23:26:41.540829+03:00",
+              "days_left": 5,
+              "overdue": false
+            }
+          ],
+          "next_task": {
+            "id": 2,
+            "title": "Написать свободную рефлексию",
+            "course": "Технологии ИИ",
+            "deadline": "2026-10-06",
+            "status": "todo",
+            "created_at": "2026-10-07T23:26:41.539984+03:00",
+            "days_left": -1,
+            "overdue": true
+          }
+        },
+        "mode": "demo",
+        "history": [
+          {
+            "time": "2026-10-07T23:26:41.540253+03:00",
+            "mode": "demo",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Написать свободную рефлексию",
+              "course": "Технологии ИИ",
+              "deadline": "2026-10-06"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 2, \"title\": \"Написать свободную рефлексию\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.539984+03:00\", \"days_left\": -1, \"overdue\": true}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.540686+03:00",
+            "mode": "demo",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Решить задачи по интегралам",
+              "course": "Математика",
+              "deadline": "2026-10-07"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 3, \"title\": \"Решить задачи по интегралам\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.540445+03:00\", \"days_left\": 0, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.541035+03:00",
+            "mode": "demo",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Оформить лабораторную работу",
+              "course": "Базы данных",
+              "deadline": "2026-10-12"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 4, \"title\": \"Оформить лабораторную работу\", \"course\": \"Базы данных\", \"deadline\": \"2026-10-12\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.540829+03:00\", \"days_left\": 5, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.541365+03:00",
+            "mode": "demo",
+            "tool": "update_task_status",
+            "arguments": {
+              "task_id": 4,
+              "status": "in_progress"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 4, \"title\": \"Оформить лабораторную работу\", \"course\": \"Базы данных\", \"deadline\": \"2026-10-12\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.540829+03:00\", \"days_left\": 5, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.541714+03:00",
+            "mode": "demo",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Изучить протокол MCP",
+              "course": "Технологии ИИ",
+              "deadline": "2026-10-05"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 5, \"title\": \"Изучить протокол MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-05\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.541492+03:00\", \"days_left\": -2, \"overdue\": true}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.542053+03:00",
+            "mode": "demo",
+            "tool": "update_task_status",
+            "arguments": {
+              "task_id": 5,
+              "status": "done"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 5, \"title\": \"Изучить протокол MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-05\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.541492+03:00\", \"days_left\": -2, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.542375+03:00",
+            "mode": "demo",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Сдать домашнее задание",
+              "course": "Математика",
+              "deadline": "2026-10-15"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 6, \"title\": \"Сдать домашнее задание\", \"course\": \"Математика\", \"deadline\": \"2026-10-15\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.542181+03:00\", \"days_left\": 8, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.542694+03:00",
+            "mode": "demo",
+            "tool": "update_task_status",
+            "arguments": {
+              "task_id": 6,
+              "status": "done"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 6, \"title\": \"Сдать домашнее задание\", \"course\": \"Математика\", \"deadline\": \"2026-10-15\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.542181+03:00\", \"days_left\": 8, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.542878+03:00",
+            "mode": "demo",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [{\"id\": 5, \"title\": \"Изучить протокол MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-05\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.541492+03:00\", \"days_left\": -2, \"overdue\": false}, {\"id\": 2, \"title\": \"Написать свободную рефлексию\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.539984+03:00\", \"days_left\": -1, \"overdue\": true}, {\"id\": 3, \"title\": \"Решить задачи по интегралам\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.540445+03:00\", \"days_left\": 0, \"overdue\": false}, {\"id\": 1, \"title\": \"Подготовить защиту практики 4\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-09\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.538964+03:00\", \"days_left\": 2, \"overdue\": false}, {\"id\": 4, \"title\": \"Оформить лабораторную работу\", \"course\": \"Базы данных\", \"deadline\": \"2026-10-12\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.540829+03:00\", \"days_left\": 5, \"overdue\": false}, {\"id\": 6, \"title\": \"Сдать домашнее задание\", \"course\": \"Математика\", \"deadline\": \"2026-10-15\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.542181+03:00\", \"days_left\": 8, \"overdue\": false}], \"count\": 6}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.543067+03:00",
+            "mode": "demo",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 6, \"by_status\": {\"todo\": 2, \"in_progress\": 2, \"done\": 2}, \"progress_percent\": 33.3, \"overdue\": [{\"id\": 2, \"title\": \"Написать свободную рефлексию\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.539984+03:00\", \"days_left\": -1, \"overdue\": true}], \"due_soon\": [{\"id\": 3, \"title\": \"Решить задачи по интегралам\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.540445+03:00\", \"days_left\": 0, \"overdue\": false}, {\"id\": 1, \"title\": \"Подготовить защиту практики 4\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-09\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.538964+03:00\", \"days_left\": 2, \"overdue\": false}, {\"id\": 4, \"title\": \"Оформить лабораторную работу\", \"course\": \"Базы данных\", \"deadline\": \"2026-10-12\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.540829+03:00\", \"days_left\": 5, \"overdue\": false}], \"next_task\": {\"id\": 2, \"title\": \"Написать свободную рефлексию\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.539984+03:00\", \"days_left\": -1, \"overdue\": true}}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.659467+03:00",
+            "mode": "demo",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [{\"id\": 5, \"title\": \"Изучить протокол MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-05\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.541492+03:00\", \"days_left\": -2, \"overdue\": false}, {\"id\": 2, \"title\": \"Написать свободную рефлексию\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.539984+03:00\", \"days_left\": -1, \"overdue\": true}, {\"id\": 3, \"title\": \"Решить задачи по интегралам\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.540445+03:00\", \"days_left\": 0, \"overdue\": false}, {\"id\": 1, \"title\": \"Подготовить защиту практики 4\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-09\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.538964+03:00\", \"days_left\": 2, \"overdue\": false}, {\"id\": 4, \"title\": \"Оформить лабораторную работу\", \"course\": \"Базы данных\", \"deadline\": \"2026-10-12\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.540829+03:00\", \"days_left\": 5, \"overdue\": false}, {\"id\": 6, \"title\": \"Сдать домашнее задание\", \"course\": \"Математика\", \"deadline\": \"2026-10-15\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.542181+03:00\", \"days_left\": 8, \"overdue\": false}], \"count\": 6}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.659847+03:00",
+            "mode": "demo",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 6, \"by_status\": {\"todo\": 2, \"in_progress\": 2, \"done\": 2}, \"progress_percent\": 33.3, \"overdue\": [{\"id\": 2, \"title\": \"Написать свободную рефлексию\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.539984+03:00\", \"days_left\": -1, \"overdue\": true}], \"due_soon\": [{\"id\": 3, \"title\": \"Решить задачи по интегралам\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.540445+03:00\", \"days_left\": 0, \"overdue\": false}, {\"id\": 1, \"title\": \"Подготовить защиту практики 4\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-09\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.538964+03:00\", \"days_left\": 2, \"overdue\": false}, {\"id\": 4, \"title\": \"Оформить лабораторную работу\", \"course\": \"Базы данных\", \"deadline\": \"2026-10-12\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:26:41.540829+03:00\", \"days_left\": 5, \"overdue\": false}], \"next_task\": {\"id\": 2, \"title\": \"Написать свободную рефлексию\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.539984+03:00\", \"days_left\": -1, \"overdue\": true}}"
+                }
+              ],
+              "isError": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/tools/add_task",
+      "status": 400,
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "day 30 must be in range 1..28 for month 2 in year 2026"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/tools/update_task_status",
+      "status": 400,
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Task 9999 not found"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/state",
+      "status": 200,
+      "response": {
+        "tasks": [
+          {
+            "id": 1,
+            "title": "Тест React dashboard",
+            "course": "Технологии ИИ",
+            "deadline": "2026-10-15",
+            "status": "done",
+            "created_at": "2026-10-07T23:26:41.590201+03:00",
+            "days_left": 8,
+            "overdue": false
+          }
+        ],
+        "dashboard": {
+          "as_of": "2026-10-07",
+          "timezone": "Europe/Moscow",
+          "total": 1,
+          "by_status": {
+            "todo": 0,
+            "in_progress": 0,
+            "done": 1
+          },
+          "progress_percent": 100.0,
+          "overdue": [],
+          "due_soon": [],
+          "next_task": null
+        },
+        "mode": "real",
+        "history": [
+          {
+            "time": "2026-10-07T23:26:41.513790+03:00",
+            "mode": "real",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [], \"count\": 0}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.514485+03:00",
+            "mode": "real",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 0, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 0}, \"progress_percent\": 0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.566130+03:00",
+            "mode": "real",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [], \"count\": 0}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.566598+03:00",
+            "mode": "real",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 0, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 0}, \"progress_percent\": 0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.590645+03:00",
+            "mode": "real",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Тест React dashboard",
+              "course": "Технологии ИИ",
+              "deadline": "2026-10-15"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 1, \"title\": \"Тест React dashboard\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-15\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:26:41.590201+03:00\", \"days_left\": 8, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.613741+03:00",
+            "mode": "real",
+            "tool": "update_task_status",
+            "arguments": {
+              "task_id": 1,
+              "status": "done"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"id\": 1, \"title\": \"Тест React dashboard\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-15\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.590201+03:00\", \"days_left\": 8, \"overdue\": false}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.636265+03:00",
+            "mode": "real",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [{\"id\": 1, \"title\": \"Тест React dashboard\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-15\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.590201+03:00\", \"days_left\": 8, \"overdue\": false}], \"count\": 1}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.636570+03:00",
+            "mode": "real",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 1, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 1}, \"progress_percent\": 100.0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.682550+03:00",
+            "mode": "real",
+            "tool": "add_task",
+            "arguments": {
+              "title": "Тест React dashboard",
+              "course": "Технологии ИИ",
+              "deadline": "2026-02-30"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "day 30 must be in range 1..28 for month 2 in year 2026"
+                }
+              ],
+              "isError": true
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.705240+03:00",
+            "mode": "real",
+            "tool": "update_task_status",
+            "arguments": {
+              "task_id": 9999,
+              "status": "done"
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Task 9999 not found"
+                }
+              ],
+              "isError": true
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.728198+03:00",
+            "mode": "real",
+            "tool": "list_tasks",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"tasks\": [{\"id\": 1, \"title\": \"Тест React dashboard\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-15\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:26:41.590201+03:00\", \"days_left\": 8, \"overdue\": false}], \"count\": 1}"
+                }
+              ],
+              "isError": false
+            }
+          },
+          {
+            "time": "2026-10-07T23:26:41.728500+03:00",
+            "mode": "real",
+            "tool": "study_dashboard",
+            "arguments": {},
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 1, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 1}, \"progress_percent\": 100.0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
+                }
+              ],
+              "isError": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/tools/not_a_tool",
+      "status": 404,
+      "response": {
+        "error": "Unknown tool"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/tools/add_task",
+      "status": 403,
+      "response": {
+        "error": "Invalid origin"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/state?mode=wrong",
+      "status": 400,
+      "response": {
+        "error": "mode must be demo or real"
+      }
+    }
+  ]
+}
