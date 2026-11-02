@@ -1,0 +1,84 @@
+test_unpaired_surrogate_cannot_poison_public_reviews (test_http.HttpTest.test_unpaired_surrogate_cannot_poison_public_reviews) ... 
+  test_unpaired_surrogate_cannot_poison_public_reviews (test_http.HttpTest.test_unpaired_surrogate_cannot_poison_public_reviews) (text="'\\ud800'") ... FAIL
+  test_unpaired_surrogate_cannot_poison_public_reviews (test_http.HttpTest.test_unpaired_surrogate_cannot_poison_public_reviews) (text="'\\udfff'") ... FAIL
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 60115)
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 500, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 488, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/private/var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/mini-shop-baseline-4cugq79f/service.py", line 131, in handle_request
+    data = (result if html else json.dumps(result, ensure_ascii=False)).encode("utf-8")
+UnicodeEncodeError: 'utf-8' codec can't encode character '\ud800' in position 15: surrogates not allowed
+----------------------------------------
+test_unpaired_surrogate_cannot_poison_public_reviews (test_http.HttpTest.test_unpaired_surrogate_cannot_poison_public_reviews) ... ERROR
+
+======================================================================
+ERROR: test_unpaired_surrogate_cannot_poison_public_reviews (test_http.HttpTest.test_unpaired_surrogate_cannot_poison_public_reviews)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/mini-shop-baseline-4cugq79f/test_http.py", line 102, in test_unpaired_surrogate_cannot_poison_public_reviews
+    self.assertEqual(self.call("GET", "/reviews/view")[0], 200)
+                     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/mini-shop-baseline-4cugq79f/test_http.py", line 36, in call
+    response = urlopen(request, timeout=5)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/urllib/request.py", line 187, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/urllib/request.py", line 487, in open
+    response = self._open(req, data)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/urllib/request.py", line 504, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/urllib/request.py", line 464, in _call_chain
+    result = func(*args)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/urllib/request.py", line 1349, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/urllib/request.py", line 1324, in do_open
+    r = h.getresponse()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 1478, in getresponse
+    response.begin()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 343, in begin
+    version, status, reason = self._read_status()
+                              ~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 312, in _read_status
+    raise RemoteDisconnected("Remote end closed connection without"
+                             " response")
+http.client.RemoteDisconnected: Remote end closed connection without response
+
+======================================================================
+FAIL: test_unpaired_surrogate_cannot_poison_public_reviews (test_http.HttpTest.test_unpaired_surrogate_cannot_poison_public_reviews) (text="'\\ud800'")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/mini-shop-baseline-4cugq79f/test_http.py", line 101, in test_unpaired_surrogate_cannot_poison_public_reviews
+    self.assertEqual(status, 400)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: 201 != 400
+
+======================================================================
+FAIL: test_unpaired_surrogate_cannot_poison_public_reviews (test_http.HttpTest.test_unpaired_surrogate_cannot_poison_public_reviews) (text="'\\udfff'")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/mini-shop-baseline-4cugq79f/test_http.py", line 101, in test_unpaired_surrogate_cannot_poison_public_reviews
+    self.assertEqual(status, 400)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: 201 != 400
+
+----------------------------------------------------------------------
+Ran 1 test in 0.524s
+
+FAILED (failures=2, errors=1)
