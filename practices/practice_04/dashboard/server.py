@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT / "practices/practice_04/mcp"))
 from client import Client
 
 SERVER = "practices/practice_04/mcp/study_tracker/server.py"
-TOOLS = {"add_task", "list_tasks", "update_task_status", "study_dashboard"}
+TOOLS = {"add_task", "list_tasks", "update_task_status", "update_task_deadline", "study_dashboard"}
 DIST = ROOT / "practices/practice_04/dashboard/dist"
 
 

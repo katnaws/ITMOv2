@@ -1,0 +1,2 @@
+which specify: /Users/peskovaekaterina/.local/bin/specify
+specify 1.2.5

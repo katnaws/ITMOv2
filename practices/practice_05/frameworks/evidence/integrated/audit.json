@@ -1,0 +1,14 @@
+{
+  "docsMissingLinks": [],
+  "invalidJson": [],
+  "headUnchanged": true,
+  "stagedFiles": [],
+  "sourceMatchesIntegration": true,
+  "sourceMismatches": [],
+  "trackedWhitespaceCheck": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "excluded": "generated nested changes.diff"
+  }
+}

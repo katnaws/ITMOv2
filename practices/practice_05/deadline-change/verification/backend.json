@@ -1,0 +1,16 @@
+{
+  "runner": {
+    "status": "ok",
+    "log": "practices/practice_04/logs/runner.log"
+  },
+  "mcp_demo": "practices/practice_04/logs/study_tracker_demo.json",
+  "dashboard_demo": "practices/practice_04/logs/dashboard_check.json",
+  "notes": [
+    "tools/list includes update_task_deadline",
+    "HTTP bridge whitelist updated",
+    "days_left/overdue rules verified (today not overdue; done never overdue)",
+    "same-date idempotent success",
+    "invalid inputs return MCP isError or bridge 400",
+    "persistence across restart verified"
+  ]
+}

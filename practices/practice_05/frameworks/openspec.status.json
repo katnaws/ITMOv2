@@ -1,0 +1,108 @@
+{
+  "changes": [
+    {
+      "changeName": "deadline-change",
+      "schemaName": "spec-driven",
+      "planningHome": {
+        "kind": "repo",
+        "root": "/private/tmp/practice05-framework-replay-20261102",
+        "changesDir": "/private/tmp/practice05-framework-replay-20261102/openspec/changes",
+        "defaultSchema": "spec-driven"
+      },
+      "changeRoot": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change",
+      "artifactPaths": {
+        "proposal": {
+          "outputPath": "proposal.md",
+          "resolvedOutputPath": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/proposal.md",
+          "existingOutputPaths": [
+            "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/proposal.md"
+          ]
+        },
+        "specs": {
+          "outputPath": "specs/**/*.md",
+          "resolvedOutputPath": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/specs/**/*.md",
+          "existingOutputPaths": [
+            "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/specs/logic/spec.md"
+          ]
+        },
+        "design": {
+          "outputPath": "design.md",
+          "resolvedOutputPath": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/design.md",
+          "existingOutputPaths": [
+            "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/design.md"
+          ]
+        },
+        "tasks": {
+          "outputPath": "tasks.md",
+          "resolvedOutputPath": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/tasks.md",
+          "existingOutputPaths": [
+            "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/tasks.md"
+          ]
+        }
+      },
+      "isPlanningComplete": true,
+      "isComplete": true,
+      "applyRequires": [
+        "tasks"
+      ],
+      "nextSteps": [
+        "All planning artifacts are complete. Run openspec instructions apply --change \"deadline-change\" --json to inspect implementation progress."
+      ],
+      "actionContext": {
+        "mode": "repo-local",
+        "sourceOfTruth": "repo",
+        "planningArtifacts": [
+          "proposal",
+          "specs",
+          "design",
+          "tasks"
+        ],
+        "linkedContext": [],
+        "allowedEditRoots": [
+          "/private/tmp/practice05-framework-replay-20261102"
+        ],
+        "requiresAffectedAreaSelection": false,
+        "constraints": [
+          "Repo-local change artifacts and implementation edits are scoped to this project."
+        ]
+      },
+      "artifacts": [
+        {
+          "id": "proposal",
+          "outputPath": "proposal.md",
+          "status": "done",
+          "requires": []
+        },
+        {
+          "id": "specs",
+          "outputPath": "specs/**/*.md",
+          "status": "done",
+          "requires": [
+            "proposal"
+          ]
+        },
+        {
+          "id": "design",
+          "outputPath": "design.md",
+          "status": "done",
+          "requires": [
+            "proposal"
+          ]
+        },
+        {
+          "id": "tasks",
+          "outputPath": "tasks.md",
+          "status": "done",
+          "requires": [
+            "specs",
+            "design"
+          ]
+        }
+      ]
+    }
+  ],
+  "root": {
+    "path": "/private/tmp/practice05-framework-replay-20261102",
+    "source": "nearest"
+  }
+}
