@@ -1,0 +1,30 @@
+{
+  "baselineCommit": "57d74e9",
+  "timestamps": {
+    "stage2StartedAtUtc": "2026-11-02T13:23:50Z"
+  },
+  "openspecVersion": "1.14.1",
+  "evidence": {
+    "files": [
+      {
+        "path": "practices/practice_04/mcp/study_tracker/server.py",
+        "sha256": "90eb41940a9c6772aef6d287e980e14046a854975e5aeea307905ad6a4ca7e54"
+      },
+      {
+        "path": "practices/practice_04/dashboard/server.py",
+        "sha256": "d7453616fcee2777a59e03b6dc661c14350ddf12458a5fa98dcd716c004e3a1b"
+      }
+    ]
+  },
+  "update_task_deadlinePresentBeforeImplementation": false,
+  "openspecNewChangeFirstAttempt": {
+    "change": null,
+    "status": [
+      {
+        "severity": "error",
+        "code": "change_error",
+        "message": "Change 'deadline-change' already exists at /private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change"
+      }
+    ]
+  }
+}

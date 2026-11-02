@@ -76,7 +76,17 @@ def run():
             assert request("POST", "/api/tools/add_task", arguments,
                            {"Content-Type": "application/json", "Origin": "https://untrusted.example"})[0] == 403
             assert request("GET", "/api/state?mode=wrong")[0] == 400
+            before_move = next(t for t in updated["tasks"] if t["id"] == task["id"])
+            status, result = request("POST", "/api/tools/update_task_deadline", {"task_id": task["id"], "deadline": "2027-01-10"})
+            moved = Bridge.decode(result)
+            assert status == 200 and moved["deadline"] == "2027-01-10"
+            assert all(moved[key] == before_move[key] for key in ("id", "title", "course", "status", "created_at"))
+            for args in ({"task_id": task["id"], "deadline": "2026-02-30"}, {"task_id": 99999, "deadline": "2027-01-10"}):
+                status, result = request("POST", "/api/tools/update_task_deadline", args)
+                assert status == 400 and result["isError"]
+            assert request("GET", "/api/state")[1]["tasks"][0] == moved
             logs = [json.loads(line) for line in server.bridge.log.read_text().splitlines()]
+            assert any(entry["tool"] == "update_task_deadline" for entry in logs)
             assert any(entry["tool"] == "add_task" and entry["result"].get("isError") for entry in logs)
             assert any(entry["tool"] == "update_task_status" and not entry["result"].get("isError") for entry in logs)
             return {"ok": True, "checks": "HTTP -> MCP, persistence across subprocesses, demo isolation, invalid input, origin checks", "requests": transcript}

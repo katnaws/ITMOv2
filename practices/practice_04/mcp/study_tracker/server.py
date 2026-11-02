@@ -95,6 +95,25 @@ def update_task_status(task_id, status):
         connection.close()
 
 
+def update_task_deadline(task_id, deadline):
+    """Persist a new date without changing task identity, content or status."""
+    if type(task_id) is not int or task_id < 1:
+        raise ValueError("task_id must be a positive integer")
+    deadline = parse_date(deadline).isoformat()
+    connection = database()
+    try:
+        with connection:
+            current = connection.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+            if current is None:
+                raise ValueError(f"Task {task_id} not found")
+            if current["deadline"] != deadline:
+                connection.execute("UPDATE tasks SET deadline = ? WHERE id = ?", (deadline, task_id))
+                current = connection.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+            return task_view(current)
+    finally:
+        connection.close()
+
+
 def study_dashboard(as_of=None):
     today = parse_date(as_of) if as_of is not None else datetime.now(ZoneInfo("Europe/Moscow")).date()
     tasks = [task_view(task, today) for task in list_tasks()["tasks"]]
@@ -123,6 +142,10 @@ TOOLS = [
          {"course": STRING, "status": STATUS}),
     tool("update_task_status", "Изменить статус существующего задания по ID.",
          {"task_id": {"type": "integer", "minimum": 1}, "status": STATUS}, ("task_id", "status"), False),
+    tool("update_task_deadline", "Перенести дедлайн задания по ID; остальные поля сохраняются.",
+         {"task_id": {"type": "integer", "minimum": 1},
+          "deadline": {"type": "string", "pattern": r"^\d{4}-\d{2}-\d{2}$"}},
+         ("task_id", "deadline"), False),
     tool("study_dashboard", "Сводка прогресса, просроченные задания, дедлайны на 7 дней и следующая задача.",
          {"as_of": {"type": "string", "description": "Дата YYYY-MM-DD; по умолчанию сегодня в Москве"}}),
 ]

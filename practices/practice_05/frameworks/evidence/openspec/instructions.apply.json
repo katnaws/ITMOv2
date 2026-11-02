@@ -1,0 +1,68 @@
+{
+  "changeName": "deadline-change",
+  "changeDir": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change",
+  "schemaName": "spec-driven",
+  "contextFiles": {
+    "proposal": [
+      "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/proposal.md"
+    ],
+    "specs": [
+      "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/specs/logic/spec.md"
+    ],
+    "design": [
+      "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/design.md"
+    ],
+    "tasks": [
+      "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/tasks.md"
+    ]
+  },
+  "progress": {
+    "total": 5,
+    "complete": 0,
+    "remaining": 5
+  },
+  "tasks": [
+    {
+      "id": "1",
+      "description": "1. Logic: add `update_task_deadline` to MCP server (server.py)",
+      "done": false,
+      "sourcePath": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/tasks.md",
+      "line": 3
+    },
+    {
+      "id": "2",
+      "description": "2. Logic: extend HTTP bridge TOOLS set and verify routing",
+      "done": false,
+      "sourcePath": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/tasks.md",
+      "line": 4
+    },
+    {
+      "id": "3",
+      "description": "3. Tests: demo DB scenarios for success, idempotence, validation error, unknown id",
+      "done": false,
+      "sourcePath": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/tasks.md",
+      "line": 5
+    },
+    {
+      "id": "4",
+      "description": "4. Docs: update Study Space README for new tool",
+      "done": false,
+      "sourcePath": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/tasks.md",
+      "line": 6
+    },
+    {
+      "id": "5",
+      "description": "5. Verification: run dashboard demo with mode=demo and real; capture evidence",
+      "done": false,
+      "sourcePath": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change/tasks.md",
+      "line": 7
+    }
+  ],
+  "taskTrackingConfigured": true,
+  "state": "ready",
+  "instruction": "Read context files, work through pending tasks, mark complete as you go.\nPause if you hit blockers or need clarification.",
+  "root": {
+    "path": "/private/tmp/practice05-framework-replay-20261102",
+    "source": "nearest"
+  }
+}

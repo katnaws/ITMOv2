@@ -1,0 +1,16 @@
+{
+  "integratedAt": "2026-11-02T13:58:59.658164+00:00",
+  "actor": "Codex (direct work explicitly authorized after VseLLM quota exhaustion)",
+  "replayRoot": "/tmp/practice05-framework-replay-20261102",
+  "baselineCommit": "57d74e9bfe387f76ef8eeca7eca9f64c9ea82039",
+  "gitCommitsCreated": false,
+  "productSourceSha256": {
+    "practices/practice_04/mcp/study_tracker/server.py": "da35ba8695b1fdd1bc4e6b8cc5ddf8e91c18b1adf3ad6b3ca7d4cccf628ff3ba",
+    "practices/practice_04/dashboard/server.py": "4b57bcc42c3161f64f2de77dc9119b89ec1f6187a71f0ac519b03a877f86c883",
+    "practices/practice_04/mcp/study_tracker/check.py": "a30042f3ca3c2f431481cd3cfe95053268f54b147ba4913ee934463c086c918b",
+    "practices/practice_04/dashboard/check.py": "5614a35f1eb2444fc16a1d5d3e3df8c42e314a498f678035306d86488dce971e",
+    "practices/practice_04/dashboard/src/main.jsx": "d00fad7350a834f8de1b66bb018c3e1b22c0bb1ac1081bd33cac9edacb2146a7",
+    "practices/practice_04/dashboard/src/style.css": "596f15aadb4069f3e91e83147a2249c268adf90d34ef93557077cf0722a63aab",
+    "practices/practice_04/dashboard/README.md": "6a9542afc3f8c7974bda0cfc7b2d77ff93c8a5653135a3c549db74d95e39a3b2"
+  }
+}

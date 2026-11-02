@@ -1,0 +1,10 @@
+{
+  "change": null,
+  "status": [
+    {
+      "severity": "error",
+      "code": "change_error",
+      "message": "Change 'deadline-change' already exists at /private/tmp/practice05-framework-replay-20261102/openspec/changes/deadline-change"
+    }
+  ]
+}

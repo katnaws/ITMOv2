@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "base": "http://127.0.0.1:8765",
+  "checks": [
+    "Modal focus, unchanged/empty save disabled, mode lock and cancel without writes",
+    "Real HTTP 200, unchanged metadata, MCP history and persistence after page reload",
+    "Same task ID: today is not overdue, past active is overdue, past completed remains done",
+    "SIMULATED 502 in isolated context: localized error, retained date, real successful retry"
+  ],
+  "consoleErrors": []
+}

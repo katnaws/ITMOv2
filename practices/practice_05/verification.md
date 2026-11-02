@@ -1,28 +1,36 @@
-Verification — Practice 05 UI v2
+# Проверки итогового прогона
 
-Документ: specs/ui_verification.v2.md — содержит фактические результаты проверки (live + simulated) и пути к скриншотам в /tmp.
+После переноса в основную рабочую папку повторно выполнены:
 
-Итог
-- Базовый DOM и границы подтверждены.
-- Live provider работает; preview и одно review — пройдены.
-- Защита гонок/Abort подтверждена simulated route в отдельном контексте.
-# Verification — Practice 05 (UI+Backend, v2)
+| Проверка | Результат | Сохранённый вывод |
+| --- | --- | --- |
+| Обязательный runner практики 4, MCP, bridge, React build | Пройдена | [runner.txt](frameworks/evidence/integrated/runner.txt) |
+| Расширенная проверка MCP/HTTP на временных БД | Пройдена, 31 вызов, 6 групп | [backend-contract.json](frameworks/evidence/integrated/backend-contract.json) |
+| Полный HTTP check | Пройдена, 17 запросов | [http.json](frameworks/evidence/integrated/http.json) |
+| Chrome/Playwright: UI, сохранение, границы, ошибка, повтор | Пройдена, 4 группы, ошибок JS нет | [browser.json](frameworks/evidence/integrated/browser.json) |
+| OpenSpec validate --all --json | 1 спецификация, 0 ошибок | [openspec-validate.json](frameworks/evidence/integrated/openspec-validate.json) |
+| Spec Kit check-prerequisites с tasks | Пройдена | [speckit-prerequisites.json](frameworks/evidence/integrated/speckit-prerequisites.json) |
 
-Команда запуска (из корня):
-- python3 -m unittest discover -v -s practices/practice_05/tests -t .
+OpenSpec archive реально выполнен: [вывод CLI](frameworks/evidence/continuation/openspec-archive.json), [архив изменения](frameworks/openspec/changes/archive/2026-11-02-deadline-change/). В Spec Kit закрыты T001–T009; сверка по инструкции converge выполнена Codex: [отчёт](frameworks/evidence/continuation/speckit-converge.json). Валидатор OpenSpec проверяет структуру спецификации; prerequisite-скрипт Spec Kit — наличие документов. Корректность приложения подтверждают отдельные тесты.
 
-Фактический результат:
-- OK — 12 tests (v2)
-  - preview: редактированный текст и redactions_count≥1, идемпотентность
-  - reviews: 413/422; 503 без ключа; 502 timeout/invalid provider; boundary 20000
-  - provider: GET /api/provider возвращает JSON {provider, model, configured}
-  - origin/mime/length: строгие проверки; статик — temp fixtures, корректные Content-Type; traversal блокируется
+## Воспроизведение из корня
 
-Модели в unit: провайдер замокан (urlopen)
-- Реальные сетевые вызовы в тестах не выполнялись.
+```sh
+bash practices/practice_04/runner.sh
+python3 practices/practice_04/dashboard/check.py
+python3 practices/practice_05/frameworks/tests/deadline_check.py
+```
 
-Live evidence
-- Активный сервер: 127.0.0.1:8000; текущий PID записан в /tmp/practice05_server.pid (последний — 66099)
-- GET /api/provider → 200; POST /api/preview → 200
-- Реальный POST /api/reviews (синтетический diff) → 200; тело безопасное, без исходных секретов (англ./рус. ответ допустим)
-- Ранний 200 от старой заглушки не считается live; текущий evidence — VseLLM
+Python-проверки выводят JSON в stdout, сами новый отчёт не сохраняют. Пример: `python3 practices/practice_05/frameworks/tests/deadline_check.py > /tmp/practice05-check.json`.
+
+Браузерный скрипт: `frameworks/tests/browser.cjs`. Требует установленный Playwright и Chrome, работающий временный сервер из [DEMO](DEMO.md). В этом прогоне использован внешний тестовый runtime `/tmp/practice05-ui-check/node_modules`, без изменения зависимостей приложения:
+
+```sh
+NODE_PATH=/tmp/practice05-ui-check/node_modules BASE_URL=http://127.0.0.1:8765 node practices/practice_05/frameworks/tests/browser.cjs
+```
+
+Временный runtime не входит в репозиторий; на другом компьютере Playwright надо установить отдельно. Скрипт не обращается к персональным заданиям: используется demo и отдельные временные базы серверных тестов.
+
+Реальны HTTP 200/400/403, запись в SQLite и повтор после перезапуска MCP. Только 502 в браузере подменён через page.route в отдельном контексте; после снятия подмены выполнен настоящий успешный запрос. Не измерялись процент надёжности и время выполнения сравнительных реализаций.
+
+Ранние отчёты первой попытки в `deadline-change/` исторические. Текущий источник результатов — `frameworks/evidence/integrated/`. Информация об авторах и передаче работы — [WORKFLOW](frameworks/WORKFLOW.md).
