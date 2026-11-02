@@ -1,0 +1,1 @@
+45/45 security checks passed; evidence: /Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/defense-checks/http-after

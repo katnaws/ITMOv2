@@ -1,0 +1,12 @@
+{
+  "model": "ollama/qwen3.5:4b",
+  "backend": "Ollama /api/chat; no tools supplied",
+  "agent": "threat-judge",
+  "seconds": 239.78,
+  "system_sha256": "51b65a813c9159ce7576063832eeb0203cc08c87f780c7f868b0a641a3ee8ba1",
+  "input_sha256": "184411657d5677e8c495b9c8125d18842c681ce1792645bb957e0a2092d5bcbb",
+  "reasoning_saved": false,
+  "done_reason": "stop",
+  "prompt_eval_count": 29620,
+  "eval_count": 1276
+}
