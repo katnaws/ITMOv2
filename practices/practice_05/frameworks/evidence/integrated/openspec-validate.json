@@ -1,0 +1,35 @@
+{
+  "items": [
+    {
+      "id": "logic",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 7
+    }
+  ],
+  "summary": {
+    "totals": {
+      "items": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    "byType": {
+      "change": {
+        "items": 0,
+        "passed": 0,
+        "failed": 0
+      },
+      "spec": {
+        "items": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    }
+  },
+  "version": "1.0",
+  "root": {
+    "path": "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_05/frameworks",
+    "source": "nearest"
+  }
+}

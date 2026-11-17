@@ -28,7 +28,7 @@ def run_demo():
         with Client(SERVER, environment) as client:
             catalog = client.request("tools/list")
             assert {tool["name"] for tool in catalog["tools"]} == {
-                "add_task", "list_tasks", "update_task_status", "study_dashboard"}
+                "add_task", "list_tasks", "update_task_status", "update_task_deadline", "study_dashboard"}
 
             def call(name, **arguments):
                 result = client.call(name, **arguments)
@@ -73,9 +73,17 @@ def run_demo():
                 raise AssertionError("Unknown tool should return a JSON-RPC error")
             assert client.request("ping") == {}  # server survives errors
             assert payload(call("list_tasks"))["count"] == 3  # failed writes changed nothing
+            before_move = next(t for t in payload(call("list_tasks"))["tasks"] if t["id"] == first["id"])
+            moved = payload(call("update_task_deadline", task_id=first["id"], deadline=(today + timedelta(days=4)).isoformat()))
+            assert moved["deadline"] == (today + timedelta(days=4)).isoformat()
+            assert all(moved[key] == before_move[key] for key in ("id", "title", "course", "status", "created_at"))
+            assert payload(call("update_task_deadline", task_id=first["id"], deadline=moved["deadline"])) == moved
+            assert call("update_task_deadline", task_id=first["id"], deadline="2026-02-30")["isError"]
+            assert call("update_task_deadline", task_id=99999, deadline=today.isoformat())["isError"]
         with Client(SERVER, environment) as restarted:
             persisted = payload(restarted.call("list_tasks"))
             assert persisted["count"] == 3
+            assert next(task for task in persisted["tasks"] if task["id"] == first["id"])["deadline"] == moved["deadline"]
             assert next(task for task in persisted["tasks"] if task["id"] == first["id"])["status"] == "in_progress"
             transcript.append({"check": "persistence_after_restart", "result": persisted})
     return {"ok": True, "transport": "MCP JSON-RPC 2.0 over stdio", "as_of": today.isoformat(),

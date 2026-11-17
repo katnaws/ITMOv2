@@ -1,0 +1,2 @@
+OpenSpec version check in replay root
+1.14.1

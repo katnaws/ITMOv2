@@ -1,0 +1,112 @@
+openapi: 3.0.3
+info:
+  title: Study Space Deadline Change
+  version: 1.0.0-before-implementation
+servers:
+  - url: http://127.0.0.1:8765
+paths:
+  /api/tools/update_task_deadline:
+    post:
+      summary: Change deadline of an existing study task via MCP bridge
+      parameters:
+        - in: query
+          name: mode
+          schema:
+            type: string
+            enum: [real, demo]
+          required: false
+          description: Data source mode; real uses persisted DB, demo seeds a temporary DB.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                task_id:
+                  type: integer
+                  minimum: 1
+                  description: Positive integer identifier; boolean values are invalid.
+                deadline:
+                  type: string
+                  pattern: '^\d{4}-\d{2}-\d{2}$'
+                  description: Date in YYYY-MM-DD (Europe/Moscow). Past dates allowed.
+              required: [task_id, deadline]
+      responses:
+        '200':
+          description: Success, MCP envelope with updated task object in content[0].text
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MCPEnvelopeSuccess'
+        '400':
+          description: Validation or business error; either MCP isError envelope or bridge validation error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/MCPEnvelopeError'
+                  - $ref: '#/components/schemas/BridgeError'
+        '502':
+          description: MCP bridge failure/unavailability
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BridgeError'
+components:
+  schemas:
+    MCPEnvelopeSuccess:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum: [text]
+              text:
+                type: string
+                description: JSON stringified Task object
+        isError:
+          type: boolean
+          enum: [false]
+      required: [content, isError]
+    MCPEnvelopeError:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum: [text]
+              text:
+                type: string
+                description: Human-readable error message (no stack traces)
+        isError:
+          type: boolean
+          enum: [true]
+      required: [content, isError]
+    BridgeError:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+    Task:
+      type: object
+      properties:
+        id: { type: integer, minimum: 1 }
+        title: { type: string }
+        course: { type: string }
+        deadline: { type: string, pattern: '^\d{4}-\d{2}-\d{2}$' }
+        status: { type: string, enum: [todo, in_progress, done] }
+        created_at: { type: string }
+        days_left: { type: integer }
+        overdue: { type: boolean }
+      required: [id, title, course, deadline, status, created_at, days_left, overdue]

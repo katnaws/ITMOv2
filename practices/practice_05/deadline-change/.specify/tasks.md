@@ -1,0 +1,21 @@
+Tasks: перенос дедлайна
+
+- MCP function:
+  - Implement update_task_deadline(task_id:int, deadline:str) with:
+    - parse_date(deadline) strict YYYY-MM-DD
+    - type(task_id) is int and task_id >= 1 (reject bool)
+    - UPDATE tasks SET deadline = ? WHERE id = ?; if rowcount==0 -> error "Task <id> not found"
+    - Return task_view(...) object; same-date remains success (no-op)
+- MCP catalog:
+  - Register tool: name: update_task_deadline; description; inputSchema: { task_id: integer(minimum:1), deadline: string }; required: [task_id, deadline]; additionalProperties: false
+- Bridge:
+  - Add to TOOLS set: update_task_deadline
+  - No direct DB access; rely on MCP subprocess
+- UI:
+  - Modal with input type=date; prefill current deadline; Save disabled when unchanged
+  - POST /api/tools/update_task_deadline?mode=... body { task_id, deadline }
+  - On success: toast + GET /api/state?mode=... to refresh
+  - Simulated 502 in a separate context (page.route): inline Russian error, date preserved, retry enabled; after unroute, retry succeeds
+- E2E checks (demo DB):
+  - success future/today/past(todo)/past(done)
+  - errors: invalid calendar date, unknown ID (real HTTP); simulated 502 via route (not a real MCP failure)

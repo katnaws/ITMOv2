@@ -1,7 +1,7 @@
 {
   "ok": true,
   "transport": "MCP JSON-RPC 2.0 over stdio",
-  "as_of": "2026-10-07",
+  "as_of": "2026-11-02",
   "database": "temporary; real study data unchanged",
   "calls": [
     {
@@ -11,7 +11,7 @@
         "content": [
           {
             "type": "text",
-            "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 0, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 0}, \"progress_percent\": 0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
+            "text": "{\"as_of\": \"2026-11-02\", \"timezone\": \"Europe/Moscow\", \"total\": 0, \"by_status\": {\"todo\": 0, \"in_progress\": 0, \"done\": 0}, \"progress_percent\": 0, \"overdue\": [], \"due_soon\": [], \"next_task\": null}"
           }
         ],
         "isError": false
@@ -22,13 +22,13 @@
       "arguments": {
         "title": "Демо: реализовать MCP",
         "course": "Технологии ИИ",
-        "deadline": "2026-10-10"
+        "deadline": "2026-11-05"
       },
       "result": {
         "content": [
           {
             "type": "text",
-            "text": "{\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-10\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:52:23.501672+03:00\", \"days_left\": 3, \"overdue\": false}"
+            "text": "{\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-05\", \"status\": \"todo\", \"created_at\": \"2026-11-02T16:58:59.881349+03:00\", \"days_left\": 3, \"overdue\": false}"
           }
         ],
         "isError": false
@@ -39,13 +39,13 @@
       "arguments": {
         "title": "Демо: написать отчёт",
         "course": "Технологии ИИ",
-        "deadline": "2026-10-06"
+        "deadline": "2026-11-01"
       },
       "result": {
         "content": [
           {
             "type": "text",
-            "text": "{\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:52:23.502205+03:00\", \"days_left\": -1, \"overdue\": true}"
+            "text": "{\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-01\", \"status\": \"todo\", \"created_at\": \"2026-11-02T16:58:59.882325+03:00\", \"days_left\": -1, \"overdue\": true}"
           }
         ],
         "isError": false
@@ -56,13 +56,13 @@
       "arguments": {
         "title": "Демо: решить задачи",
         "course": "Математика",
-        "deadline": "2026-10-07"
+        "deadline": "2026-11-02"
       },
       "result": {
         "content": [
           {
             "type": "text",
-            "text": "{\"id\": 3, \"title\": \"Демо: решить задачи\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:52:23.502554+03:00\", \"days_left\": 0, \"overdue\": false}"
+            "text": "{\"id\": 3, \"title\": \"Демо: решить задачи\", \"course\": \"Математика\", \"deadline\": \"2026-11-02\", \"status\": \"todo\", \"created_at\": \"2026-11-02T16:58:59.883248+03:00\", \"days_left\": 0, \"overdue\": false}"
           }
         ],
         "isError": false
@@ -78,7 +78,7 @@
         "content": [
           {
             "type": "text",
-            "text": "{\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-10\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:52:23.501672+03:00\", \"days_left\": 3, \"overdue\": false}"
+            "text": "{\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-05\", \"status\": \"in_progress\", \"created_at\": \"2026-11-02T16:58:59.881349+03:00\", \"days_left\": 3, \"overdue\": false}"
           }
         ],
         "isError": false
@@ -94,7 +94,7 @@
         "content": [
           {
             "type": "text",
-            "text": "{\"id\": 3, \"title\": \"Демо: решить задачи\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:52:23.502554+03:00\", \"days_left\": 0, \"overdue\": false}"
+            "text": "{\"id\": 3, \"title\": \"Демо: решить задачи\", \"course\": \"Математика\", \"deadline\": \"2026-11-02\", \"status\": \"done\", \"created_at\": \"2026-11-02T16:58:59.883248+03:00\", \"days_left\": 0, \"overdue\": false}"
           }
         ],
         "isError": false
@@ -103,13 +103,13 @@
     {
       "tool": "study_dashboard",
       "arguments": {
-        "as_of": "2026-10-07"
+        "as_of": "2026-11-02"
       },
       "result": {
         "content": [
           {
             "type": "text",
-            "text": "{\"as_of\": \"2026-10-07\", \"timezone\": \"Europe/Moscow\", \"total\": 3, \"by_status\": {\"todo\": 1, \"in_progress\": 1, \"done\": 1}, \"progress_percent\": 33.3, \"overdue\": [{\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:52:23.502205+03:00\", \"days_left\": -1, \"overdue\": true}], \"due_soon\": [{\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-10\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:52:23.501672+03:00\", \"days_left\": 3, \"overdue\": false}], \"next_task\": {\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:52:23.502205+03:00\", \"days_left\": -1, \"overdue\": true}}"
+            "text": "{\"as_of\": \"2026-11-02\", \"timezone\": \"Europe/Moscow\", \"total\": 3, \"by_status\": {\"todo\": 1, \"in_progress\": 1, \"done\": 1}, \"progress_percent\": 33.3, \"overdue\": [{\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-01\", \"status\": \"todo\", \"created_at\": \"2026-11-02T16:58:59.882325+03:00\", \"days_left\": -1, \"overdue\": true}], \"due_soon\": [{\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-05\", \"status\": \"in_progress\", \"created_at\": \"2026-11-02T16:58:59.881349+03:00\", \"days_left\": 3, \"overdue\": false}], \"next_task\": {\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-01\", \"status\": \"todo\", \"created_at\": \"2026-11-02T16:58:59.882325+03:00\", \"days_left\": -1, \"overdue\": true}}"
           }
         ],
         "isError": false
@@ -118,13 +118,13 @@
     {
       "tool": "study_dashboard",
       "arguments": {
-        "as_of": "2026-10-06"
+        "as_of": "2026-11-01"
       },
       "result": {
         "content": [
           {
             "type": "text",
-            "text": "{\"as_of\": \"2026-10-06\", \"timezone\": \"Europe/Moscow\", \"total\": 3, \"by_status\": {\"todo\": 1, \"in_progress\": 1, \"done\": 1}, \"progress_percent\": 33.3, \"overdue\": [], \"due_soon\": [{\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:52:23.502205+03:00\", \"days_left\": 0, \"overdue\": false}, {\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-10\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:52:23.501672+03:00\", \"days_left\": 4, \"overdue\": false}], \"next_task\": {\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:52:23.502205+03:00\", \"days_left\": 0, \"overdue\": false}}"
+            "text": "{\"as_of\": \"2026-11-01\", \"timezone\": \"Europe/Moscow\", \"total\": 3, \"by_status\": {\"todo\": 1, \"in_progress\": 1, \"done\": 1}, \"progress_percent\": 33.3, \"overdue\": [], \"due_soon\": [{\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-01\", \"status\": \"todo\", \"created_at\": \"2026-11-02T16:58:59.882325+03:00\", \"days_left\": 0, \"overdue\": false}, {\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-05\", \"status\": \"in_progress\", \"created_at\": \"2026-11-02T16:58:59.881349+03:00\", \"days_left\": 4, \"overdue\": false}], \"next_task\": {\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-01\", \"status\": \"todo\", \"created_at\": \"2026-11-02T16:58:59.882325+03:00\", \"days_left\": 0, \"overdue\": false}}"
           }
         ],
         "isError": false
@@ -140,7 +140,7 @@
         "content": [
           {
             "type": "text",
-            "text": "{\"tasks\": [{\"id\": 3, \"title\": \"Демо: решить задачи\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:52:23.502554+03:00\", \"days_left\": 0, \"overdue\": false}], \"count\": 1}"
+            "text": "{\"tasks\": [{\"id\": 3, \"title\": \"Демо: решить задачи\", \"course\": \"Математика\", \"deadline\": \"2026-11-02\", \"status\": \"done\", \"created_at\": \"2026-11-02T16:58:59.883248+03:00\", \"days_left\": 0, \"overdue\": false}], \"count\": 1}"
           }
         ],
         "isError": false
@@ -166,7 +166,7 @@
       "arguments": {
         "title": "",
         "course": "ИИ",
-        "deadline": "2026-10-07"
+        "deadline": "2026-11-02"
       },
       "result": {
         "content": [
@@ -297,10 +297,87 @@
         "content": [
           {
             "type": "text",
-            "text": "{\"tasks\": [{\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-06\", \"status\": \"todo\", \"created_at\": \"2026-10-07T23:52:23.502205+03:00\", \"days_left\": -1, \"overdue\": true}, {\"id\": 3, \"title\": \"Демо: решить задачи\", \"course\": \"Математика\", \"deadline\": \"2026-10-07\", \"status\": \"done\", \"created_at\": \"2026-10-07T23:52:23.502554+03:00\", \"days_left\": 0, \"overdue\": false}, {\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-10-10\", \"status\": \"in_progress\", \"created_at\": \"2026-10-07T23:52:23.501672+03:00\", \"days_left\": 3, \"overdue\": false}], \"count\": 3}"
+            "text": "{\"tasks\": [{\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-01\", \"status\": \"todo\", \"created_at\": \"2026-11-02T16:58:59.882325+03:00\", \"days_left\": -1, \"overdue\": true}, {\"id\": 3, \"title\": \"Демо: решить задачи\", \"course\": \"Математика\", \"deadline\": \"2026-11-02\", \"status\": \"done\", \"created_at\": \"2026-11-02T16:58:59.883248+03:00\", \"days_left\": 0, \"overdue\": false}, {\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-05\", \"status\": \"in_progress\", \"created_at\": \"2026-11-02T16:58:59.881349+03:00\", \"days_left\": 3, \"overdue\": false}], \"count\": 3}"
           }
         ],
         "isError": false
+      }
+    },
+    {
+      "tool": "list_tasks",
+      "arguments": {},
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"tasks\": [{\"id\": 2, \"title\": \"Демо: написать отчёт\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-01\", \"status\": \"todo\", \"created_at\": \"2026-11-02T16:58:59.882325+03:00\", \"days_left\": -1, \"overdue\": true}, {\"id\": 3, \"title\": \"Демо: решить задачи\", \"course\": \"Математика\", \"deadline\": \"2026-11-02\", \"status\": \"done\", \"created_at\": \"2026-11-02T16:58:59.883248+03:00\", \"days_left\": 0, \"overdue\": false}, {\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-05\", \"status\": \"in_progress\", \"created_at\": \"2026-11-02T16:58:59.881349+03:00\", \"days_left\": 3, \"overdue\": false}], \"count\": 3}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "tool": "update_task_deadline",
+      "arguments": {
+        "task_id": 1,
+        "deadline": "2026-11-06"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-06\", \"status\": \"in_progress\", \"created_at\": \"2026-11-02T16:58:59.881349+03:00\", \"days_left\": 4, \"overdue\": false}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "tool": "update_task_deadline",
+      "arguments": {
+        "task_id": 1,
+        "deadline": "2026-11-06"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"id\": 1, \"title\": \"Демо: реализовать MCP\", \"course\": \"Технологии ИИ\", \"deadline\": \"2026-11-06\", \"status\": \"in_progress\", \"created_at\": \"2026-11-02T16:58:59.881349+03:00\", \"days_left\": 4, \"overdue\": false}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "tool": "update_task_deadline",
+      "arguments": {
+        "task_id": 1,
+        "deadline": "2026-02-30"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "day 30 must be in range 1..28 for month 2 in year 2026"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "tool": "update_task_deadline",
+      "arguments": {
+        "task_id": 99999,
+        "deadline": "2026-11-02"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Task 99999 not found"
+          }
+        ],
+        "isError": true
       }
     },
     {
@@ -311,9 +388,9 @@
             "id": 2,
             "title": "Демо: написать отчёт",
             "course": "Технологии ИИ",
-            "deadline": "2026-10-06",
+            "deadline": "2026-11-01",
             "status": "todo",
-            "created_at": "2026-10-07T23:52:23.502205+03:00",
+            "created_at": "2026-11-02T16:58:59.882325+03:00",
             "days_left": -1,
             "overdue": true
           },
@@ -321,9 +398,9 @@
             "id": 3,
             "title": "Демо: решить задачи",
             "course": "Математика",
-            "deadline": "2026-10-07",
+            "deadline": "2026-11-02",
             "status": "done",
-            "created_at": "2026-10-07T23:52:23.502554+03:00",
+            "created_at": "2026-11-02T16:58:59.883248+03:00",
             "days_left": 0,
             "overdue": false
           },
@@ -331,10 +408,10 @@
             "id": 1,
             "title": "Демо: реализовать MCP",
             "course": "Технологии ИИ",
-            "deadline": "2026-10-10",
+            "deadline": "2026-11-06",
             "status": "in_progress",
-            "created_at": "2026-10-07T23:52:23.501672+03:00",
-            "days_left": 3,
+            "created_at": "2026-11-02T16:58:59.881349+03:00",
+            "days_left": 4,
             "overdue": false
           }
         ],

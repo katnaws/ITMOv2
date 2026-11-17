@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Activity, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, Circle, Clock3, Code2, FlaskConical, LayoutDashboard, ListTodo, LoaderCircle, Plus, RefreshCw, Search, Sparkles, TriangleAlert, X } from 'lucide-react';
+import { Activity, BookOpen, CalendarDays, Check, CheckCheck, ChevronDown, Circle, Clock3, Code2, FlaskConical, LayoutDashboard, ListTodo, LoaderCircle, Pencil, Plus, RefreshCw, Search, Sparkles, TriangleAlert, X } from 'lucide-react';
 import './style.css';
 
 const STATUS = { todo: 'К выполнению', in_progress: 'В работе', done: 'Готово' };
-const LABELS = { add_task: 'Добавление задания', update_task_status: 'Изменение статуса', list_tasks: 'Список заданий', study_dashboard: 'Сводка прогресса' };
+const LABELS = { add_task: 'Добавление задания', update_task_status: 'Изменение статуса', update_task_deadline: 'Перенос дедлайна', list_tasks: 'Список заданий', study_dashboard: 'Сводка прогресса' };
 const dateLabel = value => new Date(`${value}T12:00:00`).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
 const courseColors = ['purple', 'blue', 'orange', 'teal'];
 const courseWord = count => count % 10 === 1 && count % 100 !== 11 ? 'курс' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'курса' : 'курсов';
@@ -29,6 +29,7 @@ function App() {
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [deadlineTask, setDeadlineTask] = useState(null);
   const generation = useRef(0);
 
   async function refresh(currentMode = mode, quiet = false) {
@@ -37,9 +38,10 @@ function App() {
     setError('');
     try {
       const result = await api(`/api/state?mode=${currentMode}`);
-      if (ticket === generation.current) setState(result);
+      if (ticket === generation.current) { setState(result); return result; }
     } catch (e) {
       if (ticket === generation.current) setError(e.message);
+      return null;
     } finally {
       if (ticket === generation.current) setLoading(false);
     }
@@ -77,6 +79,19 @@ function App() {
     finally { setBusy(false); }
   }
 
+  async function moveDeadline(task, deadline) {
+    setBusy(true);
+    setError('');
+    try {
+      await callTool('update_task_deadline', { task_id: task.id, deadline });
+      setDeadlineTask(null);
+      const updated = await refresh(mode, true);
+      setNotice(updated ? 'Дедлайн перенесён' : 'Срок сохранён. Обновите список заданий.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const tasks = state?.tasks || [];
   const dashboard = state?.dashboard;
   const courses = [...new Set(tasks.map(t => t.course))];
@@ -109,7 +124,7 @@ function App() {
     </aside>
 
     <main>
-      <div className="topbar"><div className="breadcrumb">Моя учёба<span>/</span><strong>{view === 'overview' ? 'Обзор' : view === 'tasks' ? 'Все задания' : 'Дедлайны'}</strong></div><div className="mode-switch" aria-label="Режим данных"><button disabled={busy} className={mode === 'real' ? 'selected' : ''} onClick={() => switchMode('real')}>Мои задания</button><button disabled={busy} className={mode === 'demo' ? 'selected' : ''} onClick={() => switchMode('demo')}><FlaskConical size={15} />Демо</button></div></div>
+      <div className="topbar"><div className="breadcrumb">Моя учёба<span>/</span><strong>{view === 'overview' ? 'Обзор' : view === 'tasks' ? 'Все задания' : 'Дедлайны'}</strong></div><div className="mode-switch" aria-label="Режим данных"><button disabled={busy || !!deadlineTask} className={mode === 'real' ? 'selected' : ''} onClick={() => switchMode('real')}>Мои задания</button><button disabled={busy || !!deadlineTask} className={mode === 'demo' ? 'selected' : ''} onClick={() => switchMode('demo')}><FlaskConical size={15} />Демо</button></div></div>
       <div className="page-content">
         <header className="page-heading"><div><div className="eyebrow">ТВОЙ УЧЕБНЫЙ РИТМ</div><h1>{view === 'overview' ? 'Всё по плану.' : view === 'tasks' ? 'Мои задания' : 'Ближайшие дедлайны'}</h1><p>{dashboard ? new Date(`${dashboard.as_of}T12:00:00`).toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }) : 'Загружаем задания…'}<span className="heading-dot">·</span>Этот семестр</p></div><button className="button primary" disabled={loading || busy || !state} onClick={() => setShowForm(true)}><Plus size={19} />Добавить задание</button></header>
         {mode === 'demo' && <div className="demo-banner"><FlaskConical size={17} /><span>Деморежим: можно попробовать всё. Ваши задания хранятся отдельно.</span></div>}
@@ -130,7 +145,7 @@ function App() {
             <div className="task-list" aria-busy={loading}>
               {loading && !state ? <div className="empty-state"><LoaderCircle className="spin" size={28} /><h3>Загружаем задания</h3></div> : filtered.length ? filtered.map(task => <div key={task.id} className={`task-row ${task.status === 'done' ? 'completed' : ''}`}>
                 <div className="task-info"><button className={`task-check ${task.status === 'done' ? 'checked' : ''}`} aria-label={`${task.status === 'done' ? 'Вернуть в задания' : 'Выполнить'}: ${task.title}`} disabled={busy} onClick={() => changeStatus(task, task.status === 'done' ? 'todo' : 'done')}>{task.status === 'done' && <Check size={14} />}</button><div><div className="task-title">{task.title}</div><span className={`course-label ${colorFor(task.course)}`}><span />{task.course}</span></div></div>
-                <div className={`task-date ${task.overdue ? 'late' : ''}`}><CalendarDays size={14} /><div>{dateLabel(task.deadline)}<small>{task.status === 'done' ? 'Завершено' : task.days_left < 0 ? `${Math.abs(task.days_left)} дн. назад` : task.days_left === 0 ? 'Сегодня' : task.days_left === 1 ? 'Завтра' : `Через ${task.days_left} дн.`}</small></div></div>
+                <div className={`task-date ${task.overdue ? 'late' : ''}`}><CalendarDays size={14} /><div>{dateLabel(task.deadline)}<small>{task.status === 'done' ? 'Завершено' : task.days_left < 0 ? `${Math.abs(task.days_left)} дн. назад` : task.days_left === 0 ? 'Сегодня' : task.days_left === 1 ? 'Завтра' : `Через ${task.days_left} дн.`}</small></div><button type="button" className="icon-button deadline-edit" title="Перенести срок" aria-label={'Перенести срок: ' + task.title} disabled={busy} onClick={() => setDeadlineTask(task)}><Pencil size={14} /></button></div>
                 <label className={`status-select ${task.status}`}><span className="status-symbol">{task.status === 'done' ? <Check size={13} /> : task.status === 'in_progress' ? <Clock3 size={13} /> : <Circle size={9} />}</span><select aria-label={`Статус: ${task.title}`} value={task.status} disabled={busy} onChange={e => changeStatus(task, e.target.value)}>{Object.entries(STATUS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select><ChevronDown size={12} /></label>
               </div>) : <div className="empty-state"><span className="empty-icon"><BookOpen size={28} /></span><h3>{tasks.length ? 'Ничего не найдено' : 'Начнём с первого задания'}</h3><p>{tasks.length ? 'Попробуйте изменить поиск или фильтры.' : 'Добавьте задание — и оно появится здесь.'}</p>{!tasks.length && <button className="button secondary" onClick={() => setShowForm(true)}><Plus size={16} />Добавить задание</button>}</div>}
             </div>
@@ -148,6 +163,7 @@ function App() {
     </main>
     {notice && <div className="toast" role="status"><CheckCheck size={18} />{notice}</div>}
     {showForm && <TaskForm mode={mode} courses={courses} onClose={() => setShowForm(false)} onSubmit={async args => { setBusy(true); try { await callTool('add_task', args); setShowForm(false); await refresh(mode, true); setNotice('Задание добавлено'); } finally { setBusy(false); } }} />}
+    {deadlineTask && <DeadlineForm task={deadlineTask} mode={mode} onClose={() => setDeadlineTask(null)} onSubmit={date => moveDeadline(deadlineTask, date)} />}
     {showHistory && <History history={state?.history || []} mode={mode} onClose={() => setShowHistory(false)} />}
   </div>;
 }
@@ -163,13 +179,61 @@ function Modal({ title, onClose, children, className = '' }) {
     dialog.showModal();
     return () => dialog.close();
   }, []);
-  return <dialog ref={ref} className={`modal ${className}`} onCancel={e => { e.preventDefault(); onClose(); }} onClick={e => { if (e.target === ref.current) onClose(); }}><div className="modal-header"><h2>{title}</h2><button className="icon-button" onClick={onClose} aria-label="Закрыть"><X size={20} /></button></div>{children}</dialog>;
+  return <dialog aria-label={title} ref={ref} className={`modal ${className}`} onCancel={e => { e.preventDefault(); onClose(); }} onClick={e => { if (e.target === ref.current) onClose(); }}><div className="modal-header"><h2>{title}</h2><button className="icon-button" onClick={onClose} aria-label="Закрыть"><X size={20} /></button></div>{children}</dialog>;
 }
 
 function TaskForm({ mode, courses, onClose, onSubmit }) {
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   return <Modal title="Новое задание" onClose={() => { if (!saving) onClose(); }}><p className="modal-description">{mode === 'demo' ? 'Задание будет добавлено в демопространство.' : 'Что нужно сделать и к какому сроку?'}</p><form onSubmit={async e => { e.preventDefault(); const data = new FormData(e.currentTarget); setSaving(true); setError(''); try { await onSubmit(Object.fromEntries(data)); } catch (err) { setError(err.message); } finally { setSaving(false); } }}><label>Название задания<input autoFocus name="title" required maxLength={500} placeholder="Например, подготовить защиту" /></label><label>Курс<input name="course" list="course-list" required maxLength={500} placeholder="Название предмета" /><datalist id="course-list">{courses.map(c => <option key={c} value={c} />)}</datalist></label><label>Дедлайн<input name="deadline" type="date" required /></label>{error && <p className="form-error" role="alert">{error}</p>}<div className="form-actions"><button type="button" className="button secondary" disabled={saving} onClick={onClose}>Отмена</button><button className="button primary" disabled={saving}>{saving ? <LoaderCircle size={17} className="spin" /> : <Plus size={17} />}{saving ? 'Сохраняем…' : 'Добавить задание'}</button></div></form></Modal>;
+}
+
+
+function deadlineError(error) {
+  const message = String(error?.message || '');
+  if (/Task \d+ not found/i.test(message)) return 'Задание не найдено. Обновите список.';
+  if (/Date must|day.*range|month.*range|year.*range|isoformat/i.test(message)) return 'Укажите корректную дату.';
+  if (/MCP unavailable|Failed to fetch|network|timeout/i.test(message)) return 'Сервис недоступен. Попробуйте ещё раз.';
+  return 'Не удалось перенести дедлайн. Попробуйте ещё раз.';
+}
+
+function validDeadline(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number(value.slice(0, 4)) < 1) return false;
+  const parsed = new Date(value + 'T12:00:00Z');
+  return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+
+function DeadlineForm({ task, mode, onClose, onSubmit }) {
+  const [date, setDate] = useState(task.deadline);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const inFlight = useRef(false);
+  const dateInput = useRef(null);
+  useEffect(() => { dateInput.current?.focus(); }, []);
+  const unchanged = date === task.deadline;
+  const oldDate = new Date(task.deadline + 'T12:00:00Z').toLocaleDateString('ru-RU', { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric' });
+
+  async function save(event) {
+    event.preventDefault();
+    if (inFlight.current || unchanged || !validDeadline(date)) return;
+    inFlight.current = true;
+    setSaving(true);
+    setError('');
+    try { await onSubmit(date); }
+    catch (failure) { setError(deadlineError(failure)); }
+    finally { inFlight.current = false; setSaving(false); }
+  }
+
+  return <Modal title="Перенос дедлайна" onClose={() => { if (!inFlight.current) onClose(); }}>
+    <p className="modal-description">{mode === 'demo' ? 'Изменение в демопространстве. Ваши задания хранятся отдельно.' : 'Выберите новый срок для этого задания.'}</p>
+    <div className="deadline-summary"><strong>{task.title}</strong><span><CalendarDays size={15} />Текущий срок: {oldDate}</span></div>
+    <form onSubmit={save} aria-busy={saving}>
+      <label>Новый дедлайн<input ref={dateInput} autoFocus type="date" name="deadline" required value={date} disabled={saving} aria-describedby="deadline-help" onChange={event => { setDate(event.target.value); setError(''); }} /></label>
+      <p className="deadline-help" id="deadline-help">{unchanged ? 'Выберите другую дату, чтобы перенести срок.' : 'Можно выбрать и прошедшую дату. Статус задания сохранится.'}</p>
+      {error && <p className="form-error" role="alert">{error}</p>}
+      <div className="form-actions"><button type="button" className="button secondary" disabled={saving} onClick={onClose}>Отмена</button><button type="submit" className="button primary" disabled={saving || unchanged || !validDeadline(date)}>{saving ? <LoaderCircle size={17} className="spin" /> : <Check size={17} />}{saving ? 'Сохраняем…' : 'Сохранить'}</button></div>
+    </form>
+  </Modal>;
 }
 
 function History({ history, mode, onClose }) {

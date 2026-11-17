@@ -1,0 +1,26 @@
+{
+  "author": "Codex",
+  "reason": "User authorized direct continuation after VseLLM 402 provider.quota",
+  "startedAt": "2026-11-02T13:42:36.114148+00:00",
+  "baselineCommit": "57d74e9bfe387f76ef8eeca7eca9f64c9ea82039",
+  "initialSourceSha256": {
+    "practices/practice_04/mcp/study_tracker/server.py": "90eb41940a9c6772aef6d287e980e14046a854975e5aeea307905ad6a4ca7e54",
+    "practices/practice_04/dashboard/server.py": "d7453616fcee2777a59e03b6dc661c14350ddf12458a5fa98dcd716c004e3a1b",
+    "practices/practice_04/mcp/study_tracker/check.py": "088ada4b6be057b664c396399cd1943689fefc29e8d82430205fbfea37e016fe",
+    "practices/practice_04/dashboard/check.py": "51c4cc1497f0d664986acc6cdadce2201f7cc34a4a87e60c18f24a6f2e40da74",
+    "practices/practice_04/dashboard/src/main.jsx": "cfe3a41bcc0f51a6923e1d00ab517e0a80a0fc7290fe6951e6347ebc5f09ddf0",
+    "practices/practice_04/dashboard/src/style.css": "a5885d3af1b6a1ac70fd1c7ededda35b8cde46157bac3d728aedc9e8353d4e61"
+  },
+  "frameworks": {
+    "logic": "OpenSpec 1.14.1",
+    "ui": "GitHub Spec Kit 1.2.5"
+  },
+  "originalSourceSha256": {
+    "practices/practice_04/mcp/study_tracker/server.py": "4098f2aae786df08db232896932228e628dade6ae24fc7487e9398de24e6a474",
+    "practices/practice_04/dashboard/server.py": "4b57bcc42c3161f64f2de77dc9119b89ec1f6187a71f0ac519b03a877f86c883",
+    "practices/practice_04/mcp/study_tracker/check.py": "fefc4ccbec7787b23b9d474c94b603bde3bdc5f1f718c6409b4e303a697cd177",
+    "practices/practice_04/dashboard/check.py": "676972c1eab614457afb4e4884b4668dc7f35e44b0c27f6ecb2b515f957c69fa",
+    "practices/practice_04/dashboard/src/main.jsx": "96cce34d97b34ad4269cad5a74dff5f8b334e6128b095ac4a617db9863297e72",
+    "practices/practice_04/dashboard/src/style.css": "cc7ee973ff0249bc94246531d0d9a2e1f3fa67fd897ad90870ff010227c5c395"
+  }
+}

@@ -1,0 +1,30 @@
+endpoint: /api/tools/update_task_deadline
+method: POST
+query:
+  mode: [real, demo]
+body:
+  type: object
+  required: [task_id, deadline]
+  additionalProperties: false
+  properties:
+    task_id: {type: integer, minimum: 1}
+    deadline: {type: string, pattern: '^\d{4}-\d{2}-\d{2}$'}
+responses:
+  200: {description: 'MCP envelope: isError false; content[0].text is the updated task JSON'}
+  400: {description: 'MCP isError true for bad arguments or unknown ID; bridge error for bad JSON/body'}
+  403: {description: 'Invalid Host or Origin'}
+  502: {description: 'Running HTTP bridge could not execute MCP request'}
+semantics:
+  timezone: Europe/Moscow
+  past_dates_allowed: true
+  today_overdue: false
+  completed_tasks_overdue: false
+  same_date: successful no-op
+  unchanged_fields: [id, title, course, status, created_at]
+  recomputed_fields: [days_left, overdue]
+ui:
+  unchanged_or_empty_date: save disabled
+  saving: lock inputs, duplicates and dismissal
+  modal_open: mode switch disabled
+  success: close, refresh state, toast
+  failure: localized error, retain date, allow retry

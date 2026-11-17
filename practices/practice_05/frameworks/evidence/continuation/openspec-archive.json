@@ -1,0 +1,18 @@
+{
+  "archive": {
+    "change": "deadline-change",
+    "archivedAs": "2026-11-02-deadline-change",
+    "path": "/private/tmp/practice05-framework-replay-20261102/openspec/changes/archive/2026-11-02-deadline-change",
+    "specsUpdated": true,
+    "totals": {
+      "added": 1,
+      "modified": 0,
+      "removed": 0,
+      "renamed": 0
+    }
+  },
+  "root": {
+    "path": "/private/tmp/practice05-framework-replay-20261102",
+    "source": "nearest"
+  }
+}

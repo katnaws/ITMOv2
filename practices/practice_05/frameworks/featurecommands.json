@@ -1,0 +1,16 @@
+{
+  "commands": [
+    {"cmd": ".specify/scripts/bash/create-new-feature.sh --json --name \"deadline-move-ui\"", "exit": 0},
+    {"cmd": ".specify/scripts/bash/resolve-template.sh constitution-template --json", "exit": 0},
+    {"cmd": ".specify/scripts/bash/setup-plan.sh --json", "exit": 0},
+    {"cmd": ".specify/scripts/bash/setup-tasks.sh --json", "exit": 0},
+    {"cmd": ".specify/scripts/bash/check-prerequisites.sh --json --paths-only", "exit": 0}
+  ],
+  "paths": {
+    "feature_dir": "specs/001-name-deadline-move",
+    "spec_file": "specs/001-name-deadline-move/spec.md",
+    "plan_file": "specs/001-name-deadline-move/plan.md",
+    "tasks_file": "specs/001-name-deadline-move/tasks.md",
+    "constitution_file": ".specify/memory/constitution.md"
+  }
+}
