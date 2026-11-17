@@ -34,3 +34,33 @@
 | REPORT_02: описание всех найденных проблем после фикса присутствует, можно в тексте PR | 2 |
 | Студент открыл PR и предоставил свои выводы (1-2 абзаца) | 1 |
 
+## Подготовленные материалы ДЗ 6
+
+- [Модель угроз и политика доступа](THREAT_MODEL.md).
+- [REPORT_01: исходные проблемы и воспроизведение](REPORT_01.md).
+- [REPORT_02: исправления, повторные проверки и ограничения](REPORT_02.md).
+- [Кастомный промпт судьи](judge-system-prompt.md).
+- [Текст для сдачи](SUBMISSION.md).
+- [HTTP-доказательства до](evidence/before/http-results.json) и
+  [после](evidence/after/http-results.json).
+
+Из корня репозитория: `make step6`, затем `make test`.
+Для отдельного повторения HTTP-матрицы:
+
+```bash
+python3 practices/practice_06/lab/security_audit.py --evidence /tmp/mini-shop-audit
+```
+
+Проверка реальной модели и независимая оценка судьи запускаются отдельно от тестов:
+
+```bash
+python3 practices/practice_06/lab/llm_audit.py
+python3 practices/practice_06/lab/llm_audit.py --judge
+```
+
+Нужна работающая локальная Ollama с `qwen3.5:4b`; инструменты модели не передаются.
+Скрипт сохраняет точные входы, ответы, JSON решения и HTTP-эффект в `evidence/`.
+Подробности совместимости OpenCode 2.2 и границы эксперимента — в REPORT_02.
+По просьбе пользователя коммит, push и PR не создавались; [SUBMISSION.md](SUBMISSION.md)
+содержит готовое описание для самостоятельной сдачи.
+

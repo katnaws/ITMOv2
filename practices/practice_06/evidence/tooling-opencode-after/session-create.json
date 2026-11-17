@@ -1,0 +1,30 @@
+{
+  "data": {
+    "id": "ses_e63fd8231ffejMIm7Fn3N0XNl1",
+    "projectID": "4d03000881285183944616bee51c18534ea3c74a",
+    "agent": "shop-planner",
+    "model": {
+      "id": "deepseek/deepseek-v3.2",
+      "providerID": "vsellm",
+      "variant": "default"
+    },
+    "cost": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "reasoning": 0,
+      "cache": {
+        "read": 0,
+        "write": 0
+      }
+    },
+    "time": {
+      "created": 1793618771409,
+      "updated": 1793618771409
+    },
+    "subpath": "../../../../../../../var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/mini-shop-planner-ozw7biap",
+    "location": {
+      "directory": "/var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/mini-shop-planner-ozw7biap"
+    }
+  }
+}

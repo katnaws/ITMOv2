@@ -1,0 +1,1 @@
+{"type": "error", "timestamp": 1793618772269, "sessionID": "ses_e63fd8231ffejMIm7Fn3N0XNl1", "error": {"type": "provider.auth", "message": "Request failed", "status": 401, "response": {"body": "{\"error\":{\"code\":\"401\",\"message\":\"Request failed\",\"param\":null,\"type\":\"authentication_error\"}}"}}}

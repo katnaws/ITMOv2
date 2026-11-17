@@ -1,0 +1,30 @@
+{
+  "source_commit": "d9a630dd8c5de9147350a1cc7a337ea18509121b",
+  "source_branch": "practice_6",
+  "runs": {
+    "step6": {
+      "returncode": 0,
+      "expected": 0
+    },
+    "test-all": {
+      "returncode": 0,
+      "expected": 0
+    },
+    "http-after-run": {
+      "returncode": 0,
+      "expected": 0
+    },
+    "http-before-run": {
+      "returncode": 1,
+      "expected": 1
+    }
+  },
+  "before": {
+    "passed": 6,
+    "total": 45
+  },
+  "after": {
+    "passed": 45,
+    "total": 45
+  }
+}

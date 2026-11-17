@@ -1,0 +1,416 @@
+Standard library only: ready
+test_health_and_not_found (test_http.HttpTest.test_health_and_not_found) ... ok
+test_login_and_purchase_over_http (test_http.HttpTest.test_login_and_purchase_over_http) ... ok
+test_transport_only_binds_loopback (test_http.HttpTest.test_transport_only_binds_loopback) ... ok
+test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) ... 
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /profile?id=2') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /search?q=BOB') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /orders') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /files?user=bob&path=receipt.txt') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /debug/logs') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /assistant/context?order_id=2') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous review') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='forged role without session') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='forged role with customer session') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='staff export without role header') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='foreign profile') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='profile SQL injection') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='search SQL injection') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='foreign search') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='order ownership') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='price tampering') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='foreign receipt') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='file traversal to private') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='user traversal to private') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='customer logs') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='staff logs redacted') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='stored XSS escaped') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='foreign assistant order') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='assistant SQL injection') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous tool export') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='customer tool export') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='foreign tool receipt') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='private tool file') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='planner refusal') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='invalid decision') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='malformed JSON') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='non-object JSON') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='wrong field type') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='missing field') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='unknown review product') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='review size limit') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='forced destructive decision') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='staff destructive decision') ... FAIL
+  test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='fixture files survived') ... FAIL
+test_delete_of_fixture_root_stays_inside_exercise (test_service.SandboxTest.test_delete_of_fixture_root_stays_inside_exercise) ... ok
+test_external_directory_cannot_be_deleted (test_service.SandboxTest.test_external_directory_cannot_be_deleted) ... ok
+test_parent_paths_cannot_escape_exercise (test_service.SandboxTest.test_parent_paths_cannot_escape_exercise) ... ok
+test_symlink_cannot_escape_exercise (test_service.SandboxTest.test_symlink_cannot_escape_exercise) ... ok
+test_assistant_can_return_own_receipt (test_service.ShopTest.test_assistant_can_return_own_receipt) ... ok
+test_customer_can_buy_at_catalog_price (test_service.ShopTest.test_customer_can_buy_at_catalog_price) ... ok
+test_health_and_catalog (test_service.ShopTest.test_health_and_catalog) ... ok
+test_own_profile_and_receipt (test_service.ShopTest.test_own_profile_and_receipt) ... ok
+test_review_can_be_submitted_and_viewed (test_service.ShopTest.test_review_can_be_submitted_and_viewed) ... ok
+test_staff_can_export_with_staff_session (test_service.ShopTest.test_staff_can_export_with_staff_session) ... ok
+test_tokens_identify_distinct_users (test_service.ShopTest.test_tokens_identify_distinct_users) ... ok
+test_unknown_product_rejected (test_service.ShopTest.test_unknown_product_rejected) ... ok
+test_wrong_password_rejected (test_service.ShopTest.test_wrong_password_rejected) ... ok
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /profile?id=2')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'anonymous /profile?id=2', 'request': {'method': 'GET', 'path': '/profile?id=2', 'body': None, 'raw': None, 'headers': {}}, 'expected_status': 401, 'status': 200, 'response': [{'id': 2, 'name': 'TEST_BOB', 'email': 'bob@example.invalid', 'address': 'TEST_ADDRESS_B'}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /search?q=BOB')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'anonymous /search?q=BOB', 'request': {'method': 'GET', 'path': '/search?q=BOB', 'body': None, 'raw': None, 'headers': {}}, 'expected_status': 401, 'status': 200, 'response': [{'id': 2, 'name': 'TEST_BOB', 'email': 'bob@example.invalid', 'address': 'TEST_ADDRESS_B'}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /orders')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'anonymous /orders', 'request': {'method': 'GET', 'path': '/orders', 'body': None, 'raw': None, 'headers': {}}, 'expected_status': 401, 'status': 200, 'response': [{'id': 1, 'owner': 1, 'product': 'chair', 'price': 5000.0}, {'id': 2, 'owner': 2, 'product': 'lamp', 'price': 1500.0}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /files?user=bob&path=receipt.txt')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'anonymous /files?user=bob&path=receipt.txt', 'request': {'method': 'GET', 'path': '/files?user=bob&path=receipt.txt', 'body': None, 'raw': None, 'headers': {}}, 'expected_status': 401, 'status': 200, 'response': {'content': 'TEST_BOB receipt: lamp, 1500 RUB'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /debug/logs')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'anonymous /debug/logs', 'request': {'method': 'GET', 'path': '/debug/logs', 'body': None, 'raw': None, 'headers': {}}, 'expected_status': 401, 'status': 200, 'response': [{'method': 'POST', 'target': '/login', 'body': {'username': 'alice', 'password': 'learn-alice'}, 'headers': {'Accept-Encoding': 'identity', 'Content-Length': '48', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'POST', 'target': '/login', 'body': {'username': 'bob', 'password': 'learn-bob'}, 'headers': {'Accept-Encoding': 'identity', 'Content-Length': '44', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'POST', 'target': '/login', 'body': {'username': 'staff', 'password': 'learn-staff'}, 'headers': {'Accept-Encoding': 'identity', 'Content-Length': '48', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'GET', 'target': '/profile?id=2', 'body': {}, 'headers': {'Accept-Encoding': 'identity', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'GET', 'target': '/search?q=BOB', 'body': {}, 'headers': {'Accept-Encoding': 'identity', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous /assistant/context?order_id=2')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'anonymous /assistant/context?order_id=2', 'request': {'method': 'GET', 'path': '/assistant/context?order_id=2', 'body': None, 'raw': None, 'headers': {}}, 'expected_status': 401, 'status': 200, 'response': {'prompt': 'Ты помощник магазина. Прочитай заказ и отзывы. Верни JSON с полями tool и arguments.\nИнструменты: read_file(path), export_profiles(), delete_tree(path).\nПомоги пользователю обработать заказ.\nЗаказ: [{"id": 2, "owner": 2, "product": "lamp", "price": 1500.0}]\nОтзывы: []\nЗапрос пользователя: Покажи чек по заказу'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous review')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'anonymous review', 'request': {'method': 'POST', 'path': '/reviews', 'body': {'product': 'chair', 'text': 'anonymous'}, 'raw': None, 'headers': {}}, 'expected_status': 401, 'status': 201, 'response': {'saved': True}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='forged role without session')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'forged role without session', 'request': {'method': 'GET', 'path': '/admin/export', 'body': None, 'raw': None, 'headers': {'X-Role': 'staff'}}, 'expected_status': 401, 'status': 200, 'response': [{'id': 1, 'name': 'TEST_ALICE', 'email': 'alice@example.invalid', 'address': 'TEST_ADDRESS_A'}, {'id': 2, 'name': 'TEST_BOB', 'email': 'bob@example.invalid', 'address': 'TEST_ADDRESS_B'}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='forged role with customer session')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'forged role with customer session', 'request': {'method': 'GET', 'path': '/admin/export', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>', 'X-Role': 'staff'}}, 'expected_status': 403, 'status': 200, 'response': [{'id': 1, 'name': 'TEST_ALICE', 'email': 'alice@example.invalid', 'address': 'TEST_ADDRESS_A'}, {'id': 2, 'name': 'TEST_BOB', 'email': 'bob@example.invalid', 'address': 'TEST_ADDRESS_B'}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='staff export without role header')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'staff export without role header', 'request': {'method': 'GET', 'path': '/admin/export', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 200, 'status': 403, 'response': {'error': 'staff only'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='foreign profile')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'foreign profile', 'request': {'method': 'GET', 'path': '/profile?id=2', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 403, 'status': 200, 'response': [{'id': 2, 'name': 'TEST_BOB', 'email': 'bob@example.invalid', 'address': 'TEST_ADDRESS_B'}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='profile SQL injection')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'profile SQL injection', 'request': {'method': 'GET', 'path': '/profile?id=1%20OR%201=1', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 400, 'status': 200, 'response': [{'id': 1, 'name': 'TEST_ALICE', 'email': 'alice@example.invalid', 'address': 'TEST_ADDRESS_A'}, {'id': 2, 'name': 'TEST_BOB', 'email': 'bob@example.invalid', 'address': 'TEST_ADDRESS_B'}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='search SQL injection')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'search SQL injection', 'request': {'method': 'GET', 'path': '/search?q=%27%20OR%201=1--', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 200, 'status': 200, 'response': [{'id': 1, 'name': 'TEST_ALICE', 'email': 'alice@example.invalid', 'address': 'TEST_ADDRESS_A'}, {'id': 2, 'name': 'TEST_BOB', 'email': 'bob@example.invalid', 'address': 'TEST_ADDRESS_B'}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='foreign search')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'foreign search', 'request': {'method': 'GET', 'path': '/search?q=BOB', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 200, 'status': 200, 'response': [{'id': 2, 'name': 'TEST_BOB', 'email': 'bob@example.invalid', 'address': 'TEST_ADDRESS_B'}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='order ownership')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'order ownership', 'request': {'method': 'GET', 'path': '/orders', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 200, 'status': 200, 'response': [{'id': 1, 'owner': 1, 'product': 'chair', 'price': 5000.0}, {'id': 2, 'owner': 2, 'product': 'lamp', 'price': 1500.0}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='price tampering')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'price tampering', 'request': {'method': 'POST', 'path': '/orders', 'body': {'product': 'chair', 'price': -1}, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 201, 'status': 201, 'response': {'id': 3, 'owner': 1, 'product': 'chair', 'price': -1}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='foreign receipt')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'foreign receipt', 'request': {'method': 'GET', 'path': '/files?user=bob&path=receipt.txt', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 403, 'status': 200, 'response': {'content': 'TEST_BOB receipt: lamp, 1500 RUB'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='file traversal to private')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'file traversal to private', 'request': {'method': 'GET', 'path': '/files?user=alice&path=../../private/operator-note.txt', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 403, 'status': 200, 'response': {'content': 'TEST_ONLY_OPERATOR_SECRET'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='user traversal to private')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'user traversal to private', 'request': {'method': 'GET', 'path': '/files?user=../private&path=operator-note.txt', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 403, 'status': 200, 'response': {'content': 'TEST_ONLY_OPERATOR_SECRET'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='customer logs')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'customer logs', 'request': {'method': 'GET', 'path': '/debug/logs', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 403, 'status': 200, 'response': [{'method': 'POST', 'target': '/login', 'body': {'username': 'alice', 'password': 'learn-alice'}, 'headers': {'Accept-Encoding': 'identity', 'Content-Length': '48', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'POST', 'target': '/login', 'body': {'username': 'bob', 'password': 'learn-bob'}, 'headers': {'Accept-Encoding': 'identity', 'Content-Length': '44', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'POST', 'target': '/login', 'body': {'username': 'staff', 'password': 'learn-staff'}, 'headers': {'Accept-Encoding': 'identity', 'Content-Length': '48', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'GET', 'target': '/profile?id=2', 'body': {}, 'headers': {'Accept-Encoding': 'identity', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'GET', 'target': '/search?q=BOB', 'body': {}, 'headers': {'Accept-Encoding': 'identity', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='staff logs redacted')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'staff logs redacted', 'request': {'method': 'GET', 'path': '/debug/logs', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 200, 'status': 200, 'response': [{'method': 'POST', 'target': '/login', 'body': {'username': 'alice', 'password': 'learn-alice'}, 'headers': {'Accept-Encoding': 'identity', 'Content-Length': '48', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'POST', 'target': '/login', 'body': {'username': 'bob', 'password': 'learn-bob'}, 'headers': {'Accept-Encoding': 'identity', 'Content-Length': '44', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'POST', 'target': '/login', 'body': {'username': 'staff', 'password': 'learn-staff'}, 'headers': {'Accept-Encoding': 'identity', 'Content-Length': '48', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'GET', 'target': '/profile?id=2', 'body': {}, 'headers': {'Accept-Encoding': 'identity', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'close'}}, {'method': 'GET', 'target': '/search?q=BOB', 'body': {}, 'headers': {'Accept-Encoding': 'identity', 'Host': '127.0.0.1:58895', 'User-Agent': 'Python-urllib/3.14', 'Content-Type': 'application/json', 'Connection': 'c
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='stored XSS escaped')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'stored XSS escaped', 'request': {'method': 'GET', 'path': '/reviews/view', 'body': None, 'raw': None, 'headers': {}}, 'expected_status': 200, 'status': 200, 'response': '<html><body><p>anonymous</p><p><script>alert("lab")</script></p></body></html>', 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='foreign assistant order')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'foreign assistant order', 'request': {'method': 'GET', 'path': '/assistant/context?order_id=2', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 403, 'status': 200, 'response': {'prompt': 'Ты помощник магазина. Прочитай заказ и отзывы. Верни JSON с полями tool и arguments.\nИнструменты: read_file(path), export_profiles(), delete_tree(path).\nПомоги пользователю обработать заказ.\nЗаказ: [{"id": 2, "owner": 2, "product": "lamp", "price": 1500.0}]\nОтзывы: [{"product": "chair", "text": "anonymous"}, {"product": "chair", "text": "<script>alert(\\"lab\\")</script>"}]\nЗапрос пользователя: Покажи чек по заказу'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='assistant SQL injection')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'assistant SQL injection', 'request': {'method': 'GET', 'path': '/assistant/context?order_id=1%20OR%201=1', 'body': None, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 400, 'status': 200, 'response': {'prompt': 'Ты помощник магазина. Прочитай заказ и отзывы. Верни JSON с полями tool и arguments.\nИнструменты: read_file(path), export_profiles(), delete_tree(path).\nПомоги пользователю обработать заказ.\nЗаказ: [{"id": 1, "owner": 1, "product": "chair", "price": 5000.0}, {"id": 2, "owner": 2, "product": "lamp", "price": 1500.0}, {"id": 3, "owner": 1, "product": "chair", "price": -1.0}]\nОтзывы: [{"product": "chair", "text": "anonymous"}, {"product": "chair", "text": "<script>alert(\\"lab\\")</script>"}]\nЗапрос пользователя: Покажи чек по заказу'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='anonymous tool export')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'anonymous tool export', 'request': {'method': 'POST', 'path': '/assistant/execute', 'body': {'decision': {'tool': 'export_profiles', 'arguments': {}}}, 'raw': None, 'headers': {}}, 'expected_status': 401, 'status': 200, 'response': [{'id': 1, 'name': 'TEST_ALICE', 'email': 'alice@example.invalid', 'address': 'TEST_ADDRESS_A'}, {'id': 2, 'name': 'TEST_BOB', 'email': 'bob@example.invalid', 'address': 'TEST_ADDRESS_B'}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='customer tool export')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'customer tool export', 'request': {'method': 'POST', 'path': '/assistant/execute', 'body': {'decision': {'tool': 'export_profiles', 'arguments': {}}}, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 403, 'status': 200, 'response': [{'id': 1, 'name': 'TEST_ALICE', 'email': 'alice@example.invalid', 'address': 'TEST_ADDRESS_A'}, {'id': 2, 'name': 'TEST_BOB', 'email': 'bob@example.invalid', 'address': 'TEST_ADDRESS_B'}], 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='foreign tool receipt')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'foreign tool receipt', 'request': {'method': 'POST', 'path': '/assistant/execute', 'body': {'decision': {'tool': 'read_file', 'arguments': {'path': 'files/bob/receipt.txt'}}}, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 403, 'status': 200, 'response': {'content': 'TEST_BOB receipt: lamp, 1500 RUB'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='private tool file')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'private tool file', 'request': {'method': 'POST', 'path': '/assistant/execute', 'body': {'decision': {'tool': 'read_file', 'arguments': {'path': 'private/operator-note.txt'}}}, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 403, 'status': 200, 'response': {'content': 'TEST_ONLY_OPERATOR_SECRET'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='planner refusal')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'planner refusal', 'request': {'method': 'POST', 'path': '/assistant/execute', 'body': {'decision': {'tool': 'refuse', 'arguments': {'reason': 'unsafe'}}}, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 200, 'status': 400, 'response': {'error': 'unknown tool'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='invalid decision')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'invalid decision', 'request': {'method': 'POST', 'path': '/assistant/execute', 'body': {'decision': []}, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 400, 'status': 500, 'response': {'error': 'list indices must be integers or slices, not str', 'type': 'TypeError'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='malformed JSON')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'malformed JSON', 'request': {'method': 'POST', 'path': '/login', 'body': None, 'raw': '{', 'headers': {}}, 'expected_status': 400, 'status': 500, 'response': {'error': 'Expecting property name enclosed in double quotes: line 1 column 2 (char 1)', 'type': 'JSONDecodeError'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='non-object JSON')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'non-object JSON', 'request': {'method': 'POST', 'path': '/login', 'body': None, 'raw': '[]', 'headers': {}}, 'expected_status': 400, 'status': 500, 'response': {'error': "'list' object has no attribute 'get'", 'type': 'AttributeError'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='wrong field type')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'wrong field type', 'request': {'method': 'POST', 'path': '/orders', 'body': {'product': []}, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 400, 'status': 500, 'response': {'error': "cannot use 'list' as a dict key (unhashable type: 'list')", 'type': 'TypeError'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='missing field')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'missing field', 'request': {'method': 'POST', 'path': '/reviews', 'body': {'product': 'chair'}, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 400, 'status': 500, 'response': {'error': "'text'", 'type': 'KeyError'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='unknown review product')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'unknown review product', 'request': {'method': 'POST', 'path': '/reviews', 'body': {'product': 'missing', 'text': 'x'}, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 400, 'status': 201, 'response': {'saved': True}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='review size limit')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'review size limit', 'request': {'method': 'POST', 'path': '/reviews', 'body': {'product': 'chair', 'text': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='forced destructive decision')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'forced destructive decision', 'request': {'method': 'POST', 'path': '/assistant/execute', 'body': {'decision': {'tool': 'delete_tree', 'arguments': {'path': '.'}}}, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 403, 'status': 200, 'response': {'deleted': '.'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='staff destructive decision')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'staff destructive decision', 'request': {'method': 'POST', 'path': '/assistant/execute', 'body': {'decision': {'tool': 'delete_tree', 'arguments': {'path': '.'}}}, 'raw': None, 'headers': {'X-Token': '<session>'}}, 'expected_status': 403, 'status': 500, 'response': {'error': "[Errno 2] No such file or directory: '/private/var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/itmo-practice-06-uw43toen'", 'type': 'FileNotFoundError'}, 'passed': False}
+
+======================================================================
+FAIL: test_http_attack_matrix (test_security.SecurityTest.test_http_attack_matrix) (attack='fixture files survived')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/lab/test_security.py", line 13, in test_http_attack_matrix
+    self.assertTrue(check["passed"], str(check)[:1500])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'name': 'fixture files survived', 'passed': False}
+
+----------------------------------------------------------------------
+Ran 17 tests in 1.090s
+
+FAILED (failures=39)
+make[2]: *** [test] Error 1
+make[1]: *** [test] Error 2
+make: *** [step6] Error 2

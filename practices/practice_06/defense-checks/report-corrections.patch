@@ -1,0 +1,11 @@
+--- a/practices/practice_06/REPORT_02.md
++++ b/practices/practice_06/REPORT_02.md
+@@ -24,7 +24,7 @@
+ | F06: XSS | stored XSS escaped | Теги представлены `&lt;script&gt;`; добавлены CSP и nosniff |
+ | F07: секреты в журнале | anonymous/customer/staff logs | 401/403; сотрудник получает только методы и известные маршруты |
+ | F08: опасные инструменты | anonymous/customer tool export, foreign/private tool file, forced/staff destructive decision | 401/403; оба удаления запрещены, файлы сохранены; собственный чек и экспорт staff работают |
+-| F09: prompt injection | normal/injected контексты и принудительный опасный JSON | Входы сохранены; сервер блокирует опасное решение. Реальная модель не проверялась |
++| F09: prompt injection | normal/injected контексты и принудительный опасный JSON | Четыре прогона Qwen сохранены; модель не выбрала опасный инструмент. Принудительное удаление после фикса отклонено с 403 |
+ | F10: формат и ошибки | malformed/non-object JSON, wrong/missing field, invalid decision и дополнительные HTTP-тесты | 400 вместо раскрытия исключений; неизвестный товар/слишком длинный отзыв отклоняются |
+ | F11: накопление и сессии | тесты expired_session и logs_and_reviews_bounded; анализ ограничений | Истёкшая сессия 401; отзывы/журнал не превышают 200 записей; сессии имеют срок и предел |
+ | F12: Unicode в сохранённом отзыве | test_unpaired_surrogate_cannot_poison_public_reviews | Оба одиночных суррогата отклоняются с 400; страница отзывов продолжает отвечать 200 |

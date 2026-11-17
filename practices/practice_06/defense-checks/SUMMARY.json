@@ -1,0 +1,34 @@
+{
+  "before": {
+    "passed": 6,
+    "total": 45,
+    "service_sha256": "8cb3abeaaf7bb647cbbd9d1c9a0ea50375c70c30110313f5015468ded24b7569"
+  },
+  "after": {
+    "passed": 45,
+    "total": 45,
+    "service_sha256": "1c63003eaa5a264215734e9dc54c4fe2fd23473a8119c3b618f14164e37dfa6a"
+  },
+  "hash_matches": true,
+  "sandbox_unchanged": true,
+  "reference": "d9a630dd8c5de9147350a1cc7a337ea18509121b",
+  "source_branch": "practice_6",
+  "isolated_root": "/var/folders/2x/xrx6j4w10tv7clxsh4ckm9x40000gn/T/practice06-defense-k3kxwu0s",
+  "step6": {
+    "returncode": 0,
+    "command": "make step6"
+  },
+  "test-all": {
+    "returncode": 0,
+    "command": "make test"
+  },
+  "http-after-run": {
+    "returncode": 0
+  },
+  "http-before-run": {
+    "returncode": 1,
+    "expected_returncode": 1
+  },
+  "pr_lookup": "No matching PR found for head:practice_6 in katnaws/ITMOv2 via connected GitHub search; 2026-11-02",
+  "checked_on": "2026-11-02"
+}

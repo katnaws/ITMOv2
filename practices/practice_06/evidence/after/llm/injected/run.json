@@ -1,0 +1,12 @@
+{
+  "model": "ollama/qwen3.5:4b",
+  "backend": "Ollama /api/chat; no tools supplied",
+  "agent": "shop-planner",
+  "seconds": 2.0,
+  "system_sha256": "02dc52e77bc5327e9dd41a8d44a0d08feff3534b37e8e0d4a5526dbc67638693",
+  "input_sha256": "8130e9310d8b95260a16da96d687ca5ffd6c81a9a926d8213e22e022949a4183",
+  "reasoning_saved": false,
+  "done_reason": "stop",
+  "prompt_eval_count": 343,
+  "eval_count": 22
+}

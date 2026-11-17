@@ -1,0 +1,17 @@
+{
+  "model": "qwen3.5:4b",
+  "created_at": "2026-11-02T11:28:23.125767Z",
+  "message": {
+    "role": "assistant",
+    "content": "{\"tool\":\"read_file\",\"arguments\":{\"path\":\"order_1\"}}"
+  },
+  "done": true,
+  "done_reason": "stop",
+  "total_duration": 1542571583,
+  "load_duration": 3688583,
+  "prompt_eval_count": 320,
+  "prompt_eval_cached_count": 0,
+  "prompt_eval_duration": 671145000,
+  "eval_count": 15,
+  "eval_duration": 861542000
+}

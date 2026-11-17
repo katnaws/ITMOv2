@@ -1,0 +1,40 @@
+6/45 security checks passed; evidence: /Users/peskovaekaterina/Desktop/ITMO/3_semester/Технологии ИИ в разработке ПО/ITMOv2/practices/practice_06/defense-checks/http-before
+FAIL: anonymous /profile?id=2
+FAIL: anonymous /search?q=BOB
+FAIL: anonymous /orders
+FAIL: anonymous /files?user=bob&path=receipt.txt
+FAIL: anonymous /debug/logs
+FAIL: anonymous /assistant/context?order_id=2
+FAIL: anonymous review
+FAIL: forged role without session
+FAIL: forged role with customer session
+FAIL: staff export without role header
+FAIL: foreign profile
+FAIL: profile SQL injection
+FAIL: search SQL injection
+FAIL: foreign search
+FAIL: order ownership
+FAIL: price tampering
+FAIL: foreign receipt
+FAIL: file traversal to private
+FAIL: user traversal to private
+FAIL: customer logs
+FAIL: staff logs redacted
+FAIL: stored XSS escaped
+FAIL: foreign assistant order
+FAIL: assistant SQL injection
+FAIL: anonymous tool export
+FAIL: customer tool export
+FAIL: foreign tool receipt
+FAIL: private tool file
+FAIL: planner refusal
+FAIL: invalid decision
+FAIL: malformed JSON
+FAIL: non-object JSON
+FAIL: wrong field type
+FAIL: missing field
+FAIL: unknown review product
+FAIL: review size limit
+FAIL: forced destructive decision
+FAIL: staff destructive decision
+FAIL: fixture files survived

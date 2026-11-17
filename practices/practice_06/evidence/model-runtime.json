@@ -1,0 +1,84 @@
+{
+  "tags": {
+    "models": [
+      {
+        "name": "itmo-agent:latest",
+        "model": "itmo-agent:latest",
+        "modified_at": "2026-10-07T17:25:04.220961712+03:00",
+        "size": 3389983801,
+        "digest": "16e36b53d34c4b7e822201d03c265a625a309c595a5b097aac43d80486cbede8",
+        "details": {
+          "parent_model": "qwen3.5:4b",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.7B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 262144,
+          "embedding_length": 2560
+        },
+        "capabilities": [
+          "completion",
+          "vision",
+          "tools",
+          "thinking"
+        ]
+      },
+      {
+        "name": "itmo-experiment:latest",
+        "model": "itmo-experiment:latest",
+        "modified_at": "2026-10-07T17:25:04.145928982+03:00",
+        "size": 3389983889,
+        "digest": "db8b6818a26e3e93dc3481f68fdf0dcb8a4f89e4f7e4243aea58aa2175e05ae3",
+        "details": {
+          "parent_model": "qwen3.5:4b",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.7B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 262144,
+          "embedding_length": 2560
+        },
+        "capabilities": [
+          "completion",
+          "vision",
+          "tools",
+          "thinking"
+        ]
+      },
+      {
+        "name": "qwen3.5:4b",
+        "model": "qwen3.5:4b",
+        "modified_at": "2026-09-28T15:52:10.459077551+03:00",
+        "size": 3389983735,
+        "digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.7B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 262144,
+          "embedding_length": 2560
+        },
+        "capabilities": [
+          "completion",
+          "vision",
+          "tools",
+          "thinking"
+        ]
+      }
+    ]
+  },
+  "version": {
+    "version": "0.34.4"
+  }
+}
